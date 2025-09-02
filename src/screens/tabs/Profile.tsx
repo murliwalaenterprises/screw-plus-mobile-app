@@ -24,7 +24,7 @@ import { StackNames } from '../../constants/stackNames';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
 
-export default function Profile({ navigation, route }: any) {
+export default function Profile({ navigation }: any) {
 
 
   const { user, userProfile, logout } = useAuth();
@@ -32,15 +32,23 @@ export default function Profile({ navigation, route }: any) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const userId: any = user?.uid;
-  console.log('userProfile===', userProfile);
 
   const [orders, setOrder] = useState<Order[]>([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   React.useEffect(() => {
     const unsubscribe = firebaseService.subscribeToOrder(userId, (data) => {
       setOrder(data);
       const values: Record<string, Animated.Value> = {};
       data.forEach(order => { values[order.orderId] = new Animated.Value(1); });
+    });
+    return () => unsubscribe();
+  }, []);
+
+  React.useEffect(() => {
+    const unsubscribe = firebaseService.subscribeToUser(userId, (data) => {
+      console.log('user data', data);
+      setIsAdmin(data?.isAdmin || false);
     });
     return () => unsubscribe();
   }, []);
@@ -74,18 +82,18 @@ export default function Profile({ navigation, route }: any) {
 
   const menuItems = [
     { id: 'admin_panel', icon: Shield, title: "Admin Panel", subtitle: "Manage app content", route: StackNames.AdminScreen, isAdminUser: true, loginOnly: true },
-    { id: 'my_orders',icon: ShoppingBag, title: "My Orders", subtitle: "Track your orders", route: StackNames.Orders, loginOnly: true },
-    { id: 'wishlist',icon: Heart, title: "Wishlist", subtitle: "Your favorite items", route: StackNames.WishListScreen },
-    { id: 'addresses',icon: MapPin, title: "Addresses", subtitle: "Manage delivery addresses", route: StackNames.AddressesScreen, loginOnly: true },
-    { id: 'payment_methods',icon: CreditCard, title: "Payment Methods", subtitle: "Cards & wallets", route: StackNames.PaymentMethodsScreen, loginOnly: true },
-    { id: 'notifications',icon: Bell, title: "Notifications", subtitle: "Alerts & updates", route: StackNames.NotificationsScreen },
-    { id: 'help_support',icon: HelpCircle, title: "Help & Support", subtitle: "Get assistance", route: null },
+    { id: 'my_orders', icon: ShoppingBag, title: "My Orders", subtitle: "Track your orders", route: StackNames.Orders, loginOnly: true },
+    { id: 'wishlist', icon: Heart, title: "Wishlist", subtitle: "Your favorite items", route: StackNames.WishListScreen },
+    { id: 'addresses', icon: MapPin, title: "Addresses", subtitle: "Manage delivery addresses", route: StackNames.AddressesScreen, loginOnly: true },
+    { id: 'payment_methods', icon: CreditCard, title: "Payment Methods", subtitle: "Cards & wallets", route: StackNames.PaymentMethodsScreen, loginOnly: true },
+    { id: 'notifications', icon: Bell, title: "Notifications", subtitle: "Alerts & updates", route: StackNames.NotificationsScreen },
+    { id: 'help_support', icon: HelpCircle, title: "Help & Support", subtitle: "Get assistance", route: "" },
     // { icon: Settings, title: "Settings", subtitle: "App preferences", route: StackNames.SettingsScreen },
   ];
 
-  const filteredMenuItems = menuItems.filter(item => {
+  const filteredMenuItems = menuItems?.filter(item => {
     if (item?.id === 'admin_panel') {
-      return userProfile?.isAdmin === true;
+      return isAdmin === true;
     }
     return true;
   });
@@ -95,7 +103,7 @@ export default function Profile({ navigation, route }: any) {
       navigation.navigate(StackNames.AuthStack)
       return;
     }
-    if (item?.route) {
+    if (item?.route && typeof item.route === 'string') {
       navigation.navigate(item.route as never);
     }
   };

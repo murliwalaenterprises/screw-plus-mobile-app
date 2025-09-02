@@ -364,6 +364,24 @@ class FirebaseService {
     });
   }
 
+  // Users
+
+  subscribeToUser(userId: string, callback: (user: any) => void) {
+    const userRef = doc(db, "users", userId); 
+    return onSnapshot(userRef, (snapshot) => {
+      if (snapshot?.exists()) {
+        const user = {
+          id: snapshot?.id,
+          ...snapshot?.data(),
+        };
+        callback(user);
+      } else {
+        console.log("User not found");
+        callback(null);
+      }
+    });
+  }
+
 }
 
 export const firebaseService = new FirebaseService();

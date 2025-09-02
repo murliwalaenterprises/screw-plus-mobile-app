@@ -21,7 +21,7 @@ export default function Home({navigation}: any) {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [showLocationSelector, setShowLocationSelector] = useState(false);
 
-  console.log('Selected Location ID:', products);
+  console.log('Products', products);
   const featuredProducts = products?.slice(0, 6);
   const newArrivals = products?.filter(p => p.isNew).slice(0, 4);
   const bestSellers = products?.filter(p => p.isBestseller).slice(0, 4);
