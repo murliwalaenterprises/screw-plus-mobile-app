@@ -30,46 +30,46 @@ interface NotificationSettings {
 }
 
 const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    type: 'order',
-    title: 'Order Shipped',
-    message: 'Your order #CS2024002 has been shipped and will arrive in 2-3 days.',
-    time: '2 hours ago',
-    isRead: false,
-  },
-  {
-    id: '2',
-    type: 'offer',
-    title: 'Flash Sale Alert!',
-    message: 'Get up to 70% off on selected items. Limited time offer!',
-    time: '4 hours ago',
-    isRead: false,
-  },
-  {
-    id: '3',
-    type: 'wishlist',
-    title: 'Price Drop Alert',
-    message: 'The Classic White T-Shirt in your wishlist is now 20% off!',
-    time: '1 day ago',
-    isRead: true,
-  },
-  {
-    id: '4',
-    type: 'order',
-    title: 'Order Delivered',
-    message: 'Your order #CS2024001 has been delivered successfully.',
-    time: '2 days ago',
-    isRead: true,
-  },
-  {
-    id: '5',
-    type: 'general',
-    title: 'Welcome to Screw Plus!',
-    message: 'Thank you for joining us. Explore our latest collection and enjoy shopping!',
-    time: '1 week ago',
-    isRead: true,
-  },
+  // {
+  //   id: '1',
+  //   type: 'order',
+  //   title: 'Order Shipped',
+  //   message: 'Your order #CS2024002 has been shipped and will arrive in 2-3 days.',
+  //   time: '2 hours ago',
+  //   isRead: false,
+  // },
+  // {
+  //   id: '2',
+  //   type: 'offer',
+  //   title: 'Flash Sale Alert!',
+  //   message: 'Get up to 70% off on selected items. Limited time offer!',
+  //   time: '4 hours ago',
+  //   isRead: false,
+  // },
+  // {
+  //   id: '3',
+  //   type: 'wishlist',
+  //   title: 'Price Drop Alert',
+  //   message: 'The Classic White T-Shirt in your wishlist is now 20% off!',
+  //   time: '1 day ago',
+  //   isRead: true,
+  // },
+  // {
+  //   id: '4',
+  //   type: 'order',
+  //   title: 'Order Delivered',
+  //   message: 'Your order #CS2024001 has been delivered successfully.',
+  //   time: '2 days ago',
+  //   isRead: true,
+  // },
+  // {
+  //   id: '5',
+  //   type: 'general',
+  //   title: 'Welcome to Screw Plus!',
+  //   message: 'Thank you for joining us. Explore our latest collection and enjoy shopping!',
+  //   time: '1 week ago',
+  //   isRead: true,
+  // },
 ];
 
 const getNotificationIcon = (type: string) => {
@@ -110,7 +110,7 @@ export default function NotificationsScreen() {
   });
   const [showSettings, setShowSettings] = useState(false);
   const [animatedValues] = useState(() => 
-    mockNotifications.reduce((acc, notification) => {
+    mockNotifications?.reduce((acc, notification) => {
       acc[notification.id] = new Animated.Value(1);
       return acc;
     }, {} as Record<string, Animated.Value>)

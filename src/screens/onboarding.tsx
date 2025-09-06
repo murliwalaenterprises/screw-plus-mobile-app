@@ -15,6 +15,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { StackNames } from '../constants/stackNames';
+import { getOnboardingSession, getUserSession } from '../services/session';
+import { useAuth } from '../context/AuthContext';
 
 const { width } = Dimensions.get('window');
 
@@ -33,6 +35,7 @@ interface OnboardingSlide {
 export default function OnboardingScreen({ navigation }: any) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollViewRef = useRef<ScrollView>(null);
+     const [checkOnboard, setCheckOnboard] = useState(false);
     const fadeAnim = useRef(new Animated.Value(1)).current;
 
     const slides: any = [
@@ -64,6 +67,27 @@ export default function OnboardingScreen({ navigation }: any) {
             image: { uri: 'https://png.pngtree.com/background/20210711/original/pngtree-e-commerce-training-enrollment-poster-background-material-picture-image_1116075.jpg' }
         },
     ];
+
+       React.useEffect(() => {
+        getOnboardingSession().then((hasCompletedOnboarding: boolean) => {
+          if (hasCompletedOnboarding) {
+            navigation.reset({
+              index: 0,
+              routes: [
+                {
+                  name: StackNames.AuthStack,
+                },
+              ],
+            });
+            return;
+          }
+          setCheckOnboard(true);
+        });
+      }, []);
+    
+      if (!checkOnboard) {
+        return;
+      }
 
     const handleNext = () => {
         if (currentIndex < slides.length - 1) {

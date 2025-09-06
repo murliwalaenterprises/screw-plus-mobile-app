@@ -17,15 +17,17 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../constants/Colors';
 import { StackNames } from '../constants/stackNames';
 import { useAuth } from '../context/AuthContext';
+import { getUserSession } from '../services/session';
 
 export default function LoginScreen({ navigation }: any) {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [checkLogin, setCheckLogin] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { signIn, skipLogin, completeOnboarding } = useAuth();
+    const { signIn, skipLogin, completeOnboarding,setUserProfile} = useAuth();
 
     const handleLogin = async () => {
         if (!email.trim() || !password.trim()) {
@@ -35,6 +37,7 @@ export default function LoginScreen({ navigation }: any) {
 
         setIsLoading(true);
         const result = await signIn(email.trim(), password);
+        console.log('Login result:', result);
         setIsLoading(false);
 
         if (result.success) {
@@ -44,7 +47,6 @@ export default function LoginScreen({ navigation }: any) {
             Alert.alert('Login Failed', result.error || 'An error occurred');
         }
     };
-
 
     const handleSkipLogin = async () => {
         await skipLogin();
@@ -58,6 +60,29 @@ export default function LoginScreen({ navigation }: any) {
     const handleSignUp = () => {
         navigation.navigate(StackNames.SignUpScreen);
     };
+
+    React.useEffect(() => {
+        getUserSession().then((oUser: any) => {
+            if (oUser) {
+                console.log("User session found:", oUser);
+                setUserProfile(oUser);
+                navigation.reset({
+                    index: 0,
+                    routes: [
+                        {
+                            name: StackNames.MainAppStack,
+                        },
+                    ],
+                });
+                return;
+            }
+            setCheckLogin(true);
+        });
+    }, []);
+
+    if (!checkLogin) {
+        return;
+    }
 
     return (
         <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
@@ -151,7 +176,7 @@ export default function LoginScreen({ navigation }: any) {
                             style={styles.socialButton}
                         >
                             <Image
-                                source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png' }}
+                                source={require('../assets/images/google_logo.png')}
                                 style={{
                                     width: 20,
                                     height: 20,

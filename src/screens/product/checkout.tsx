@@ -39,11 +39,22 @@ export default function CheckoutScreen({ navigation }: any) {
     const tax = Math.round(cartTotal * (taxPercentage / 100));
     const finalTotal = cartTotal + deliveryFee + tax + platformFee;
 
+    console.log('payment methods', selectedPayment);
+
     // const addresses = [
     //     '123 Main Street, New Delhi, 110001',
     //     '456 Park Avenue, Mumbai, 400001',
     //     '789 Garden Road, Bangalore, 560001'
     // ];
+
+    const handleOrderConfirmation = async (order: any) => {
+        console.log('order', JSON.stringify(order, null, 2));
+        setOrderDetails(order);
+        await firebaseService.addOrder(userId, order);
+        Vibration.vibrate(500);
+        clearCart();
+        setIsOrderPlaced(true);
+    }
 
     const handleRazorpayPayment = async () => {
         try {
@@ -55,13 +66,14 @@ export default function CheckoutScreen({ navigation }: any) {
                 CustomerName: 'Pradeep Suthar', // Collect from user input
                 CustomerEmail: 'sutharpradeep081@gmail.com',
                 CustomerMobile: '8440077147',
-                CompanyName: 'Screw Plus', // Collect from user input
+                CompanyName: 'EShop', // Collect from user input
                 CompanyLogo: 'https://example.com/logo.png', // Your company logo
                 Description: 'Order Payment',
                 MTxnId: `MT${Date.now()}`, // Unique transaction ID
             };
             const options = {
-                key: 'rzp_test_cURWUv0ns0gAYU', // Replace with your Razorpay key
+                // key: 'rzp_test_cURWUv0ns0gAYU', // Replace with your Razorpay key
+                key: 'rzp_test_RDRYAr7BuRV4uT', // Replace with your Razorpay key
                 amount: finalTotal * 100, // Amount in paise
                 currency: 'INR',
                 name: orderDetails.CompanyName,
@@ -78,8 +90,8 @@ export default function CheckoutScreen({ navigation }: any) {
             startRazorpayPayment({
                 amount: options.amount,
                 orderId: orderDetails.orderId, // Collect Order ID from Backend
-                email: orderDetails.EmailId,
-                contact: orderDetails?.MobileNo,
+                email: orderDetails.CustomerEmail,
+                contact: orderDetails?.CustomerMobile,
                 name: orderDetails?.CustomerName,
                 companyName: orderDetails.CompanyName,
                 key: options.key,
@@ -87,6 +99,7 @@ export default function CheckoutScreen({ navigation }: any) {
                 transactionId: orderDetails?.MTxnId,  // Collect Transaction ID from Backend
                 onSuccess: async (data) => {
                     console.log('Payment Success:', data);
+                    console.log('orderDetails', orderDetails);
                     if (data.razorpay_payment_id && data.razorpay_signature && data.razorpay_order_id) {
                         const resPayload = {
                             'razorpay_signature': data.razorpay_signature,
@@ -96,20 +109,21 @@ export default function CheckoutScreen({ navigation }: any) {
                             'razorpay_email': options.prefill.email,
                         };
                         console.log('resPayload', resPayload);
-                        Alert.alert(
-                            'Order Placed Successfully!',
-                            `Your order has been placed successfully. Order total: ₹${finalTotal.toLocaleString()}`,
-                            [
-                                {
-                                    text: 'View Orders',
-                                    onPress: () => navigation.navigate(StackNames.Orders)
-                                },
-                                {
-                                    text: 'Continue Shopping',
-                                    onPress: () => navigation.navigate(StackNames.MainAppStack)
-                                }
-                            ]
-                        );
+                        handleOrderConfirmation(orderDetails);
+                        // Alert.alert(
+                        //     'Order Placed Successfully!',
+                        //     `Your order has been placed successfully. Order total: ₹${finalTotal.toLocaleString()}`,
+                        //     [
+                        //         {
+                        //             text: 'View Orders',
+                        //             onPress: () => navigation.navigate(StackNames.Orders)
+                        //         },
+                        //         {
+                        //             text: 'Continue Shopping',
+                        //             onPress: () => navigation.navigate(StackNames.MainAppStack)
+                        //         }
+                        //     ]
+                        // );
                     }
                 },
                 onError: (error) => {
@@ -177,38 +191,34 @@ export default function CheckoutScreen({ navigation }: any) {
                 orderDate: new Date()
             };
 
-            // call handleRazorPay function if selected payment is online
-            // if payment is done by razorpay then place order
+            if (selectedPayment !== 'cod') {
+                await handleRazorpayPayment();
+                return;
+            }
 
-            console.log('order', JSON.stringify(order, null, 2));
-            setOrderDetails(order);
-            await firebaseService.addOrder(userId, order);
-            Vibration.vibrate(500);
-            clearCart();
-            setIsOrderPlaced(true);
+            handleOrderConfirmation(order)
             // Send push notification
             // await sendOrderNotification('pending', `CS${Date.now()}`);
-            Alert.alert(
-                'Order Placed Successfully!',
-                `Your order has been placed successfully. Order total: ₹${finalTotal.toLocaleString()}`,
-                [
-                    {
-                        text: 'View Orders',
-                        onPress: () => navigation.navigate(StackNames.Orders)
-                    },
-                    {
-                        text: 'Continue Shopping',
-                        onPress: () => navigation.navigate(StackNames.MainAppStack)
-                    }
-                ]
-            );
+            // Alert.alert(
+            //     'Order Placed Successfully!',
+            //     `Your order has been placed successfully. Order total: ₹${finalTotal.toLocaleString()}`,
+            //     [
+            //         {
+            //             text: 'View Orders',
+            //             onPress: () => navigation.navigate(StackNames.Orders)
+            //         },
+            //         {
+            //             text: 'Continue Shopping',
+            //             onPress: () => navigation.navigate(StackNames.MainAppStack)
+            //         }
+            //     ]
+            // );
         } catch {
             Alert.alert('Error', 'Failed to place order. Please try again.');
         } finally {
             setIsProcessing(false);
         }
     };
-
 
     React.useEffect(() => {
         if (isOrderPlaced) {
@@ -235,6 +245,7 @@ export default function CheckoutScreen({ navigation }: any) {
                     amount: orderDetails.finalTotal,
                     status: orderDetails.status,
                 }}
+                navigation={navigation}
             />
         );
     }
@@ -395,6 +406,7 @@ export default function CheckoutScreen({ navigation }: any) {
                             colors={[Colors.light.primaryButtonBackground.start, Colors.light.primaryButtonBackground.end]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
+                            style={{ borderRadius: 8 }}
                         >
                             <View style={[styles.placeOrderButton, isProcessing && styles.disabledButton]}>
                                 <CheckCircle size={20} color={Colors.light.primaryButtonForeground} />

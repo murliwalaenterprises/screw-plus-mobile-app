@@ -75,7 +75,7 @@ export default function OrdersScreen({navigation, router}: any) {
   };
 
   const goToOrder = (order: Order) => {
-    router.push({
+    router?.push({
       pathname: "/order/[id]",
       params: {
         id: order.id || '', // required
@@ -121,21 +121,21 @@ export default function OrdersScreen({navigation, router}: any) {
             <View style={styles.statusContainer}>
               {getStatusIcon(order.status)}
               <Text style={[styles.statusText, { color: getStatusColor(order.status) }]}>
-                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                {order.status?.charAt(0)?.toUpperCase() + order?.status?.slice(1)}
               </Text>
             </View>
-            <Text style={styles.orderTotal}>₹{order.finalTotal.toLocaleString()}</Text>
+            <Text style={styles.orderTotal}>₹{order?.finalTotal?.toLocaleString()}</Text>
           </View>
         </TouchableOpacity>
 
         <Animated.View style={[styles.orderItems, { height: animatedHeight }]}>
-          {order.items.map((item: OrderItem, index: number) => (
+          {order.items?.map((item: OrderItem, index: number) => (
             <View key={index} style={styles.orderItem}>
-              <Image source={{ uri: item.image }} style={styles.itemImage} />
+              <Image source={{ uri: item?.image }} style={styles.itemImage} />
               <View style={styles.itemDetails}>
-                <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
-                <Text style={styles.itemVariant}>{item.size} • {item.color}</Text>
-                <Text style={styles.itemPrice}>₹{item.price.toLocaleString()} × {item.quantity} QTY</Text>
+                <Text style={styles.itemName} numberOfLines={1}>{item?.name}</Text>
+                <Text style={styles.itemVariant}>{item.size} • {item?.color}</Text>
+                <Text style={styles.itemPrice}>₹{item.price.toLocaleString()} × {item?.quantity} QTY</Text>
               </View>
             </View>
           ))}

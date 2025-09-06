@@ -44,7 +44,7 @@ const OrderSuccess = ({ order, navigation }: any) => {
 
             {/* Footer */}
             <View style={styles.footer}>
-                <TouchableOpacity style={styles.addToCartButton} onPress={() => navigation.navigate(StackNames.Orders)}>
+                <TouchableOpacity style={styles.addToCartButton} onPress={() => navigation.navigate(StackNames?.Orders)}>
                     <Text style={styles.addToCartText}>View Orders</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.buyNowButton} onPress={() => navigation.navigate(StackNames.MainAppStack)}>

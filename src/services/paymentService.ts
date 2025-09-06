@@ -25,7 +25,8 @@ export const startRazorpayPayment = (params: {
         key: params.key, // Test API Key
         amount: params.amount, // amount in paisa
         name: params.companyName,
-        order_id: params.orderId, // Razorpay Order ID from backend
+        // order_id: params.orderId, // Razorpay Order ID from backend
+        order_id: 'order_RDRiQAg7DFKd2f', // Razorpay Order ID from backend
         prefill: {
             email: params.email,
             contact: params.contact,

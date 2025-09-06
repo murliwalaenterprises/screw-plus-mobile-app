@@ -39,9 +39,9 @@ function App() {
     <GestureHandlerRootView>
       <SafeAreaProvider>
         <StatusBar
-          barStyle="dark-content" // "dark-content" or "light-content"
-          backgroundColor="#fff" // Android background color
-          translucent={false}       // true makes content go under status bar
+          barStyle="default" // "dark-content" or "light-content"
+          backgroundColor="transparent" // Android background color
+          translucent={true}       // true makes content go under status bar
         />
 
         <QueryClientProvider client={queryClient}>

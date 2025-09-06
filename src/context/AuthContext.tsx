@@ -4,6 +4,7 @@ import { auth, db } from "../config/firebase";
 import EncryptedStorage from "react-native-encrypted-storage";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { Platform } from "react-native";
+import { removeUserSession, storeUserSession } from "../services/session";
 // import EncryptedStorage from "react-native-encrypted-storage";
 
 export interface UserProfile {
@@ -40,6 +41,7 @@ export interface AuthState {
     completeOnboarding: () => Promise<void>;
     skipLogin: () => Promise<void>;
     hasSkippedLogin: boolean;
+    setUserProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
 }
 
 
@@ -67,6 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     updatedAt: data.updatedAt?.toDate() || new Date(),
                 } as UserProfile;
                 setUserProfile(profile);
+                await storeUserSession(profile)
 
                 if (data.selectedLocation) {
                     setSelectedLocation(data.selectedLocation);
@@ -145,8 +148,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const signIn = useCallback(async (email: string, password: string) => {
         try {
             setIsLoading(true);
-            await signInWithEmailAndPassword(auth, email, password);
+            const user = await signInWithEmailAndPassword(auth, email, password);
+            console.log('Signed in user:', user);
             return { success: true };
+
         } catch (error: any) {
             console.log('Sign in error:', error);
             return { success: false, error: error.message };
@@ -283,6 +288,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const logout = useCallback(async () => {
         try {
             await signOut(auth);
+            await removeUserSession();
             return { success: true };
         } catch (error: any) {
             console.log('Logout error:', error);
@@ -362,6 +368,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             completeOnboarding,
             skipLogin,
             updateSelectedLocation,
+            setUserProfile
 
         }),
         [user,
@@ -379,7 +386,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             updateUserProfile,
             completeOnboarding,
             skipLogin,
-            updateSelectedLocation,]
+            updateSelectedLocation,
+            setUserProfile]
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

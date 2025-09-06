@@ -32,26 +32,29 @@ export default function Profile({ navigation }: any) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const userId: any = user?.uid;
+  const isLoggedIn = !!user;
 
   const [orders, setOrder] = useState<Order[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
 
   React.useEffect(() => {
-    const unsubscribe = firebaseService.subscribeToOrder(userId, (data) => {
+    const unsubscribe = firebaseService?.subscribeToOrder(userId, (data) => {
       setOrder(data);
       const values: Record<string, Animated.Value> = {};
-      data.forEach(order => { values[order.orderId] = new Animated.Value(1); });
+      data?.forEach(order => { values[order?.orderId] = new Animated.Value(1); });
     });
     return () => unsubscribe();
   }, []);
 
   React.useEffect(() => {
-    const unsubscribe = firebaseService.subscribeToUser(userId, (data) => {
+    if (!userId) return;
+    const unsubscribe = firebaseService?.subscribeToUser(userId, (data) => {
       console.log('user data', data);
       setIsAdmin(data?.isAdmin || false);
     });
-    return () => unsubscribe();
-  }, []);
+    return () => unsubscribe?.();
+  }, [userId]);
+
 
   const handleLogout = () => {
     Alert.alert(
@@ -99,10 +102,15 @@ export default function Profile({ navigation }: any) {
   });
 
   const handleMenuPress = (item: any) => {
-    if (item?.loginOnly && !userProfile?.isAdmin) {
-      navigation.navigate(StackNames.AuthStack)
+    if (item?.loginOnly && !isLoggedIn) {
+      navigation.navigate(StackNames.AuthStack);
       return;
     }
+
+    if (item?.id === 'admin_panel' && !isAdmin) {
+      return;
+    }
+
     if (item?.route && typeof item.route === 'string') {
       navigation.navigate(item.route as never);
     }
@@ -179,17 +187,17 @@ export default function Profile({ navigation }: any) {
 
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{orders.length}</Text>
+              <Text style={styles.statNumber}>{isLoggedIn ? orders.length : 0}</Text>
               <Text style={styles.statLabel}>Orders</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{favorites.length}</Text>
+              <Text style={styles.statNumber}>{isLoggedIn ? favorites.length : 0}</Text>
               <Text style={styles.statLabel}>Wishlist</Text>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>₹{orders.filter(order => order.status !== 'cancelled').reduce((total, order) => total + order.finalTotal, 0).toLocaleString()}</Text>
+              <Text style={styles.statNumber}>₹{isLoggedIn ? orders.filter(order => order.status !== 'cancelled').reduce((total, order) => Number(total) + Number(order?.finalTotal), 0).toLocaleString() : 0}</Text>
               <Text style={styles.statLabel}>Spent</Text>
             </View>
           </View>

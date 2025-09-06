@@ -1,4 +1,5 @@
-import { Address } from "@/types/types";
+import { Address } from "../types/types";
+
 
 type AddressFields = Pick<Address, "address" | "city" | "state" | "pincode">;
 

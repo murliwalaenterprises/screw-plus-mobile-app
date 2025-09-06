@@ -9,9 +9,12 @@ import { getDiscountPercentage } from '../../services/utilityService';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/stackNames';
+import { useAuth } from '../../context/AuthContext';
 
 export default function CartScreen({navigation}: any) {
   const { cart, removeFromCart, updateCartQuantity, getCartTotal, clearCart } = useStore();
+  const { user } = useAuth();
+  const isLoggedIn = !!user;
 
   const handleQuantityChange = (item: CartItem, newQuantity: number) => {
     if (newQuantity === 0) {
@@ -20,6 +23,14 @@ export default function CartScreen({navigation}: any) {
       updateCartQuantity(item.product.id, item.selectedSize, item.selectedColor, newQuantity);
     }
   };
+
+  const handleCheckout = () =>{
+    if (!isLoggedIn) {
+      navigation.navigate(StackNames.AuthStack);
+      return;
+    }
+    navigation.navigate(StackNames.Checkout);
+  }
 
   const handleRemoveItem = (item: CartItem) => {
     removeFromCart(item.product.id, item.selectedSize, item.selectedColor);
@@ -135,12 +146,13 @@ export default function CartScreen({navigation}: any) {
           </View> */}
 
           <TouchableOpacity
-            onPress={() => navigation.navigate(StackNames.Checkout)}
+            onPress={handleCheckout}
           >
             <LinearGradient
               colors={[Colors.light.primaryButtonBackground.start, Colors.light.primaryButtonBackground.end]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
+              style = {{borderRadius: 8}}
             >
               <View style={styles.checkoutButton}>
                 <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>

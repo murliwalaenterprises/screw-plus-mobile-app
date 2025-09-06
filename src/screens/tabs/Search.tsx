@@ -76,7 +76,7 @@ export default function Search({navigation, route}: any) {
         setIsFocused(false);
         inputRef.current?.blur();
         Keyboard.dismiss();
-        navigation.back();
+        navigation.goBack();
     };
 
     return (
