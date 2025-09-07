@@ -1,4 +1,5 @@
 import { Address } from "../types/types";
+import APIService from "./APIService";
 
 
 type AddressFields = Pick<Address, "address" | "city" | "state" | "pincode">;
@@ -61,17 +62,20 @@ export const getProductVariant = (product: any, size?: string, color?: string) =
 };
 
 
-export function generateOrderId() {
-    // Part 1: 3 digit number
-    const part1 = Math.floor(100 + Math.random() * 900); // 100 - 999
-
-    // Part 2: 7 digit number
-    const part2 = Math.floor(1000000 + Math.random() * 9000000); // 1000000 - 9999999
-
-    // Part 3: 7 digit number
-    const part3 = Math.floor(1000000 + Math.random() * 9000000); // 1000000 - 9999999
-
-    return `${part1}-${part2}-${part3}`;
+export async function generateOrderId(amount: number): Promise<{orderId: string, receiptId: string}> {
+  try {
+    const receiptId = `rcpt_${Date.now()}`;
+    const response = await APIService.createOrder({
+      amount,
+      currency: "INR",
+      receipt: receiptId,
+    });
+    console.log("Razorpay Order ID", response);
+    return {orderId: response.id, receiptId}; 
+  } catch (error) {
+    console.error("Error generating Razorpay Order ID", error);
+    throw error;
+  }
 }
 
 export function formatTimestampDate(timestamp: any): string {
@@ -148,7 +152,7 @@ export const getStatusColor = (status: string) => {
 
 export const paymentMethods = [
     { id: 'cod', name: 'Cash on Delivery', icon: '💵' },
-    { id: 'card', name: 'Credit/Debit Card', icon: '💳' },
-    { id: 'upi', name: 'UPI Payment', icon: '📱' },
-    { id: 'wallet', name: 'Digital Wallet', icon: '💰' }
+    // { id: 'card', name: 'Credit/Debit Card', icon: '💳' },
+    { id: 'online', name: 'UPI Payment', icon: '📱' },
+    // { id: 'wallet', name: 'Digital Wallet', icon: '💰' }
 ];

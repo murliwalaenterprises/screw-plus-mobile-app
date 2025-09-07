@@ -2460,7 +2460,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNReanimated (4.0.2):
+  - RNReanimated (4.1.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2487,11 +2487,11 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated (= 4.0.2)
+    - RNReanimated/reanimated (= 4.1.0)
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNReanimated/reanimated (4.0.2):
+  - RNReanimated/reanimated (4.1.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2518,11 +2518,11 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNReanimated/reanimated/apple (= 4.0.2)
+    - RNReanimated/reanimated/apple (= 4.1.0)
     - RNWorklets
     - SocketRocket
     - Yoga
-  - RNReanimated/reanimated/apple (4.0.2):
+  - RNReanimated/reanimated/apple (4.1.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2668,7 +2668,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - RNWorklets (0.4.2):
+  - RNWorklets (0.5.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2695,10 +2695,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/worklets (= 0.4.2)
+    - RNWorklets/worklets (= 0.5.0)
     - SocketRocket
     - Yoga
-  - RNWorklets/worklets (0.4.2):
+  - RNWorklets/worklets (0.5.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2725,10 +2725,10 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNWorklets/worklets/apple (= 0.4.2)
+    - RNWorklets/worklets/apple (= 0.5.0)
     - SocketRocket
     - Yoga
-  - RNWorklets/worklets/apple (0.4.2):
+  - RNWorklets/worklets/apple (0.5.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -3097,10 +3097,10 @@ SPEC CHECKSUMS:
   ReactCommon: 116d6ee71679243698620d8cd9a9042541e44aa6
   RNCAsyncStorage: 29f0230e1a25f36c20b05f65e2eb8958d6526e82
   RNGestureHandler: 3a73f098d74712952870e948b3d9cf7b6cae9961
-  RNReanimated: ee96d03fe3713993a30cc205522792b4cb08e4f9
+  RNReanimated: 9de34f0313c4177a34c079ca9fce6f1f278bff24
   RNScreens: 83be436fa9efeb1ea225e11243d4c4d0655d7e00
   RNSVG: 6f39605a4c4d200b11435c35bd077553c6b5963a
-  RNWorklets: e39284a85d3d0562334d81d84a0323da6e555aab
+  RNWorklets: c3a39bbcdc44906af1ec1d1e0bc17f144c1e30da
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: 00013dd9cde63a2d98e8002fcc4f5ddb66c10782
 

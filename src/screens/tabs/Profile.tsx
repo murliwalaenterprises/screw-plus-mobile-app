@@ -32,7 +32,7 @@ export default function Profile({ navigation }: any) {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const userId: any = user?.uid;
-  const isLoggedIn = !!user;
+  const isLoggedIn = !!userProfile;
 
   const [orders, setOrder] = useState<Order[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -41,10 +41,12 @@ export default function Profile({ navigation }: any) {
     const unsubscribe = firebaseService?.subscribeToOrder(userId, (data) => {
       setOrder(data);
       const values: Record<string, Animated.Value> = {};
-      data?.forEach(order => { values[order?.orderId] = new Animated.Value(1); });
+      data?.forEach(order => { values[order.orderId || ''] = new Animated.Value(1); });
     });
     return () => unsubscribe();
   }, []);
+
+  console.log('orders', orders);
 
   React.useEffect(() => {
     if (!userId) return;
@@ -171,7 +173,7 @@ export default function Profile({ navigation }: any) {
               </Text>
             </View>
             {
-              userProfile?.isAdmin && (
+              isLoggedIn && (
                 <TouchableOpacity
                   style={styles.editButton}
                   onPress={() => navigation.navigate(StackNames.EditProfile)}
@@ -197,7 +199,14 @@ export default function Profile({ navigation }: any) {
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>₹{isLoggedIn ? orders.filter(order => order.status !== 'cancelled').reduce((total, order) => Number(total) + Number(order?.finalTotal), 0).toLocaleString() : 0}</Text>
+              <Text style={styles.statNumber}>
+                ₹{isLoggedIn
+                  ? orders
+                    .filter(order => order?.status !== 'cancelled')
+                    .reduce((total, order) => Number(total) + Number(order?.finalTotal || 0), 0)
+                    .toLocaleString()
+                  : 0}
+              </Text>
               <Text style={styles.statLabel}>Spent</Text>
             </View>
           </View>

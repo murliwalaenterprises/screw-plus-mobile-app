@@ -63,14 +63,14 @@ export default function EditProfileScreen({navigation}: any) {
 
         setIsLoading(true);
         const result = await updateUserProfile({
-            displayName: displayName.trim(),
-            phoneNumber: phoneNumber.trim() || undefined,
-            address: address.trim() || undefined,
-            city: city.trim() || undefined,
-            state: state.trim() || undefined,
-            pincode: pincode.trim() || undefined,
-            dateOfBirth: dateOfBirth.trim() || undefined,
-            gender: gender || undefined,
+            displayName: displayName.trim() || '',
+            phoneNumber: phoneNumber.trim() || '',
+            address: address.trim() || '',
+            city: city.trim() || '',
+            state: state.trim() || '',
+            pincode: pincode.trim() || '',
+            dateOfBirth: dateOfBirth.trim() || '',
+            gender: gender || 'male',
         });
         setIsLoading(false);
 

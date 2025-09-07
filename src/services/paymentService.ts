@@ -1,5 +1,7 @@
 import { Alert } from 'react-native';
 import RazorpayCheckout from 'react-native-razorpay';
+import { Colors } from '../constants/Colors';
+import { Company } from '../config/appConfig';
 /**
  * Start Razorpay Payment
  * @param params Dynamic payment options like amount, order_id, etc.
@@ -18,15 +20,30 @@ export const startRazorpayPayment = (params: {
     onSuccess?: (paymentData: any) => void,
     onError?: (error: any) => void
 }) => {
+    const paymentOptions = Company.payments.find(opt => opt.method === 'razorpay');
+    if (!paymentOptions) {
+        Alert.alert('Payment Error', 'Razorpay payment method is not configured.');
+        return;
+    }
+
+    if (!params.orderId) {
+        Alert.alert('Payment Error', 'Order ID is required for Razorpay payment.');
+        return;
+    }
+
+    if (!params.amount || params.amount <= 0) {
+        Alert.alert('Payment Error', 'Invalid payment amount.');
+        return;
+    }
+
     const options: any = {
-        description: params.description,
-        image: 'http://staging.autogeniuslite.com/app-assets/img/ico/favicon-32.png',
-        currency: 'INR',
-        key: params.key, // Test API Key
+        description: Company.address,
+        image: Company.logoUrl,
+        currency: paymentOptions.currency || 'INR',
+        key: paymentOptions.key,
         amount: params.amount, // amount in paisa
-        name: params.companyName,
-        // order_id: params.orderId, // Razorpay Order ID from backend
-        order_id: 'order_RDRiQAg7DFKd2f', // Razorpay Order ID from backend
+        name: Company.name,
+        order_id: params.orderId, // Razorpay Order ID from backend
         prefill: {
             email: params.email,
             contact: params.contact,
@@ -36,7 +53,8 @@ export const startRazorpayPayment = (params: {
             transactionId: params.transactionId || '',
             userId: params.userId || '',
         },
-        theme: { color: '#fff' },
+        theme: { color: Colors.light.primaryButtonBackground.end },
+
     };
     console.log('Razorpay Payment Options:', options);
 

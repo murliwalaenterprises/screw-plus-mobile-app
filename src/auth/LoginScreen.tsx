@@ -27,7 +27,7 @@ export default function LoginScreen({ navigation }: any) {
     const [checkLogin, setCheckLogin] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { signIn, skipLogin, completeOnboarding,setUserProfile} = useAuth();
+    const { signIn, skipLogin, completeOnboarding,setUserProfile, setUser} = useAuth();
 
     const handleLogin = async () => {
         if (!email.trim() || !password.trim()) {
@@ -63,9 +63,10 @@ export default function LoginScreen({ navigation }: any) {
 
     React.useEffect(() => {
         getUserSession().then((oUser: any) => {
-            if (oUser) {
-                console.log("User session found:", oUser);
-                setUserProfile(oUser);
+            console.log("User session found:", oUser);
+            if (oUser && oUser.userProfile) {
+                setUserProfile(oUser?.userProfile);
+                setUser(oUser?.firebaseUser);
                 navigation.reset({
                     index: 0,
                     routes: [

@@ -15,7 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { StackNames } from '../constants/stackNames';
-import { getOnboardingSession, getUserSession } from '../services/session';
+import { getOnboardingSession } from '../services/session';
 import { useAuth } from '../context/AuthContext';
 
 const { width } = Dimensions.get('window');
@@ -35,7 +35,7 @@ interface OnboardingSlide {
 export default function OnboardingScreen({ navigation }: any) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollViewRef = useRef<ScrollView>(null);
-     const [checkOnboard, setCheckOnboard] = useState(false);
+    const [checkOnboard, setCheckOnboard] = useState(false);
     const fadeAnim = useRef(new Animated.Value(1)).current;
 
     const slides: any = [
@@ -68,26 +68,26 @@ export default function OnboardingScreen({ navigation }: any) {
         },
     ];
 
-       React.useEffect(() => {
+    React.useEffect(() => {
         getOnboardingSession().then((hasCompletedOnboarding: boolean) => {
-          if (hasCompletedOnboarding) {
-            navigation.reset({
-              index: 0,
-              routes: [
-                {
-                  name: StackNames.AuthStack,
-                },
-              ],
-            });
-            return;
-          }
-          setCheckOnboard(true);
+            if (hasCompletedOnboarding) {
+                navigation.reset({
+                    index: 0,
+                    routes: [
+                        {
+                            name: StackNames.AuthStack,
+                        },
+                    ],
+                });
+                return;
+            }
+            setCheckOnboard(true);
         });
-      }, []);
-    
-      if (!checkOnboard) {
+    }, []);
+
+    if (!checkOnboard) {
         return;
-      }
+    }
 
     const handleNext = () => {
         if (currentIndex < slides.length - 1) {
@@ -197,7 +197,7 @@ export default function OnboardingScreen({ navigation }: any) {
                 style={styles.scrollView}
             >
                 {slides.map((slide: any, index: number) => (
-                    <View key={index} style={[styles.slide, {padding: 20}]}>
+                    <View key={index} style={[styles.slide, { padding: 20 }]}>
                         <Image
                             key={index}
                             source={slide.image}

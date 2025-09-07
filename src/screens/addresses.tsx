@@ -20,11 +20,12 @@ const getAddressIcon = (type: string) => {
   }
 };
 
-export default function AddressesScreen() {
+export default function AddressesScreen({route, navigation}: any) {
+  const { isAddAddress } = route?.params || {};
   const { updateSelectedLocation, selectedLocation } = useAuth();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [animatedValues, setAnimatedValues] = useState<Record<string, Animated.Value>>({});
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState(isAddAddress || false );
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 
   const { user }: any = useAuth();

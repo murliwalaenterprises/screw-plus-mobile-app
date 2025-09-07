@@ -13,8 +13,8 @@ import { useAuth } from '../../context/AuthContext';
 
 export default function CartScreen({navigation}: any) {
   const { cart, removeFromCart, updateCartQuantity, getCartTotal, clearCart } = useStore();
-  const { user } = useAuth();
-  const isLoggedIn = !!user;
+  const { user , userProfile} = useAuth();
+  const isLoggedIn = !!userProfile;
 
   const handleQuantityChange = (item: CartItem, newQuantity: number) => {
     if (newQuantity === 0) {

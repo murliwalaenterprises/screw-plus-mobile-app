@@ -26,7 +26,7 @@ import { StackNames } from '../../constants/stackNames';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HEADER_HEIGHT = 300;
 
-export default function ProductDetailScreen({navigation, route}: any) {
+export default function ProductDetailScreen({ navigation, route }: any) {
   const { getCartItemsCount, cart } = useStore();
   const { productId } = route.params;
   const { favorites, toggleFavorite, addToCart } = useStore();
@@ -211,8 +211,8 @@ export default function ProductDetailScreen({navigation, route}: any) {
         <Animated.View style={[styles.animatedHeader, { opacity: headerOpacity, paddingTop: insets.top }]}>
           <View style={styles.headerContent}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-              <TouchableOpacity style={[styles.floatingButton, { backgroundColor: 'transparent' }]} 
-              onPress={() => navigation.navigate(StackNames.MainAppStack)}
+              <TouchableOpacity style={[styles.floatingButton, { backgroundColor: 'transparent' }]}
+                onPress={() => navigation.navigate(StackNames.MainAppStack)}
               >
                 <ArrowLeft size={20} color={'#000'} />
               </TouchableOpacity>
@@ -255,15 +255,14 @@ export default function ProductDetailScreen({navigation, route}: any) {
 
         {/* Floating Header Buttons */}
         <View style={[styles.floatingHeader, { paddingTop: insets.top + 12 }]}>
-          <TouchableOpacity style={styles.floatingButton} 
-          onPress={() => navigation.navigate(StackNames.MainAppStack)}
+          <TouchableOpacity style={styles.floatingButton}
+            onPress={() => navigation.navigate(StackNames.MainAppStack)}
           >
             <ArrowLeft size={20} color={'#fff'} />
           </TouchableOpacity>
           <View style={styles.floatingActions}>
             <TouchableOpacity
-              style={styles.floatingButton}
-              onPress={() => navigation.navigate(StackNames.Cart)}
+              style={styles.floatingButton} onPress={() => navigation.navigate(StackNames.Cart)}
             >
               <ShoppingCart size={20} color={'#fff'} />
               {cartItemsCount > 0 && (
@@ -560,7 +559,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   indicator: {
-    width: 8, 
+    width: 8,
     height: 8,
     borderRadius: 4,
     backgroundColor: 'rgba(107, 108, 110, 0.5)',

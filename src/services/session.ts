@@ -1,10 +1,10 @@
 import EncryptedStorage from 'react-native-encrypted-storage';
 
-export async function storeUserSession(data: any) {
+export async function storeUserSession(userProfile: any, firebaseUser?: any) {
     try {
         await EncryptedStorage.setItem(
             'user_session',
-            JSON.stringify(data)
+            JSON.stringify({userProfile, firebaseUser})
         );
         console.log('Token stored securely');
     } catch (error) {

@@ -4,7 +4,7 @@ import { auth, db } from "../config/firebase";
 import EncryptedStorage from "react-native-encrypted-storage";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { Platform } from "react-native";
-import { removeUserSession, storeUserSession } from "../services/session";
+import { getUserSession, removeUserSession, storeUserSession } from "../services/session";
 // import EncryptedStorage from "react-native-encrypted-storage";
 
 export interface UserProfile {
@@ -42,6 +42,7 @@ export interface AuthState {
     skipLogin: () => Promise<void>;
     hasSkippedLogin: boolean;
     setUserProfile: React.Dispatch<React.SetStateAction<UserProfile | null>>;
+    setUser: React.Dispatch<React.SetStateAction<User | null>>;
 }
 
 
@@ -56,21 +57,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isLoading, setIsLoading] = useState(true);
     const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
     const [hasSkippedLogin, setHasSkippedLogin] = useState(false);
-    const [selectedLocation, setSelectedLocation] = useState('Select Location');
+    const [selectedLocation, setSelectedLocation] = useState('');
 
-    const loadUserProfile = useCallback(async (uid: string) => {
+    const loadUserProfile = useCallback(async (uid: string, dataSession?: any) => {
         try {
             const userDoc = await getDoc(doc(db, 'users', uid));
             if (userDoc.exists()) {
                 const data = userDoc.data();
+                console.log('User profile data:', data);
                 const profile = {
                     ...data,
                     createdAt: data.createdAt?.toDate() || new Date(),
                     updatedAt: data.updatedAt?.toDate() || new Date(),
                 } as UserProfile;
                 setUserProfile(profile);
-                await storeUserSession(profile)
-
+                console.log('Existing session data:', dataSession);
+                if (dataSession) {
+                    await storeUserSession(profile, dataSession?.firebaseUser);
+                }
                 if (data.selectedLocation) {
                     setSelectedLocation(data.selectedLocation);
                     await EncryptedStorage.setItem('selectedLocation', data.selectedLocation);
@@ -84,8 +88,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
             setUser(firebaseUser);
+
+
             if (firebaseUser) {
-                await loadUserProfile(firebaseUser.uid);
+                const dataSession = await getUserSession();
+                await storeUserSession(dataSession?.userProfile, firebaseUser)
+                await loadUserProfile(firebaseUser.uid, dataSession);
             } else {
                 setUserProfile(null);
             }
@@ -299,14 +307,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const updateUserProfile = useCallback(async (updates: Partial<UserProfile>) => {
         try {
             if (!user) return { success: false, error: 'No user logged in' };
-
             const updatedProfile = {
                 ...updates,
                 updatedAt: new Date(),
             };
-
-            await updateDoc(doc(db, 'users', user.uid), updatedProfile);
-            await loadUserProfile(user.uid);
+            console.log('Updating user profile with:', { db, updatedProfile, user, });
+            await updateDoc(doc(db, 'users', user?.uid), updatedProfile);
+            await loadUserProfile(user?.uid);
 
             return { success: true };
         } catch (error: any) {
@@ -368,7 +375,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             completeOnboarding,
             skipLogin,
             updateSelectedLocation,
-            setUserProfile
+            setUserProfile,
+            setUser
 
         }),
         [user,
@@ -387,7 +395,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             completeOnboarding,
             skipLogin,
             updateSelectedLocation,
-            setUserProfile]
+            setUserProfile,
+            setUser]
     );
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,5 +1,5 @@
 
-import { CheckCircle, ChevronDown, CreditCard, MapPin } from 'lucide-react-native';
+import { CheckCircle, ChevronDown, CreditCard, MapPin, Plus } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, Vibration, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,7 +19,7 @@ import { startRazorpayPayment } from '../../services/paymentService';
 export default function CheckoutScreen({ navigation }: any) {
 
     const { cart, getCartTotal, clearCart } = useStore();
-    const { user }: any = useAuth();
+    const { user, userProfile }: any = useAuth();
     const userId = user?.uid;
     const [selectedPayment, setSelectedPayment] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
@@ -40,6 +40,7 @@ export default function CheckoutScreen({ navigation }: any) {
     const finalTotal = cartTotal + deliveryFee + tax + platformFee;
 
     console.log('payment methods', selectedPayment);
+    console.log('user=====', user)
 
     // const addresses = [
     //     '123 Main Street, New Delhi, 110001',
@@ -56,37 +57,31 @@ export default function CheckoutScreen({ navigation }: any) {
         setIsOrderPlaced(true);
     }
 
-    const handleRazorpayPayment = async () => {
+    const handleRazorpayPayment = async (order: Order) => {
         try {
             const orderDetails = {
-                orderId: 'order_' + Date.now(),
+                orderId: order.orderId || '',
                 Amount: finalTotal.toString(),
-                EmailId: '', // Collect from user input
-                MobileNo: '', // Collect from user input
-                CustomerName: 'Pradeep Suthar', // Collect from user input
-                CustomerEmail: 'sutharpradeep081@gmail.com',
-                CustomerMobile: '8440077147',
-                CompanyName: 'EShop', // Collect from user input
-                CompanyLogo: 'https://example.com/logo.png', // Your company logo
-                Description: 'Order Payment',
+                CustomerName: userProfile?.displayName || '', // Collect from user input
+                CustomerEmail: userProfile?.email || '', // Collect from user input
+                CustomerMobile: userProfile?.phoneNumber || '', // Collect from user input
+                CompanyName: userProfile?.companyName || '', // Collect from user input
+                CompanyLogo: userProfile?.companyLogo, // Your company logo
+                Description: userProfile?.Description || 'Order Payment', // Collect from user input
                 MTxnId: `MT${Date.now()}`, // Unique transaction ID
             };
             const options = {
-                // key: 'rzp_test_cURWUv0ns0gAYU', // Replace with your Razorpay key
-                key: 'rzp_test_RDRYAr7BuRV4uT', // Replace with your Razorpay key
                 amount: finalTotal * 100, // Amount in paise
-                currency: 'INR',
                 name: orderDetails.CompanyName,
-                description: orderDetails.Description,
                 image: orderDetails.CompanyLogo, // Your app logo
                 order_id: orderDetails.orderId, // Unique order ID
                 prefill: {
-                    name: orderDetails.CustomerName,
-                    email: orderDetails.CustomerEmail,
-                    contact: orderDetails.CustomerMobile,
+                    name: (orderDetails.CustomerName || '') + ` ${Date.now()}`,
+                    email: orderDetails.CustomerEmail || '',
+                    contact: orderDetails.CustomerMobile || '',
                 },
-                theme: { color: Colors.light.primaryButtonBackground.end },
             };
+            console.log('Razorpay Options:', options);
             startRazorpayPayment({
                 amount: options.amount,
                 orderId: orderDetails.orderId, // Collect Order ID from Backend
@@ -94,8 +89,6 @@ export default function CheckoutScreen({ navigation }: any) {
                 contact: orderDetails?.CustomerMobile,
                 name: orderDetails?.CustomerName,
                 companyName: orderDetails.CompanyName,
-                key: options.key,
-                description: orderDetails?.Description,
                 transactionId: orderDetails?.MTxnId,  // Collect Transaction ID from Backend
                 onSuccess: async (data) => {
                     console.log('Payment Success:', data);
@@ -137,7 +130,8 @@ export default function CheckoutScreen({ navigation }: any) {
     };
 
     const handlePlaceOrder = async () => {
-        if (!getSelectedLocation(selectedLocation)) {
+        console.log('selectedLocation', selectedLocation);
+        if (!selectedLocation) {
             Alert.alert('Error', 'Please select a delivery address');
             return;
         }
@@ -150,7 +144,6 @@ export default function CheckoutScreen({ navigation }: any) {
         setIsProcessing(true);
 
         try {
-            // Simulate payment processing
             const items: OrderItem[] = cart.map(item => {
                 const productVariant = item.product.variants.find(
                     variant => variant.size === item.selectedSize && variant.color === item.selectedColor
@@ -167,12 +160,12 @@ export default function CheckoutScreen({ navigation }: any) {
                     color: productVariant?.color,
                     price: productVariant?.price ?? 0,
                     quantity: item.quantity,
-                    total: Number(productVariant?.price ?? 0) * item.quantity
+                    total: Number(productVariant?.price ?? 0) * item.quantity,
                 };
             });
 
+
             const order: Order = {
-                orderId: generateOrderId(),
                 items: items,
                 invoiceNo: null,
                 status: 'pending' as const,
@@ -188,32 +181,25 @@ export default function CheckoutScreen({ navigation }: any) {
                 discount: 0,
                 finalTotal,
                 notes: orderNotes,
-                orderDate: new Date()
+                orderDate: new Date(),
             };
 
             if (selectedPayment !== 'cod') {
-                await handleRazorpayPayment();
+                const { orderId: razorpayOrderId, receiptId } = await generateOrderId(finalTotal);
+                order.orderId = razorpayOrderId;
+                order.receiptId = receiptId;
+                console.log('Generated Razorpay Order ID:', razorpayOrderId);
+                await handleRazorpayPayment(order);
                 return;
             }
+            else {
+                order.orderId = `order_${Date.now()}`;
+                order.receiptId = `rcpt_${Date.now()}`;
+                handleOrderConfirmation(order);
+            }
 
-            handleOrderConfirmation(order)
-            // Send push notification
-            // await sendOrderNotification('pending', `CS${Date.now()}`);
-            // Alert.alert(
-            //     'Order Placed Successfully!',
-            //     `Your order has been placed successfully. Order total: ₹${finalTotal.toLocaleString()}`,
-            //     [
-            //         {
-            //             text: 'View Orders',
-            //             onPress: () => navigation.navigate(StackNames.Orders)
-            //         },
-            //         {
-            //             text: 'Continue Shopping',
-            //             onPress: () => navigation.navigate(StackNames.MainAppStack)
-            //         }
-            //     ]
-            // );
-        } catch {
+
+        } catch (err) {
             Alert.alert('Error', 'Failed to place order. Please try again.');
         } finally {
             setIsProcessing(false);
@@ -308,13 +294,25 @@ export default function CheckoutScreen({ navigation }: any) {
                             <Text style={styles.sectionTitle}>Delivery Address</Text>
                         </View>
 
-                        <TouchableOpacity
-                            style={[styles.addressOption, { justifyContent: 'space-between' }]}
-                            onPress={() => setShowLocationSelector(true)}
-                        >
-                            <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">{getSelectedLocation(selectedLocation)}</Text>
-                            <ChevronDown size={16} color="#333" />
-                        </TouchableOpacity>
+                        {
+                            !selectedLocation ? (
+                                <TouchableOpacity style={styles.addAddressButton} onPress={() => navigation.navigate(StackNames.AddressesScreen, {isAddAddress: true})}>
+                                    <Plus size={20} color="#333" />
+                                    <Text style={styles.addAddressText}>Add New Address</Text>
+                                </TouchableOpacity>
+                            ) :
+                                (
+                                    <TouchableOpacity
+                                        style={[styles.addressOption, { justifyContent: 'space-between' }]}
+                                        onPress={() => setShowLocationSelector(true)}
+                                    >
+                                        <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">{getSelectedLocation(selectedLocation)}</Text>
+                                        <ChevronDown size={16} color="#333" />
+                                    </TouchableOpacity>
+                                )
+                        }
+
+
 
                         {/* {addresses.map((address, index) => (
                             <TouchableOpacity
@@ -641,5 +639,23 @@ const styles = StyleSheet.create({
         color: '#333',
         marginHorizontal: 6,
         maxWidth: '90%',
+    },
+    addAddressButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#fff',
+        margin: 16,
+        padding: 16,
+        borderRadius: 12,
+        borderWidth: 2,
+        borderColor: '#e9ecef',
+        borderStyle: 'dashed',
+    },
+    addAddressText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#333',
+        marginLeft: 8,
     },
 });

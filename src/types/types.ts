@@ -1,5 +1,5 @@
 
-interface Address {
+export interface Address {
     id: string;
     type: 'home' | 'work' | 'other';
     name: string;
@@ -11,7 +11,7 @@ interface Address {
     isDefault: boolean;
 }
 
-interface OrderItem {
+export interface OrderItem {
     productId: string;
     name: string;
     description: string;
@@ -25,10 +25,10 @@ interface OrderItem {
     total: number;
 }
 
-interface Order {
+export interface Order {
     id?: string;
     userId?: string;
-    orderId: string;
+    orderId?: string;
     items: OrderItem[];
     invoiceNo: string | null;
     status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
@@ -45,10 +45,8 @@ interface Order {
     notes?: string;
     estimatedDelivery?: Date;
     orderDate: Date;
+    receiptId?: string;
 }
 
 
-export {
-    Address, Order, OrderItem
-};
 
