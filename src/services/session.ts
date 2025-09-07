@@ -30,6 +30,7 @@ export async function removeUserSession() {
         await EncryptedStorage.removeItem('user_session');
         await EncryptedStorage.removeItem('selectedLocation');
         await EncryptedStorage.removeItem('hasSkippedLogin');
+        await EncryptedStorage.removeItem('hasCompletedOnboarding');
         console.log('Session removed');
     } catch (error) {
         console.log('Error removing session', error);

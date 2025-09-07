@@ -381,6 +381,22 @@ class FirebaseService {
       }
     });
   }
+  subscribeToAppConfig(callback: (config: any) => void) {
+    const id = 'cHThTqgAD0e1TpRQej1Y';
+    const userRef = doc(db, "appConfig", id); 
+    return onSnapshot(userRef, (snapshot) => {
+      if (snapshot?.exists()) {
+        const config = {
+          id: snapshot?.id,
+          ...snapshot?.data(),
+        };
+        callback(config);
+      } else {
+        console.log("Config not found");
+        callback(null);
+      }
+    });
+  }
 
 }
 

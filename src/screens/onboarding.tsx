@@ -1,7 +1,7 @@
 
 
 import { ChevronRight, Shield, ShoppingBag, Truck } from 'lucide-react-native';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
     Dimensions,
@@ -17,6 +17,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import { StackNames } from '../constants/stackNames';
 import { getOnboardingSession } from '../services/session';
 import { useAuth } from '../context/AuthContext';
+import { firebaseService } from '../services/firebaseService';
+import { Colors } from '../constants/Colors';
 
 const { width } = Dimensions.get('window');
 
@@ -36,37 +38,19 @@ export default function OnboardingScreen({ navigation }: any) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollViewRef = useRef<ScrollView>(null);
     const [checkOnboard, setCheckOnboard] = useState(false);
+    const [onBoardSlides, setOnBoardSlides] = useState<any[]>([]);
     const fadeAnim = useRef(new Animated.Value(1)).current;
 
-    const slides: any = [
-        {
-            id: 1,
-            title: 'Welcome to',
-            subtitle: 'Screw Plus',
-            description: 'Discover the latest fashion trends and shop your favorite styles with ease.',
-            icon: <ShoppingBag size={80} color="#fff" />,
-            gradient: ['#FF944D', '#CC5200'],
-            image: { uri: 'https://i.pinimg.com/736x/02/33/ce/0233ced33033e9be62126046c9a73017.jpg' }
-        },
-        {
-            id: 2,
-            title: 'Fast',
-            subtitle: 'Delivery',
-            description: 'Get your orders delivered quickly and safely to your doorstep.',
-            icon: <Truck size={80} color="#fff" />,
-            gradient: ['#f093fb', '#f5576c'],
-            image: { uri: 'https://i.pinimg.com/736x/44/3b/4c/443b4c670baff78987bc86b360c728f0.jpg' }
-        },
-        {
-            id: 3,
-            title: 'Secure',
-            subtitle: 'Shopping',
-            description: 'Shop with confidence knowing your data and payments are secure.',
-            icon: <Shield size={80} color="#fff" />,
-            gradient: ['#4facfe', '#00f2fe'],
-            image: { uri: 'https://png.pngtree.com/background/20210711/original/pngtree-e-commerce-training-enrollment-poster-background-material-picture-image_1116075.jpg' }
-        },
-    ];
+
+    useEffect(() => {
+        firebaseService.subscribeToAppConfig((config: any) => {
+            console.log("App Config:", config);
+            if (config) {
+                const onBoardSliders = config?.onboardScreens || [];
+                setOnBoardSlides(onBoardSliders);
+            }
+        })
+    }, [])
 
     React.useEffect(() => {
         getOnboardingSession().then((hasCompletedOnboarding: boolean) => {
@@ -90,7 +74,7 @@ export default function OnboardingScreen({ navigation }: any) {
     }
 
     const handleNext = () => {
-        if (currentIndex < slides.length - 1) {
+        if (currentIndex < onBoardSlides.length - 1) {
             const nextIndex = currentIndex + 1;
             setCurrentIndex(nextIndex);
 
@@ -127,58 +111,6 @@ export default function OnboardingScreen({ navigation }: any) {
         setCurrentIndex(pageNum);
     };
 
-    const renderSlide = (slide: OnboardingSlide, index: number) => (
-        <View key={slide.id} style={styles.slide}>
-            <LinearGradient
-                colors={slide.gradient}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-            >
-                <View style={styles.slideGradient}>
-                    <Animated.View style={[styles.slideContent, { opacity: fadeAnim }]}>
-                        {/* <View style={styles.iconContainer}>
-                            {slide.icon}
-                        </View>
-
-                        <View style={styles.textContainer}>
-                            <Text style={styles.title}>{slide.title}</Text>
-                            <Text style={styles.subtitle}>{slide.subtitle}</Text>
-                            <Text style={styles.description}>{slide.description}</Text>
-                        </View> */}
-                        <View>
-                            <Image
-                                key={index}
-                                source={slides[index].image}
-                                style={{
-                                    width: '100%',
-                                    height: '100%',
-                                    borderRadius: 4,
-                                    marginHorizontal: 4,
-                                    opacity: index === currentIndex ? 1 : 0.5,
-                                }}
-                                resizeMode="cover"
-                            />
-                        </View>
-                    </Animated.View>
-                </View>
-            </LinearGradient>
-        </View>
-    );
-
-    const renderPagination = () => (
-        <View style={styles.pagination}>
-            {slides.map((_: any, index: number) => (
-                <View
-                    key={index}
-                    style={[
-                        styles.paginationDot,
-                        index === currentIndex && styles.paginationDotActive,
-                    ]}
-                />
-            ))}
-        </View>
-    );
-
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
@@ -196,11 +128,11 @@ export default function OnboardingScreen({ navigation }: any) {
                 scrollEventThrottle={16}
                 style={styles.scrollView}
             >
-                {slides.map((slide: any, index: number) => (
+                {onBoardSlides.map((image: any, index: number) => (
                     <View key={index} style={[styles.slide, { padding: 20 }]}>
                         <Image
                             key={index}
-                            source={slide.image}
+                            source={{uri: image}}
                             style={{
                                 width: '100%',
                                 height: '100%',
@@ -212,7 +144,6 @@ export default function OnboardingScreen({ navigation }: any) {
                         />
                     </View>
                 ))}
-                {/* <Text>Hello</Text> */}
             </ScrollView>
 
             {/* {renderPagination()} */}
@@ -220,14 +151,13 @@ export default function OnboardingScreen({ navigation }: any) {
             <View style={styles.footer}>
                 <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
                     <LinearGradient
-                        colors={slides[currentIndex].gradient}
-
+                        colors={[Colors.light.homeScreenHeaderBackground.start, Colors.light.homeScreenHeaderBackground.end]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                     >
                         <View style={styles.nextButtonGradient}>
                             <Text style={styles.nextButtonText}>
-                                {currentIndex === slides.length - 1 ? 'Get Started' : 'Next'}
+                                {currentIndex === onBoardSlides.length - 1 ? 'Get Started' : 'Next'}
                             </Text>
                             <ChevronRight size={20} color="#fff" />
                         </View>
