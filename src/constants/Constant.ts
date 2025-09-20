@@ -43,11 +43,11 @@ export const darkWeatherColors = [
 ];
 
 export const defaultHeaderColor = [
-    "#1a2a6c",
-    "#1a2a6c",
-    "#1a2a6c",
-    'rgba(54, 67, 92, 1)',
-    'rgba(54, 67, 92, 0.0)'
+    "#35aeb7ff",
+    "#4da3a9ff",
+    "#4fac87ff",
+    'rgba(133, 190, 166, 1)',
+    'rgba(169, 230, 211, 0)'
 ];
 
 export const defaultHeaderTransparent = ['rgba(0,0,0, 0.6)', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0)'];

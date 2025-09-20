@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-native/no-inline-styles */
 import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
@@ -27,7 +29,7 @@ export default function LoginScreen({ navigation }: any) {
     const [checkLogin, setCheckLogin] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { signIn, skipLogin, completeOnboarding,setUserProfile, setUser} = useAuth();
+    const { signIn, skipLogin, completeOnboarding, setUserProfile, setUser } = useAuth();
 
     const handleLogin = async () => {
         if (!email.trim() || !password.trim()) {
@@ -94,8 +96,7 @@ export default function LoginScreen({ navigation }: any) {
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                     <View style={styles.header}>
                         <Image
-                            // source={require('@/assets/images/new-logo-black.png')}
-
+                            source={require('../assets/images/new-logo-black.png')}
                             style={{
                                 width: 220,
                                 height: 40,

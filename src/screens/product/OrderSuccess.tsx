@@ -23,7 +23,7 @@ const OrderSuccess = ({ order, navigation }: any) => {
 
                 <View style={styles.row}>
                     <Text style={styles.label}>Order No</Text>
-                    <Text style={styles.value}>#{order?.id}</Text>
+                    <Text style={styles.value}>#{order.orderNumber}</Text>
                 </View>
 
                 <View style={styles.row}>
@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowRadius: 4,
         elevation: 3,
+        marginBottom: 20
     },
     cardTitle: {
         fontSize: 16,
@@ -127,10 +128,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingHorizontal: 16,
         paddingTop: 12,
-        paddingBottom: 28,
+        paddingBottom: 20,
         backgroundColor: '#fff',
-        borderTopWidth: 1,
-        borderTopColor: '#f0f0f0',
         gap: 10
     },
     addToCartButton: {

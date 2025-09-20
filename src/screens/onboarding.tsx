@@ -1,6 +1,6 @@
-
-
-import { ChevronRight, Shield, ShoppingBag, Truck } from 'lucide-react-native';
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-native/no-inline-styles */
+import { ChevronRight } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Animated,
@@ -16,23 +16,10 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { StackNames } from '../constants/stackNames';
 import { getOnboardingSession } from '../services/session';
-import { useAuth } from '../context/AuthContext';
 import { firebaseService } from '../services/firebaseService';
 import { Colors } from '../constants/Colors';
 
 const { width } = Dimensions.get('window');
-
-interface OnboardingSlide {
-    id: number;
-    title: string;
-    subtitle: string;
-    description: string;
-    icon: React.ReactNode;
-    gradient: [string, string];
-    image?: { uri: string }
-}
-
-
 
 export default function OnboardingScreen({ navigation }: any) {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -129,18 +116,15 @@ export default function OnboardingScreen({ navigation }: any) {
                 style={styles.scrollView}
             >
                 {onBoardSlides.map((image: any, index: number) => (
-                    <View key={index} style={[styles.slide, { padding: 20 }]}>
+                    <View key={index} style={[styles.slide, { padding: 0 }]}>
                         <Image
                             key={index}
-                            source={{uri: image}}
+                            source={{ uri: image }}
                             style={{
                                 width: '100%',
                                 height: '100%',
-                                borderRadius: 12,
-                                marginHorizontal: 4,
-                                opacity: index === currentIndex ? 1 : 0.5,
                             }}
-                            resizeMode="cover"
+                            resizeMode="contain"
                         />
                     </View>
                 ))}

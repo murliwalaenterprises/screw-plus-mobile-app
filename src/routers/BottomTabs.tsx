@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react/no-unstable-nested-components */
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -8,7 +9,7 @@ import Categories from "../screens/tabs/Categories";
 import Explore from "../screens/tabs/Explore";
 import Profile from "../screens/tabs/Profile";
 import Search from "../screens/tabs/Search";
-import {Colors} from "../constants/Colors";
+import { Colors } from "../constants/Colors";
 import HomeScreen from "../screens/tabs/HomeScreen2";
 
 const Tab = createBottomTabNavigator();
@@ -25,8 +26,8 @@ export default function BottomTabs() {
     >
       <Tab.Screen
         name={StackNames.Home}
-        // component={Home}
-        component={HomeScreen}
+        component={Home}
+        // component={HomeScreen}
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => <HomeIcon color={color} size={size} />,
@@ -60,15 +61,15 @@ export default function BottomTabs() {
           headerShown: false
         }}
       />
-        <Tab.Screen
-          name={StackNames.Profile}
-          component={Profile}
-          options={{
-            title: "Profile",
-            tabBarIcon: ({ color, size }) => <User2 color={color} size={size} />,
-            headerShown: false
-          }}
-        />
+      <Tab.Screen
+        name={StackNames.Profile}
+        component={Profile}
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color, size }) => <User2 color={color} size={size} />,
+          headerShown: false
+        }}
+      />
     </Tab.Navigator>
   );
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 
 import { useFirebaseData } from '../../store/useFirebaseData';
 import { useStore } from '../../store/useStore';
@@ -13,8 +14,9 @@ import LocationSelector from '../../components/LocationSelector';
 import ProductCard from '../../components/ProductCard';
 import { useAuth } from '../../context/AuthContext';
 import { StackNames } from '../../constants/stackNames';
+import { scale } from 'react-native-size-matters';
 
-export default function Home({navigation}: any) {
+export default function Home({ navigation }: any) {
   const { getCartItemsCount } = useStore();
   const { products, categories, banners, loading } = useFirebaseData();
   const { selectedLocation } = useAuth();
@@ -40,7 +42,7 @@ export default function Home({navigation}: any) {
 
   const renderProduct = ({ item }: { item: any }) => (
     <View style={styles.productContainer}>
-      <ProductCard product={item} width={180}/>
+      <ProductCard product={item} width={180} />
     </View>
   );
 
@@ -63,7 +65,7 @@ export default function Home({navigation}: any) {
           <MapPin size={16} color="#333" />
           <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">
             {getSelectedLocation(selectedLocation)}
-            </Text>
+          </Text>
           <ChevronDown size={16} color="#333" />
         </TouchableOpacity>
       </View>
@@ -166,6 +168,10 @@ export default function Home({navigation}: any) {
                 </>
               )}
 
+              <View style={{ backgroundColor: '#f8f8f8', width: '100%', paddingHorizontal: 20, paddingTop: 20, paddingBottom: 30 }}>
+                <Text style={{ fontSize: scale(50), fontWeight: 'bold', opacity: 0.2 }}>Screw Plus</Text>
+                <Text style={{ opacity: 0.2, marginTop: 10, }}>Developed By ❤️ Murliwala Enterprises</Text>
+              </View>
               <View style={styles.bottomSpacing} />
             </ScrollView>
           </Animated.View>
@@ -174,10 +180,10 @@ export default function Home({navigation}: any) {
         <LocationSelector
           visible={showLocationSelector}
           onClose={() => setShowLocationSelector(false)}
-          getLocations={(locations) => {
+          getLocations={(loc) => {
             // Handle locations update
-            console.log('Selected locations:', locations);
-            setLocations(locations);
+            console.log('Selected locations:', loc);
+            setLocations(loc);
           }}
         />
       </SafeAreaView>

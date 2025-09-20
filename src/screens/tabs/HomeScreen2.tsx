@@ -1,4 +1,5 @@
- /* eslint-disable react-native/no-inline-styles */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-native/no-inline-styles */
 import React from "react";
 import {
     View,
@@ -20,11 +21,14 @@ import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated
 import LottieView from "lottie-react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { scale } from "react-native-size-matters";
-import { darkWeatherColors, defaultHeaderTransparent } from "../../constants/Constant";
+import { darkWeatherColors, defaultHeaderColor, defaultHeaderTransparent } from "../../constants/Constant";
 import { CircleUserRound, CloudRainWind, Mic, Search, UserRoundPlus } from "lucide-react-native";
+import { useFirebaseData } from "../../store/useFirebaseData";
+import BannerCarousel from "../../components/BannerCarousel";
+import { StackNames } from "../../constants/stackNames";
 
 // 🔹 Your Category Data
-const categories = [
+const old_categories = [
     {
         id: "1",
         label: "Milk, Curd & Paneer",
@@ -67,9 +71,11 @@ const categories = [
     },
 ];
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: any) => {
+    const { products, categories, banners, loading } = useFirebaseData();
+
     const [refreshing, setRefreshing] = React.useState(false);
-    const isRaining = true;
+    const isRaining = false;
 
     const themeBackground = 'https://img.freepik.com/free-vector/happy-diwali-wishes-banner-with-diya-text-space_1017-46555.jpg?semt=ais_incoming&w=740&q=80';
 
@@ -101,14 +107,13 @@ const HomeScreen = () => {
                     style={{
                         flex: 1,
                         width: '100%',
-                        height: 200,
                         marginBottom: 180
                     }}
                     resizeMode="cover"
                 >
                     <Animated.View style={[styles.headerBg]}>
                         <LinearGradient
-                            colors={isRaining ? darkWeatherColors : defaultHeaderTransparent} // dark navy -> grey-blue -> white
+                            colors={isRaining ? darkWeatherColors : defaultHeaderColor} // dark navy -> grey-blue -> white
                             start={{ x: 0.5, y: 0.5 }}
                             end={{ x: 0.5, y: 1 }}
                             style={styles.gradient}
@@ -142,28 +147,29 @@ const HomeScreen = () => {
                                         <View style={styles.row}>
                                             <Text style={styles.timeText}>15 minutes </Text>
                                             {/* <Icon name="rainy-outline" size={16} color="#fff" /> */}
-                                            <CloudRainWind color={'#fff'} size={16}/>
+                                            <CloudRainWind color={'#fff'} size={16} />
                                         </View>
                                         <Text style={styles.address}>176/A, Sector-1, Sultanpur</Text>
                                     </View>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={() => navigation.navigate(StackNames.Profile)}>
                                         {/* <Icon name="person-circle-outline" size={38} color="#fff" /> */}
-                                        <CircleUserRound color={'white'} size={38}/>
+                                        <CircleUserRound color={'white'} size={38} />
                                     </TouchableOpacity>
                                 </View>
 
                                 {/* Search */}
                                 <View style={styles.searchBox}>
                                     {/* <Icon name="search-outline" size={20} color="#555" /> */}
-                                    <Search color={'#555'} size={20}/>
+                                    <Search color={'#555'} size={20} />
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Search for ata, dal, coke"
                                         placeholderTextColor="#888"
+                                        onFocus={() => navigation.navigate(StackNames.Search)}
                                     />
                                     <TouchableOpacity>
                                         {/* <Icon name="mic-outline" size={20} color="#555" /> */}
-                                        <Mic color={'#555'} size={20}/>
+                                        <Mic color={'#555'} size={20} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -179,7 +185,7 @@ const HomeScreen = () => {
                 </ImageBackground>
 
                 {/* 🔹 Scroll Content */}
-                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 50 }}
+                <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
@@ -191,15 +197,18 @@ const HomeScreen = () => {
                         />
                     }
                 >
+
                     {/* Banner */}
-                    <Animatable.View animation="fadeInUp" duration={800} style={styles.bannerBox}>
-                        <Image
-                            source={{
-                                uri: "https://images.meesho.com/images/marketing/1757490578069.webp",
-                            }}
-                            style={styles.banner}
-                            resizeMode="cover"
-                        />
+                    <Animatable.View animation="fadeInUp" duration={800}>
+                        {loading.banners ? (
+                            <View style={styles.loadingBanner}>
+                                <Text style={styles.loadingText}>Loading banners...</Text>
+                            </View>
+                        ) : (
+                            <View style={{ width: '100%', height: 220, paddingTop: 20, backgroundColor: 'transparent' }}>
+                                <BannerCarousel banners={banners} />
+                            </View>
+                        )}
                     </Animatable.View>
 
                     {/* Section */}
@@ -218,7 +227,7 @@ const HomeScreen = () => {
                                 >
                                     <TouchableOpacity style={styles.catCard}>
                                         <Image source={{ uri: item.image }} style={styles.catImage} />
-                                        <Text style={styles.catText}>{item.label}</Text>
+                                        <Text style={styles.catText}>{item.name}</Text>
                                     </TouchableOpacity>
                                 </Animatable.View>
                             )}
@@ -276,9 +285,9 @@ const styles = StyleSheet.create({
     input: { flex: 1, fontSize: 14, paddingHorizontal: 8, color: "#000" },
     bannerBox: { borderRadius: 14, overflow: "hidden", marginHorizontal: 15, marginTop: 27, marginBottom: 10 },
     banner: { width: "100%", height: 140, borderRadius: 14 },
-    section: { marginBottom: 20, paddingHorizontal: 12 },
-    sectionTitle: { fontSize: 16, fontWeight: "600", marginBottom: 10, color: '#fff' },
-    catBox: { flex: 1, margin: 5, alignItems: "center" },
+    section: { marginBottom: 20, paddingHorizontal: 12, paddingTop: 10 },
+    sectionTitle: { fontSize: 16, fontWeight: "600", marginBottom: 10, color: '#000' },
+    catBox: { flex: 1, margin: 5 },
     catCard: {
         backgroundColor: "#fff",
         borderRadius: 12,
@@ -315,5 +324,22 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: 100,
+    },
+    loadingContainer: {
+        paddingVertical: 40,
+        alignItems: 'center',
+    },
+    loadingBanner: {
+        height: 200,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#F3F4F6',
+        marginHorizontal: 16,
+        marginVertical: 16,
+        borderRadius: 12,
+    },
+    loadingText: {
+        fontSize: 16,
+        color: '#6B7280',
     },
 });

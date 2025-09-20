@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import { CheckCircle, ChevronDown, CreditCard, MapPin, Plus } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
@@ -43,9 +46,9 @@ export default function CheckoutScreen({ navigation }: any) {
     console.log('user=====', user)
 
     const handleOrderConfirmation = async (order: any) => {
-    const userId = user?.uid || userProfile?.uid;
-        console.log('handleOrderConfirmation called', {user, userProfile});
-        if(!userId) {   
+        const userId = user?.uid || userProfile?.uid;
+        console.log('handleOrderConfirmation called', { user, userProfile });
+        if (!userId) {
             Alert.alert('Error', 'User not logged in');
             return;
         }
@@ -69,7 +72,7 @@ export default function CheckoutScreen({ navigation }: any) {
 
     const handleRazorpayPayment = async (order: Order) => {
         try {
-            const orderDetails = {
+            const oOrderDetails = {
                 ...order,
                 orderId: order.orderId || '',
                 finalTotal: finalTotal,
@@ -85,27 +88,27 @@ export default function CheckoutScreen({ navigation }: any) {
             };
             const options = {
                 amount: finalTotal * 100, // Amount in paise
-                name: orderDetails.CompanyName,
-                image: orderDetails.CompanyLogo, // Your app logo
-                order_id: orderDetails.orderId, // Unique order ID
+                name: oOrderDetails.CompanyName,
+                image: oOrderDetails.CompanyLogo, // Your app logo
+                order_id: oOrderDetails.orderId, // Unique order ID
                 prefill: {
-                    name: (orderDetails.CustomerName || '') + ` ${Date.now()}`,
-                    email: orderDetails.CustomerEmail || '',
-                    contact: orderDetails.CustomerMobile || '',
+                    name: (oOrderDetails.CustomerName || '') + ` ${Date.now()}`,
+                    email: oOrderDetails.CustomerEmail || '',
+                    contact: oOrderDetails.CustomerMobile || '',
                 },
             };
             console.log('Razorpay Options:', options);
             startRazorpayPayment({
                 amount: options.amount,
-                orderId: orderDetails.orderId, // Collect Order ID from Backend
-                email: orderDetails.CustomerEmail,
-                contact: orderDetails?.CustomerMobile,
-                name: orderDetails?.CustomerName,
-                companyName: orderDetails.CompanyName,
-                transactionId: orderDetails?.MTxnId,  // Collect Transaction ID from Backend
+                orderId: oOrderDetails.orderId, // Collect Order ID from Backend
+                email: oOrderDetails.CustomerEmail,
+                contact: oOrderDetails?.CustomerMobile,
+                name: oOrderDetails?.CustomerName,
+                companyName: oOrderDetails.CompanyName,
+                transactionId: oOrderDetails?.MTxnId,  // Collect Transaction ID from Backend
                 onSuccess: async (data) => {
                     console.log('Payment Success:', data);
-                    console.log('orderDetails', orderDetails);
+                    console.log('orderDetails', oOrderDetails);
                     if (data.razorpay_payment_id && data.razorpay_signature && data.razorpay_order_id) {
                         const resPayload = {
                             'razorpay_signature': data.razorpay_signature,
@@ -115,7 +118,7 @@ export default function CheckoutScreen({ navigation }: any) {
                             'razorpay_email': options.prefill.email,
                         };
                         console.log('resPayload', resPayload);
-                        handleOrderConfirmation(orderDetails);
+                        handleOrderConfirmation(oOrderDetails);
                         // Alert.alert(
                         //     'Order Placed Successfully!',
                         //     `Your order has been placed successfully. Order total: ₹${finalTotal.toLocaleString()}`,
@@ -251,7 +254,8 @@ export default function CheckoutScreen({ navigation }: any) {
         return (
             <OrderSuccess
                 order={{
-                    id: orderDetails.orderId,
+                    ...orderDetails,
+                    id: orderDetails.number,
                     date: `${formatTimestampDate(orderDetails.orderDate)}`,
                     amount: orderDetails.finalTotal,
                     status: orderDetails.status,
