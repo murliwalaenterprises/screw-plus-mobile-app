@@ -28,8 +28,8 @@ export default function AddressesScreen({route, navigation}: any) {
   const [modalVisible, setModalVisible] = useState(isAddAddress || false );
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 
-  const { user }: any = useAuth();
-  const userId = user?.uid;
+  const { user, userProfile }: any = useAuth();
+  const userId = user?.uid || userProfile?.uid;
 
   useEffect(() => {
     const unsubscribe = firebaseService.subscribeToAddresses(userId, (data) => {

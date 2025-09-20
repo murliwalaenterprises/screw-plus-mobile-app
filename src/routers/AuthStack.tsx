@@ -12,6 +12,7 @@ const AuthStack = () => {
   return (
     <AuthWrapper>
       <Stack.Navigator
+        initialRouteName={StackNames.LoginScreen}
         screenOptions={{
           headerShown: false,
         }}>

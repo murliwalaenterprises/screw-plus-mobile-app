@@ -1,12 +1,12 @@
 
 import { CheckCircle, ChevronDown, CreditCard, MapPin, Plus } from 'lucide-react-native';
-import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, Vibration, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, Vibration, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStore } from '../../store/useStore';
 import { useAuth } from '../../context/AuthContext';
 import { Order, OrderItem } from '../../types/types';
-import { formatTimestampDate, generateOrderId, getEstimatedDeliveryDate, paymentMethods } from '../../services/utilityService';
+import { formatCurrency, formatTimestampDate, generateOrderId, generateOrderNumber, getEstimatedDeliveryDate, paymentMethods } from '../../services/utilityService';
 import { firebaseService } from '../../services/firebaseService';
 import { Colors } from '../../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -20,7 +20,6 @@ export default function CheckoutScreen({ navigation }: any) {
 
     const { cart, getCartTotal, clearCart } = useStore();
     const { user, userProfile }: any = useAuth();
-    const userId = user?.uid;
     const [selectedPayment, setSelectedPayment] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
     const [orderNotes, setOrderNotes] = useState('');
@@ -29,6 +28,7 @@ export default function CheckoutScreen({ navigation }: any) {
     const { selectedLocation } = useAuth();
     const [showLocationSelector, setShowLocationSelector] = useState(false);
     const [isOrderPlaced, setIsOrderPlaced] = useState(false);
+    const [loadingSuccess, setLoadingSuccess] = useState(false);
 
     const [orderDetails, setOrderDetails] = React.useState<any>({});
 
@@ -42,33 +42,46 @@ export default function CheckoutScreen({ navigation }: any) {
     console.log('payment methods', selectedPayment);
     console.log('user=====', user)
 
-    // const addresses = [
-    //     '123 Main Street, New Delhi, 110001',
-    //     '456 Park Avenue, Mumbai, 400001',
-    //     '789 Garden Road, Bangalore, 560001'
-    // ];
-
     const handleOrderConfirmation = async (order: any) => {
+    const userId = user?.uid || userProfile?.uid;
+        console.log('handleOrderConfirmation called', {user, userProfile});
+        if(!userId) {   
+            Alert.alert('Error', 'User not logged in');
+            return;
+        }
         console.log('order', JSON.stringify(order, null, 2));
         setOrderDetails(order);
-        await firebaseService.addOrder(userId, order);
-        Vibration.vibrate(500);
-        clearCart();
-        setIsOrderPlaced(true);
-    }
+
+        try {
+            setLoadingSuccess(true);
+            await firebaseService.addOrder(userId, order);
+            console.log("Order added to Firebase successfully");
+            Vibration.vibrate(500);
+            clearCart();
+            setIsOrderPlaced(true);
+        } catch (err) {
+            console.error("Error adding order:", err);
+            Alert.alert("Error", "Failed to place your order.");
+        } finally {
+            setLoadingSuccess(false); // 👈 stop loader once Firebase call finishes
+        }
+    };
 
     const handleRazorpayPayment = async (order: Order) => {
         try {
             const orderDetails = {
+                ...order,
                 orderId: order.orderId || '',
-                Amount: finalTotal.toString(),
-                CustomerName: userProfile?.displayName || '', // Collect from user input
-                CustomerEmail: userProfile?.email || '', // Collect from user input
-                CustomerMobile: userProfile?.phoneNumber || '', // Collect from user input
-                CompanyName: userProfile?.companyName || '', // Collect from user input
-                CompanyLogo: userProfile?.companyLogo, // Your company logo
-                Description: userProfile?.Description || 'Order Payment', // Collect from user input
-                MTxnId: `MT${Date.now()}`, // Unique transaction ID
+                finalTotal: finalTotal,
+                CustomerName: userProfile?.displayName || '',
+                CustomerEmail: userProfile?.email || '',
+                CustomerMobile: userProfile?.phoneNumber || '',
+                CompanyName: userProfile?.companyName || '',
+                CompanyLogo: userProfile?.companyLogo || null,
+                Description: userProfile?.Description || 'Order Payment',
+                MTxnId: `MT${Date.now()}`,
+                orderDate: new Date().toISOString(),
+                status: 'pending',
             };
             const options = {
                 amount: finalTotal * 100, // Amount in paise
@@ -182,6 +195,7 @@ export default function CheckoutScreen({ navigation }: any) {
                 finalTotal,
                 notes: orderNotes,
                 orderDate: new Date(),
+                orderNumber: generateOrderNumber(),
             };
 
             if (selectedPayment !== 'cod') {
@@ -221,6 +235,17 @@ export default function CheckoutScreen({ navigation }: any) {
             });
         }
     }, [isOrderPlaced]);
+
+    if (loadingSuccess) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" color="#4CAF50" />
+                <Text style={{ marginTop: 12, fontSize: 16, color: "#333" }}>
+                    Placing your order...
+                </Text>
+            </View>
+        );
+    }
 
     if (isOrderPlaced) {
         return (
@@ -281,7 +306,7 @@ export default function CheckoutScreen({ navigation }: any) {
                                             Size: {item.selectedSize} | Color: {item.selectedColor} | Qty: {item.quantity}
                                         </Text>
                                     </View>
-                                    <Text style={styles.orderItemPrice}>₹{(selectedVariant.price * item.quantity).toLocaleString()}</Text>
+                                    <Text style={styles.orderItemPrice}>{formatCurrency(selectedVariant.price * item.quantity)}</Text>
                                 </View>
                             )
                         })}
@@ -296,7 +321,7 @@ export default function CheckoutScreen({ navigation }: any) {
 
                         {
                             !selectedLocation ? (
-                                <TouchableOpacity style={styles.addAddressButton} onPress={() => navigation.navigate(StackNames.AddressesScreen, {isAddAddress: true})}>
+                                <TouchableOpacity style={styles.addAddressButton} onPress={() => navigation.navigate(StackNames.AddressesScreen, { isAddAddress: true })}>
                                     <Plus size={20} color="#333" />
                                     <Text style={styles.addAddressText}>Add New Address</Text>
                                 </TouchableOpacity>
@@ -374,23 +399,23 @@ export default function CheckoutScreen({ navigation }: any) {
                         <Text style={styles.sectionTitle}>Price Details</Text>
                         <View style={styles.priceRow}>
                             <Text style={styles.priceLabel}>Subtotal</Text>
-                            <Text style={styles.priceValue}>₹{cartTotal.toLocaleString()}</Text>
+                            <Text style={styles.priceValue}>{formatCurrency(cartTotal)}</Text>
                         </View>
                         <View style={styles.priceRow}>
                             <Text style={styles.priceLabel}>Delivery Fee</Text>
-                            <Text style={styles.priceValue}>₹{deliveryFee}</Text>
+                            <Text style={styles.priceValue}>{formatCurrency(deliveryFee)}</Text>
                         </View>
                         <View style={styles.priceRow}>
                             <Text style={styles.priceLabel}>Tax ({taxPercentage}%)</Text>
-                            <Text style={styles.priceValue}>₹{tax.toLocaleString()}</Text>
+                            <Text style={styles.priceValue}>{formatCurrency(tax)}</Text>
                         </View>
                         <View style={styles.priceRow}>
                             <Text style={styles.priceLabel}>Platform Fee</Text>
-                            <Text style={styles.priceValue}>₹{platformFee.toLocaleString()}</Text>
+                            <Text style={styles.priceValue}>{formatCurrency(platformFee)}</Text>
                         </View>
                         <View style={[styles.priceRow, styles.totalRow]}>
                             <Text style={styles.totalLabel}>Total</Text>
-                            <Text style={styles.totalValue}>₹{finalTotal.toLocaleString()}</Text>
+                            <Text style={styles.totalValue}>{formatCurrency(finalTotal)}</Text>
                         </View>
                     </View>
                 </ScrollView>
@@ -409,7 +434,7 @@ export default function CheckoutScreen({ navigation }: any) {
                             <View style={[styles.placeOrderButton, isProcessing && styles.disabledButton]}>
                                 <CheckCircle size={20} color={Colors.light.primaryButtonForeground} />
                                 <Text style={styles.placeOrderText}>
-                                    {isProcessing ? 'Processing...' : `Place Order • ₹${finalTotal.toLocaleString()}`}
+                                    {isProcessing ? 'Processing...' : `Place Order • ${formatCurrency(finalTotal)}`}
                                 </Text>
                             </View>
                         </LinearGradient>

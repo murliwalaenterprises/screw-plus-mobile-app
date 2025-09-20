@@ -19,7 +19,7 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStore } from '../../store/useStore';
 import { firebaseService } from '../../services/firebaseService';
-import { getDiscountPercentage, getProductVariant } from '../../services/utilityService';
+import { formatCurrency, getDiscountPercentage, getProductVariant } from '../../services/utilityService';
 import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/stackNames';
 
@@ -117,7 +117,7 @@ export default function ProductDetailScreen({ navigation, route }: any) {
     try {
       console.log('Sharing product:', product);
       await Share.share({
-        message: `Check out this amazing product: ${product.title} - ₹${getProductVariant(product).price}`,
+        message: `Check out this amazing product: ${product.title} - ${formatCurrency(getProductVariant(product).price)}`,
         url: product.image,
       });
     } catch (error) {
@@ -220,10 +220,10 @@ export default function ProductDetailScreen({ navigation, route }: any) {
                 <Text style={{ fontSize: 14, fontWeight: '500', marginBottom: 3 }} numberOfLines={1} ellipsizeMode='tail'>{product.title}</Text>
                 {selectedOptions ? (
                   <View style={[styles.priceContainer, { marginBottom: 0 }]}>
-                    <Text style={[styles.price, { fontSize: 14, color: 'green' }]}>₹{selectedOptions.price}</Text>
+                    <Text style={[styles.price, { fontSize: 14, color: 'green' }]}>{formatCurrency(selectedOptions.price)}</Text>
                     {selectedOptions.originalPrice && (
                       <Text style={[styles.originalPrice, { fontSize: 14 }]}>
-                        ₹{selectedOptions.originalPrice}
+                        {formatCurrency(selectedOptions.originalPrice)}
                       </Text>
                     )}
                     {getDiscountPercentage(selectedOptions.originalPrice, selectedOptions.price) > 0 && (
@@ -351,10 +351,10 @@ export default function ProductDetailScreen({ navigation, route }: any) {
 
             {selectedOptions ? (
               <View style={styles.priceContainer}>
-                <Text style={styles.price}>₹{selectedOptions.price}</Text>
+                <Text style={styles.price}>{formatCurrency(selectedOptions.price)}</Text>
                 {selectedOptions.originalPrice && (
                   <Text style={styles.originalPrice}>
-                    ₹{selectedOptions.originalPrice}
+                    {formatCurrency(selectedOptions.originalPrice)}
                   </Text>
                 )}
                 {getDiscountPercentage(selectedOptions.originalPrice, selectedOptions.price) > 0 && (
@@ -613,8 +613,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+    fontSize: 17,
+    fontWeight: '500',
     color: '#333',
     marginBottom: 8,
     lineHeight: 26,

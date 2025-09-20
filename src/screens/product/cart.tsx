@@ -5,7 +5,7 @@ import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CartItem } from '../../types/product';
 import { useStore } from '../../store/useStore';
-import { getDiscountPercentage } from '../../services/utilityService';
+import { formatCurrency, getDiscountPercentage } from '../../services/utilityService';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/stackNames';
@@ -52,10 +52,10 @@ export default function CartScreen({navigation}: any) {
           </Text>
           {selectedVariant ? (
             <View style={styles.priceContainer}>
-              <Text style={styles.price}>₹{selectedVariant.price}</Text>
+              <Text style={styles.price}>{formatCurrency(selectedVariant.price)}</Text>
               {selectedVariant.originalPrice && (
                 <Text style={styles.originalPrice}>
-                  ₹{selectedVariant.originalPrice}
+                  {formatCurrency(selectedVariant.originalPrice)}
                 </Text>
               )}
               {getDiscountPercentage(selectedVariant.originalPrice, selectedVariant.price) > 0 && (

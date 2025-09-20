@@ -3,6 +3,7 @@ import { CheckCircle } from "lucide-react-native"; // ✅ Lucide icon
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { StackNames } from "../../constants/stackNames";
+import { formatCurrency } from "../../services/utilityService";
 
 const OrderSuccess = ({ order, navigation }: any) => {
     return (
@@ -22,22 +23,22 @@ const OrderSuccess = ({ order, navigation }: any) => {
 
                 <View style={styles.row}>
                     <Text style={styles.label}>Order No</Text>
-                    <Text style={styles.value}>#{order.id}</Text>
+                    <Text style={styles.value}>#{order?.id}</Text>
                 </View>
 
                 <View style={styles.row}>
                     <Text style={styles.label}>Order Date</Text>
-                    <Text style={styles.value}>{order.date}</Text>
+                    <Text style={styles.value}>{order?.date}</Text>
                 </View>
 
                 <View style={styles.row}>
                     <Text style={styles.label}>Total Amount</Text>
-                    <Text style={styles.value}>₹{Number(order.amount).toLocaleString()}</Text>
+                    <Text style={styles.value}>{formatCurrency(Number(order?.amount))}</Text>
                 </View>
 
                 <View style={styles.row}>
                     <Text style={styles.label}>Status</Text>
-                    <Text style={[styles.value, styles.status]}>{order.status.charAt(0).toUpperCase() + order.status.slice(1)}</Text>
+                    <Text style={[styles.value, styles.status]}>{order?.status?.charAt(0).toUpperCase() + order?.status?.slice(1)}</Text>
                 </View>
             </View>
 
@@ -47,10 +48,18 @@ const OrderSuccess = ({ order, navigation }: any) => {
                 <TouchableOpacity style={styles.addToCartButton} onPress={() => navigation.navigate(StackNames?.Orders)}>
                     <Text style={styles.addToCartText}>View Orders</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.buyNowButton} onPress={() => navigation.navigate(StackNames.MainAppStack)}>
-                    <Text style={styles.buyNowText}>Continue Shopping</Text>
-                </TouchableOpacity>
+
             </View>
+            <View style={styles.durationTimeline}>
+                <View style={styles.durationLine} />
+                <View style={styles.durationLabel}>
+                    <Text style={styles.durationTimelineText}>OR</Text>
+                </View>
+            </View>
+            <TouchableOpacity onPress={() => navigation.navigate(StackNames.MainAppStack)}>
+                <Text>Continue Shopping</Text>
+            </TouchableOpacity>
+
         </View>
     );
 };
@@ -154,5 +163,32 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#fff',
         fontWeight: 'bold',
+    },
+    durationTimeline: {
+        alignItems: "center",
+        marginBottom: 20,
+    },
+    durationLine: {
+        width: "100%",
+        height: 1,
+        backgroundColor: "#E0E0E0",
+        position: "absolute",
+        top: "50%",
+    },
+    durationLabel: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#FFF",
+        paddingHorizontal: 14,
+        paddingVertical: 6,
+        borderRadius: 20,
+        borderWidth: 1,
+        borderColor: "#007AFF",
+    },
+    durationTimelineText: {
+        marginLeft: 6,
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#007AFF"
     },
 });

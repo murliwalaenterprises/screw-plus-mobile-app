@@ -9,20 +9,52 @@
 
 # Add any project specific keep options here:
 
-# Razorpay SDK rules
+########## React Native ##########
+-keep class com.facebook.react.** { *; }
+-dontwarn com.facebook.react.**
 
- -keep class com.razorpay.** { *; }
+########## Hermes ##########
+-keep class com.facebook.hermes.** { *; }
+-dontwarn com.facebook.hermes.**
 
- -keep interface com.razorpay.** { *; }
+########## JNI ##########
+-keep class com.facebook.jni.** { *; }
+-dontwarn com.facebook.jni.**
 
- -keepattributes *Annotation*
- 
-# Suppress GPay-related warnings
+########## Firebase ##########
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
 
- -dontwarn com.google.android.apps.nbu.paisa.inapp.client.api.**
- 
-# Fix missing proguard.annotation.Keep
+########## Google Play Services ##########
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
 
- -keep class proguard.annotation.Keep { *; }
+########## Razorpay ##########
+-keep class com.razorpay.** { *; }
+-dontwarn com.razorpay.**
 
- -keep class proguard.annotation.KeepClassMembers { *; }
+########## Networking (OkHttp, Retrofit, Gson) ##########
+-keep class okhttp3.** { *; }
+-dontwarn okhttp3.**
+
+-keep class retrofit2.** { *; }
+-dontwarn retrofit2.**
+
+-keep class com.google.gson.** { *; }
+-dontwarn com.google.gson.**
+
+########## Kotlin ##########
+-keep class kotlin.** { *; }
+-dontwarn kotlin.**
+
+-keep class kotlinx.** { *; }
+-dontwarn kotlinx.**
+
+########## Your Models (for Firebase serialization) ##########
+-keep class com.eshopmobile.models.** { *; }
+
+########## Annotations ##########
+-keep @androidx.annotation.Keep class * { *; }
+
+########## Enums ##########
+-keepclassmembers enum * { *; }

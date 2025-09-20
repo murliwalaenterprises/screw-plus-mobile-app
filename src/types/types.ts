@@ -31,7 +31,7 @@ export interface Order {
     orderId?: string;
     items: OrderItem[];
     invoiceNo: string | null;
-    status: 'pending' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
+    status: 'pending' | 'processing' | 'confirmed' | 'shipped' | 'delivered' | 'cancelled';
     deliveryAddress: string;
     paymentMethod: string;
     isPaid: false,
@@ -46,6 +46,8 @@ export interface Order {
     estimatedDelivery?: Date;
     orderDate: Date;
     receiptId?: string;
+    updatedStatus?: string;
+    orderNumber?: string;
 }
 
 

@@ -290,7 +290,12 @@ class FirebaseService {
   async addOrder(userId: string, order: Omit<Order, 'id'>): Promise<string> {
     // 1. Save order
     const orderRef = collection(db, `users/${userId}/orders`);
-    const docRef = await addDoc(orderRef, order);
+    const now = Timestamp.now();
+    const docRef = await addDoc(orderRef, {
+      ...order,
+      createdAt: now,
+      updatedAt: now
+    });
 
     // 2. Loop through items to update stock
     for (const item of order.items) {
@@ -321,8 +326,9 @@ class FirebaseService {
   }
 
   async updateOrder(userId: string, id: string, order: Partial<Order>): Promise<void> {
+    const now = Timestamp.now();
     const orderRef = doc(db, `users/${userId}/orders`, id);
-    await updateDoc(orderRef, order);
+    await updateDoc(orderRef, { ...order, updatedAt: now });
   }
 
   async deleteOrder(userId: string, id: string): Promise<void> {
@@ -359,7 +365,7 @@ class FirebaseService {
           ...data,
         };
       });
-
+      console.log("All Orders:", orders);
       callback(orders);
     });
   }
@@ -367,7 +373,7 @@ class FirebaseService {
   // Users
 
   subscribeToUser(userId: string, callback: (user: any) => void) {
-    const userRef = doc(db, "users", userId); 
+    const userRef = doc(db, "users", userId);
     return onSnapshot(userRef, (snapshot) => {
       if (snapshot?.exists()) {
         const user = {
@@ -383,7 +389,7 @@ class FirebaseService {
   }
   subscribeToAppConfig(callback: (config: any) => void) {
     const id = 'cHThTqgAD0e1TpRQej1Y';
-    const userRef = doc(db, "appConfig", id); 
+    const userRef = doc(db, "appConfig", id);
     return onSnapshot(userRef, (snapshot) => {
       if (snapshot?.exists()) {
         const config = {

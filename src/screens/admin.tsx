@@ -35,7 +35,7 @@ const tabs: Tab[] = [
   { id: 'orders', title: 'Orders', icon: Package, color: '#003873' },
 ];
 
-export default function AdminScreen() {
+export default function AdminScreen({navigation, route}: any) {
   const [activeTab, setActiveTab] = useState<TabType>('stats');
 
   const renderTabContent = () => {
@@ -49,7 +49,7 @@ export default function AdminScreen() {
       case 'stats':
         return <StatsTab/>;
       case 'orders':
-        return <OrderTab/>;
+        return <OrderTab navigation={navigation} route={route} />;
       default:
         return <ProductsTab />;
     }

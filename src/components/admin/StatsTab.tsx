@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { BarChart3, Package, Grid3X3, Image, TrendingUp } from 'lucide-react-native';
 import { useFirebaseData } from '../../store/useFirebaseData';
+import { formatCurrency } from '../../services/utilityService';
 
 interface StatCardProps {
   title: string;
@@ -88,7 +89,7 @@ export default function StatsTab() {
         />
         <StatCard
           title="Average Price"
-          value={`₹${averagePrice}`}
+          value={formatCurrency(averagePrice)}
           icon={TrendingUp}
           color="#8B5CF6"
         />

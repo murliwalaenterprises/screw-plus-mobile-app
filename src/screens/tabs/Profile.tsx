@@ -23,6 +23,7 @@ import { firebaseService } from '../../services/firebaseService';
 import { StackNames } from '../../constants/stackNames';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
+import { formatCurrency } from '../../services/utilityService';
 
 export default function Profile({ navigation }: any) {
 
@@ -73,9 +74,14 @@ export default function Profile({ navigation }: any) {
           onPress: async () => {
             setIsLoggingOut(true);
             const result = await logout();
+            console.log('result', result)
             setIsLoggingOut(false);
-            if (result.success) {
-              navigation.replace(StackNames.AuthStack);
+            if (result?.success) {
+              // navigation.navigate(StackNames.AuthStack);
+              navigation.reset({
+                index: 0,
+                routes: [{ name: StackNames.AuthStack }],
+              });
             } else {
               Alert.alert('Error', result.error || 'Failed to logout');
             }
@@ -200,12 +206,12 @@ export default function Profile({ navigation }: any) {
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
               <Text style={styles.statNumber}>
-                ₹{isLoggedIn
+                {formatCurrency(isLoggedIn
                   ? orders
                     .filter(order => order?.status !== 'cancelled')
                     .reduce((total, order) => Number(total) + Number(order?.finalTotal || 0), 0)
-                    .toLocaleString()
-                  : 0}
+                  : 0)
+                  }
               </Text>
               <Text style={styles.statLabel}>Spent</Text>
             </View>

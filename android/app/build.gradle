@@ -57,7 +57,9 @@ react {
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
+def app_versionCode = 3
+def app_versionName = "1.0"
 
 /**
  * The preferred build flavor of JavaScriptCore (JSC)
@@ -82,9 +84,28 @@ android {
         applicationId "com.eshopmobile"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode app_versionCode
+        versionName app_versionName
     }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def appName = "Screw Plus" // Custom app name
+            def buildType = variant.buildType.name // e.g., debug or release
+            def versionName = variant.versionName // Version name from your app
+ 
+            // Get current date in 'dd-MMM-yyyy' format
+            def date = new Date().format("dd-MM-yyyy")
+            def time = new Date().format("HHmm")
+ 
+            // Set the APK name with version, date, and build type
+            def newApkName = "${appName}-${buildType}-v${versionName}(${app_versionCode})-(${date}_${time}).apk"
+ 
+            // Set the new APK name
+            outputFileName = newApkName
+        }
+    }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -102,7 +123,8 @@ android {
             // see https://reactnative.dev/docs/signed-apk-android.
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
-            proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            shrinkResources true
+             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 }

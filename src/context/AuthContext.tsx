@@ -295,7 +295,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const logout = useCallback(async () => {
         try {
-            await signOut(auth);
+            let res = await signOut(auth);
+            console.log('Signed out:', res);
             await removeUserSession();
             return { success: true };
         } catch (error: any) {

@@ -15,6 +15,7 @@ import {
 import NewProductFormModal from './NewProductFormModal';
 import { useFirebaseData } from '../../store/useFirebaseData';
 import { Product } from '../../types/product';
+import { formatCurrency } from '../../services/utilityService';
 // import ProductFormModal from './ProductFormModal';
 
 export default function ProductsTab() {
@@ -68,7 +69,7 @@ export default function ProductsTab() {
           {item.title}
         </Text>
         <Text style={styles.productCategory}>{item.category}</Text>
-        <Text style={styles.productPrice}>₹{item.price}</Text>
+        <Text style={styles.productPrice}>{formatCurrency(item.price)}</Text>
         <View style={styles.productStats}>
           <Text style={styles.statText}>★ {item.rating}</Text>
           <Text style={styles.statText}>({item.reviews})</Text>

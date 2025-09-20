@@ -62,20 +62,20 @@ export const getProductVariant = (product: any, size?: string, color?: string) =
 };
 
 
-export async function generateOrderId(amount: number): Promise<{orderId: string, receiptId: string}> {
-  try {
-    const receiptId = `rcpt_${Date.now()}`;
-    const response = await APIService.createOrder({
-      amount,
-      currency: "INR",
-      receipt: receiptId,
-    });
-    console.log("Razorpay Order ID", response);
-    return {orderId: response.id, receiptId}; 
-  } catch (error) {
-    console.error("Error generating Razorpay Order ID", error);
-    throw error;
-  }
+export async function generateOrderId(amount: number): Promise<{ orderId: string, receiptId: string }> {
+    try {
+        const receiptId = `rcpt_${Date.now()}`;
+        const response = await APIService.createOrder({
+            amount,
+            currency: "INR",
+            receipt: receiptId,
+        });
+        console.log("Razorpay Order ID", response);
+        return { orderId: response.id, receiptId };
+    } catch (error) {
+        console.error("Error generating Razorpay Order ID", error);
+        throw error;
+    }
 }
 
 export function formatTimestampDate(timestamp: any): string {
@@ -106,6 +106,13 @@ export function formatDate(date: Date): string {
     });
 }
 
+export function generateOrderNumber() {
+    const part1 = Math.floor(100 + Math.random() * 900); // 3 digits
+    const part2 = Math.floor(1000000 + Math.random() * 9000000); // 7 digits
+    const part3 = Math.floor(1000000 + Math.random() * 9000000); // 7 digits
+    return `${part1}-${part2}-${part3}`;
+};
+
 export function getEstimatedDeliveryDate(placedOn: string | Date, deliveryType: "standard" | "express" | "same-day" = "standard"): Date {
     const placedDate = new Date(placedOn);
 
@@ -133,6 +140,44 @@ export function getEstimatedDeliveryDate(placedOn: string | Date, deliveryType: 
     return placedDate
 }
 
+export function formatCurrency(
+    amount: number,
+    currency: string = 'INR',
+    removeDecimal: boolean = false
+): string {
+    if (typeof amount !== 'number' || isNaN(amount)) {
+        return '';
+    }
+
+    return amount.toLocaleString('en-US', {
+        style: 'currency',
+        currency,
+        minimumFractionDigits: removeDecimal ? 0 : 2,
+        maximumFractionDigits: removeDecimal ? 0 : 2,
+    });
+}
+
+export function getTimestampValue(d: any): number {
+    if (!d) return 0;
+    if (d.seconds) {
+        // Firestore Timestamp
+        return d.seconds * 1000;
+    }
+    if (d instanceof Date) {
+        // Already a Date object
+        return d.getTime();
+    }
+    return new Date(d).getTime(); // fallback if it's a string
+};
+
+export const sortByDateDesc = <T extends { [key: string]: any }>(
+    arr: T[],
+    key: keyof T
+): T[] => {
+    return arr.sort((a, b) => getTimestampValue(b[key]) - getTimestampValue(a[key]));
+};
+
+
 export const getStatusColor = (status: string) => {
     switch (status) {
         case 'pending':
@@ -141,6 +186,8 @@ export const getStatusColor = (status: string) => {
             return '#3742fa';
         case 'shipped':
             return '#2f3542';
+        case 'confirmed':
+            return '#2ed573';
         case 'delivered':
             return '#2ed573';
         case 'cancelled':

@@ -9,6 +9,7 @@ import Explore from "../screens/tabs/Explore";
 import Profile from "../screens/tabs/Profile";
 import Search from "../screens/tabs/Search";
 import {Colors} from "../constants/Colors";
+import HomeScreen from "../screens/tabs/HomeScreen2";
 
 const Tab = createBottomTabNavigator();
 
@@ -24,7 +25,8 @@ export default function BottomTabs() {
     >
       <Tab.Screen
         name={StackNames.Home}
-        component={Home}
+        // component={Home}
+        component={HomeScreen}
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => <HomeIcon color={color} size={size} />,

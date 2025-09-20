@@ -23,6 +23,7 @@ import {
 import { Product } from "../../types/product";
 import { useFirebaseData } from "../../store/useFirebaseData";
 import { Colors } from "../../constants/Colors";
+import { formatCurrency } from "../../services/utilityService";
 
 interface ProductFormModalProps {
   visible: boolean;
@@ -494,7 +495,7 @@ export default function NewProductFormModal({
 
             {minVariantPrice != null && (
               <Text style={styles.helper}>
-                Min price: ₹{minVariantPrice.toFixed(2)}
+                Min price: {formatCurrency(minVariantPrice)}
               </Text>
             )}
           </View>

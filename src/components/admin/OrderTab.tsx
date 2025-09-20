@@ -1,11 +1,12 @@
 
-import { CheckCircle, Clock, Package, Truck, XCircle } from 'lucide-react-native';
+import { Check, CheckCircle, Clock, Package, Truck, XCircle } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
   Animated,
   Image,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -17,7 +18,7 @@ import { useFirebaseData } from '../../store/useFirebaseData';
 import { Order, OrderItem } from '../../types/types';
 import { useAuth } from '../../context/AuthContext';
 import { firebaseService } from '../../services/firebaseService';
-import { formatDate, formatTimestampDate, getEstimatedDeliveryDate, getStatusColor, getTimestampToDate } from '../../services/utilityService';
+import { formatCurrency, formatDate, formatTimestampDate, getEstimatedDeliveryDate, getStatusColor, getTimestampToDate, sortByDateDesc } from '../../services/utilityService';
 import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/stackNames';
 // import ProductFormModal from './ProductFormModal';
@@ -26,6 +27,8 @@ const getStatusIcon = (status: string) => {
   switch (status) {
     case 'pending':
       return <Clock size={16} color="#ffa502" />;
+    case 'confirmed':
+      return <Check size={16} color="#2ed573" />;
     case 'processing':
       return <Package size={16} color="#3742fa" />;
     case 'shipped':
@@ -39,12 +42,11 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-export default function OrderTab({navigation, route}: any) {
+export default function OrderTab({ navigation, route }: any) {
   const { products, loading, deleteProduct } = useFirebaseData();
   const [showForm, setShowForm] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Order | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-
 
   const [orders, setOrder] = useState<Order[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
@@ -60,39 +62,58 @@ export default function OrderTab({navigation, route}: any) {
   // }, []);
 
   React.useEffect(() => {
-    const unsubscribe = firebaseService.subscribeToAllOrders((data) => {
-      setOrder(data);
-      const values: Record<string, Animated.Value> = {};
-      data.forEach(order => { values[order.orderId] = new Animated.Value(1); });
-      setAnimatedValues(values);
+  const unsubscribe = firebaseService.subscribeToAllOrders((data) => {
+    const sortedData = sortByDateDesc(data, "orderDate");
+
+    setOrder(sortedData);
+    console.log("Subscribed to orders:", sortedData);
+
+    const values: Record<string, Animated.Value> = {};
+    sortedData.forEach((order) => {
+      if (order?.orderId) {
+        values[order.orderId] = new Animated.Value(1);
+      }
     });
-    return () => unsubscribe();
-  }, []);
+    setAnimatedValues(values);
+  });
+
+  return () => unsubscribe();
+}, []);
 
   const goToOrder = (order: Order) => {
-  navigation.navigate(StackNames.Orders, {
-    id: order.id || '', // required
-    orderId: order.orderId,
-    placedOn: `${formatTimestampDate(order.orderDate)}`,
-    items: order.items, // 👈 no need stringify unless you really want to
-    status: order.status,
-    estimatedDelivery: `${formatDate(
-      getEstimatedDeliveryDate(getTimestampToDate(order.orderDate))
-    )}`,
-    deliveryAddress: order.deliveryAddress,
-    billingAddress: order.deliveryAddress,
-    paymentMethod: order.paymentMethod,
-    subTotal: order.subTotal,
-    deliveryFee: order.deliveryFee,
-    platformFee: order.platformFee,
-    discount: order.discount,
-    taxPercentage: order.taxPercentage,
-    taxAmount: order.taxAmount,
-    total: order.finalTotal,
-  });
-};
+    console.log("Navigating to Order Details for order:", order);
+    navigation.navigate(StackNames.AdminOrderDetailsScreen, {
+      order: {
+        id: order.id || '',
+        orderId: order.orderId,
+        placedOn: `${formatTimestampDate(order.orderDate)}`,
+        items: order.items,
+        status: order.status,
+        estimatedDelivery: `${formatDate(
+          getEstimatedDeliveryDate(getTimestampToDate(order.orderDate))
+        )}`,
+        deliveryAddress: order.deliveryAddress,
+        billingAddress: order.deliveryAddress,
+        paymentMethod: order.paymentMethod,
+        subTotal: order.subTotal,
+        deliveryFee: order.deliveryFee,
+        platformFee: order.platformFee,
+        discount: order.discount,
+        taxPercentage: order.taxPercentage,
+        taxAmount: order.taxAmount,
+        total: order.finalTotal,
+        userId: order.userId || '',
+        orderNumber: order.orderNumber || '',
+      },
+    });
+  };
 
-  const toggleOrderExpansion = (orderId: string) => {
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setTimeout(() => setRefreshing(false), 1000);
+  };
+
+  const toggleOrderExpansion = (orderId: any) => {
     const isExpanded = expandedOrder === orderId;
 
     if (isExpanded) {
@@ -113,59 +134,60 @@ export default function OrderTab({navigation, route}: any) {
 
   const renderOrderItem = (order: Order) => {
 
+    const isExpanded = order?.orderId ? expandedOrder === order?.orderId : false;
+    const animatedHeight = order?.orderId && isExpanded
+      ? animatedValues[order?.orderId]?.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, order?.items?.length * 75],
+      }) || new Animated.Value(0)
+      : 0;
 
-    const isExpanded = expandedOrder === order.orderId;
-    const animatedHeight = isExpanded ? animatedValues[order.orderId]?.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, order.items.length * 75],
-    }) || new Animated.Value(0) : 0;
 
+    // const handleAction = (action: string, order: Order & { userId?: string }) => {
+    //   const status = action === 'accept' ? 'confirmed' : 'cancelled';
 
-    const handleAction = async (action: string) => {
-      switch (action) {
-        case 'accept':
-          Alert.alert(
-            'Accept Order',
-            'Are you sure you want to accept this order?',
-            [
-              {
-                text: 'Cancel',
-                onPress: () => null
-              },
-              {
-                text: 'Confirm',
-                onPress: () => null
-              }
-            ]
-          );
-          break;
-        case 'reject':
-          Alert.alert(
-            'Reject Order',
-            'Are you sure you want to reject this order?',
-            [
-              {
-                text: 'Cancel',
-                onPress: () => null
-              },
-              {
-                text: 'Confirm',
-                onPress: () => null
-              }
-            ]
-          );
-          break;
-      }
-    }
+    //   Alert.alert(
+    //     `${action === 'accept' ? 'Accept' : 'Reject'} Order`,
+    //     `Are you sure you want to ${action} this order?`,
+    //     [
+    //       { text: 'Cancel', style: 'cancel' },
+    //       {
+    //         text: 'Confirm',
+    //         onPress: async () => {
+    //           if (order.userId && order.id) {
+    //             console.log(
+    //               `Updating order ${order.orderId} (docId: ${order.id}) for user ${order.userId} to status ${status}`
+    //             );
+    //             try {
+    //               await firebaseService.updateOrder(order.userId, order.id, { status });
+
+    //               // ✅ Show success message
+    //               Alert.alert(
+    //                 "Success",
+    //                 `Order has been ${status === "confirmed" ? "accepted" : "rejected"} successfully.`
+    //               );
+    //             } catch (error) {
+    //               console.error("Failed to update order status:", error);
+    //               Alert.alert("Error", "Failed to update order status. Please try again.");
+    //             }
+    //           } else {
+    //             console.warn("Missing userId or Firestore doc id for updating order", order);
+    //           }
+    //         }
+    //       }
+    //     ]
+    //   );
+    // };
 
     return (
       <View key={order.orderId} style={styles.orderCard}>
         <TouchableOpacity
           style={styles.orderHeader}
-          onPress={() => toggleOrderExpansion(order.orderId)}
+          onPress={() => toggleOrderExpansion(order?.orderId)}
         >
           <View style={styles.orderHeaderLeft}>
-            <Text style={styles.orderNumber}>#{order.orderId}</Text>
+            {/* <Text style={styles.orderNumber}>#{order.orderId}</Text> */}
+            <Text style={styles.orderNumber}>{order.orderNumber || 'NA'}</Text>
             <Text style={styles.orderDate}>{formatTimestampDate(order.orderDate)}</Text>
           </View>
 
@@ -173,39 +195,50 @@ export default function OrderTab({navigation, route}: any) {
             <View style={styles.statusContainer}>
               {getStatusIcon(order.status)}
               <Text style={[styles.statusText, { color: getStatusColor(order.status) }]}>
-                {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                {order?.status?.charAt(0).toUpperCase() + order?.status?.slice(1)}
               </Text>
             </View>
-            <Text style={styles.orderTotal}>₹{order.finalTotal.toLocaleString()}</Text>
+            <Text style={styles.orderTotal}>{formatCurrency(order?.finalTotal)}</Text>
           </View>
         </TouchableOpacity>
 
         <Animated.View style={[styles.orderItems, { height: animatedHeight }]}>
-          {order.items.map((item: OrderItem, index: number) => (
+          {order?.items?.map((item: OrderItem, index: number) => (
             <View key={index} style={styles.orderItem}>
               <Image source={{ uri: item.image }} style={styles.itemImage} />
               <View style={styles.itemDetails}>
                 <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
                 <Text style={styles.itemVariant}>{item.size} • {item.color}</Text>
-                <Text style={styles.itemPrice}>₹{item.price.toLocaleString()} × {item.quantity} QTY</Text>
+                <Text style={styles.itemPrice}>{formatCurrency(item.price)} × {item.quantity} QTY</Text>
               </View>
             </View>
           ))}
         </Animated.View>
 
         <View style={styles.orderActions}>
-          {
+          {/* {
             order.status === 'pending' && (
               <>
-                <TouchableOpacity style={[styles.actionButton, styles.secondaryButton, { backgroundColor: Colors.light.success, borderColor: Colors.light.success }]} onPress={() => handleAction('accept')}>
-                  <Text style={[styles.actionButtonText, styles.secondaryButtonText, { color: '#fff' }]}>Accept</Text>
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.secondaryButton, { backgroundColor: Colors.light.success, borderColor: Colors.light.success }]}
+                  onPress={() => handleAction('accept', order)}
+                >
+                  <Text style={[styles.actionButtonText, styles.secondaryButtonText, { color: '#fff' }]}>
+                    Accept
+                  </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.actionButton, styles.secondaryButton, { backgroundColor: Colors.light.danger, borderColor: Colors.light.danger }]} onPress={() => handleAction('reject')}>
-                  <Text style={[styles.actionButtonText, styles.secondaryButtonText, { color: '#fff' }]}>Reject</Text>
+
+                <TouchableOpacity
+                  style={[styles.actionButton, styles.secondaryButton, { backgroundColor: Colors.light.danger, borderColor: Colors.light.danger }]}
+                  onPress={() => handleAction('reject', order)}
+                >
+                  <Text style={[styles.actionButtonText, styles.secondaryButtonText, { color: '#fff' }]}>
+                    Reject
+                  </Text>
                 </TouchableOpacity>
               </>
             )
-          }
+          } */}
           <TouchableOpacity style={[styles.actionButton]} onPress={() => goToOrder(order)}>
             <Text style={[styles.actionButtonText]}>View Details</Text>
           </TouchableOpacity>
@@ -231,7 +264,11 @@ export default function OrderTab({navigation, route}: any) {
           <Text style={styles.headerTitle}>Orders ({orders.length})</Text>
         </View>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <View style={styles.ordersContainer}>
           {orders.map(renderOrderItem)}
         </View>

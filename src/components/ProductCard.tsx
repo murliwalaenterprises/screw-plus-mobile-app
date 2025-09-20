@@ -5,7 +5,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useStore } from '../store/useStore';
 import { navigationRef, reset } from '../helper/NavigationService';
 import { Product } from '../types/product';
-import { getProductVariant } from '../services/utilityService';
+import { formatCurrency, getProductVariant } from '../services/utilityService';
 import { StackNames } from '../constants/stackNames';
 
 interface ProductCardProps {
@@ -70,9 +70,9 @@ export default function ProductCard({ product, width }: ProductCardProps) {
         </View>
 
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>₹{getProductVariant(product).price}</Text>
+          <Text style={styles.price}>{formatCurrency(getProductVariant(product).price)}</Text>
           {(getProductVariant(product).originalPrice !== getProductVariant(product).price) && (
-            <Text style={styles.originalPrice}>₹{getProductVariant(product).originalPrice}</Text>
+            <Text style={styles.originalPrice}> {formatCurrency(getProductVariant(product).originalPrice)}</Text>
           )}
         </View>
       </View>

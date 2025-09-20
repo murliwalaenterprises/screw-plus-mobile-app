@@ -6,7 +6,6 @@ import {
 } from 'react-native-safe-area-context';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';  // ⬅️ add this
 import RootStack from './src/routers/RootStack';
-import LoginScreen from './src/auth/LoginScreen';
 import { navigationRef } from './src/helper/NavigationService';
 import { Colors } from './src/constants/Colors';
 import AuthWrapper from './src/components/AuthWrapper';

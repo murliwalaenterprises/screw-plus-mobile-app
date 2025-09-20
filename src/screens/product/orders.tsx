@@ -1,5 +1,5 @@
 
-import { CheckCircle, Clock, Package, ShoppingBag, Truck, XCircle } from 'lucide-react-native';
+import { Check, CheckCircle, Clock, Package, ShoppingBag, Truck, XCircle } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   Animated,
@@ -14,7 +14,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { Order, OrderItem } from '../../types/types';
 import { firebaseService } from '../../services/firebaseService';
-import { formatDate, formatTimestampDate, getEstimatedDeliveryDate, getStatusColor, getTimestampToDate } from '../../services/utilityService';
+import { formatCurrency, formatDate, formatTimestampDate, getEstimatedDeliveryDate, getStatusColor, getTimestampToDate, sortByDateDesc } from '../../services/utilityService';
 import { StackNames } from '../../constants/stackNames';
 import { Colors } from '../../constants/Colors';
 import TrackOrder from './TrackOrder';
@@ -27,6 +27,8 @@ const getStatusIcon = (status: string) => {
       return <Package size={16} color="#3742fa" />;
     case 'shipped':
       return <Truck size={16} color="#2f3542" />;
+    case 'confirmed':
+      return <Check size={16} color="#2ed573" />;
     case 'delivered':
       return <CheckCircle size={16} color="#2ed573" />;
     case 'cancelled':
@@ -36,28 +38,38 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-export default function OrdersScreen({navigation, router}: any) {
+export default function OrdersScreen({ navigation, router }: any) {
   const [orders, setOrder] = useState<Order[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [animatedValues, setAnimatedValues] = useState<Record<string, Animated.Value>>({});
-  const { user }: any = useAuth();
-  const userId = user?.uid;
+  const { user, userProfile }: any = useAuth();
+  const userId = user?.uid || userProfile?.uid;
 
   const [showTrackOrder, setShowTrackOrder] = React.useState<boolean>(false);
 
+
   useEffect(() => {
     const unsubscribe = firebaseService.subscribeToOrder(userId, (data) => {
-      setOrder(data);
+      const sortedData = sortByDateDesc(data, "orderDate");
+
+      setOrder(sortedData);
+
       const values: Record<string, Animated.Value> = {};
-      data.forEach(order => { values[order.orderId] = new Animated.Value(1); });
+      // data.forEach(order => { values[order.orderId] = new Animated.Value(1); });
       setAnimatedValues(values);
     });
+
     return () => unsubscribe();
   }, []);
 
-  const toggleOrderExpansion = (orderId: string) => {
-    const isExpanded = expandedOrder === orderId;
+  console.log("Orders:", orders);
 
+  const toggleOrderExpansion = (orderId: any) => {
+    if (!animatedValues[orderId]) {
+      animatedValues[orderId] = new Animated.Value(0);
+    }
+
+    const isExpanded = expandedOrder === orderId;
     if (isExpanded) {
       Animated.timing(animatedValues[orderId], {
         toValue: 0,
@@ -66,6 +78,7 @@ export default function OrdersScreen({navigation, router}: any) {
       }).start(() => setExpandedOrder(null));
     } else {
       setExpandedOrder(orderId);
+      console.log("Set expanded order to:", orderId);
       Animated.timing(animatedValues[orderId], {
         toValue: 1,
         duration: 300,
@@ -74,16 +87,19 @@ export default function OrdersScreen({navigation, router}: any) {
     }
   };
 
+
   const goToOrder = (order: Order) => {
-    router?.push({
-      pathname: "/order/[id]",
-      params: {
-        id: order.id || '', // required
+    console.log("Navigating to Order Details for order:", order);
+    navigation.navigate(StackNames.OrderDetailsScreen, {
+      order: {
+        id: order.id || '',
         orderId: order.orderId,
         placedOn: `${formatTimestampDate(order.orderDate)}`,
-        items: JSON.stringify(order.items), // 👈 stringify
+        items: order.items,
         status: order.status,
-        estimatedDelivery: `${formatDate(getEstimatedDeliveryDate(getTimestampToDate(order.orderDate)))}`,
+        estimatedDelivery: `${formatDate(
+          getEstimatedDeliveryDate(getTimestampToDate(order.orderDate))
+        )}`,
         deliveryAddress: order.deliveryAddress,
         billingAddress: order.deliveryAddress,
         paymentMethod: order.paymentMethod,
@@ -94,26 +110,29 @@ export default function OrdersScreen({navigation, router}: any) {
         taxPercentage: order.taxPercentage,
         taxAmount: order.taxAmount,
         total: order.finalTotal,
+        orderNumber: order.orderNumber || '',
       },
     });
-
   };
 
   const renderOrderItem = (order: Order) => {
-    const isExpanded = expandedOrder === order.orderId;
-    const animatedHeight = isExpanded ? animatedValues[order.orderId]?.interpolate({
-      inputRange: [0, 1],
-      outputRange: [0, order.items.length * 75],
-    }) || new Animated.Value(0) : 0;
+    const isExpanded = order?.orderId ? expandedOrder === order?.orderId : false;
+    const animatedHeight = order?.orderId && isExpanded
+      ? animatedValues[order?.orderId]?.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, order?.items?.length * 75],
+      }) || new Animated.Value(0)
+      : 0;
 
     return (
       <View key={order.orderId} style={styles.orderCard}>
         <TouchableOpacity
           style={styles.orderHeader}
-          onPress={() => toggleOrderExpansion(order.orderId)}
+          onPress={() => toggleOrderExpansion(order.id)}
+        // onPress={() => console.log('Order pressed')}
         >
           <View style={styles.orderHeaderLeft}>
-            <Text style={styles.orderNumber}>#{order.orderId}</Text>
+            <Text style={styles.orderNumber}>{order.orderNumber}</Text>
             <Text style={styles.orderDate}>{formatTimestampDate(order.orderDate)}</Text>
           </View>
 
@@ -124,18 +143,20 @@ export default function OrdersScreen({navigation, router}: any) {
                 {order.status?.charAt(0)?.toUpperCase() + order?.status?.slice(1)}
               </Text>
             </View>
-            <Text style={styles.orderTotal}>₹{order?.finalTotal?.toLocaleString()}</Text>
+            <Text style={styles.orderTotal}>{formatCurrency(order?.finalTotal)}</Text>
           </View>
         </TouchableOpacity>
 
-        <Animated.View style={[styles.orderItems, { height: animatedHeight }]}>
+        <Animated.View
+          style={[styles.orderItems, { height: animatedHeight }]}
+        >
           {order.items?.map((item: OrderItem, index: number) => (
             <View key={index} style={styles.orderItem}>
               <Image source={{ uri: item?.image }} style={styles.itemImage} />
               <View style={styles.itemDetails}>
                 <Text style={styles.itemName} numberOfLines={1}>{item?.name}</Text>
                 <Text style={styles.itemVariant}>{item.size} • {item?.color}</Text>
-                <Text style={styles.itemPrice}>₹{item.price.toLocaleString()} × {item?.quantity} QTY</Text>
+                <Text style={styles.itemPrice}>{formatCurrency(item.price)} × {item?.quantity} QTY</Text>
               </View>
             </View>
           ))}
@@ -164,7 +185,7 @@ export default function OrdersScreen({navigation, router}: any) {
     );
   };
 
-  if (orders.length === 0) {
+  if (orders?.length === 0) {
     return (
       <SafeAreaView style={styles.container} edges={['left', 'right']}>
         <View style={styles.emptyContainer}>
