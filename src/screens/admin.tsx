@@ -15,6 +15,8 @@ import CategoriesTab from '../components/admin/CategoriesTab';
 import BannersTab from '../components/admin/BannersTab';
 import StatsTab from '../components/admin/StatsTab';
 import OrderTab from '../components/admin/OrderTab';
+import ScreenHeader from '../components/ScreenHeader';
+import { StackNames } from '../constants/stackNames';
 
 const { width } = Dimensions.get('window');
 
@@ -56,7 +58,11 @@ export default function AdminScreen({navigation, route}: any) {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
+       <ScreenHeader
+                title={StackNames.AdminScreen}
+                navigation={navigation}
+            />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

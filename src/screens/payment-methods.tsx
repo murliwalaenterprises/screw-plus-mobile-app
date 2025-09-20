@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../components/ScreenHeader';
+import { StackNames } from '../constants/stackNames';
 
 interface PaymentMethod {
   id: string;
@@ -82,7 +84,7 @@ const getPaymentTypeColor = (type: string) => {
   }
 };
 
-export default function PaymentMethodsScreen() {
+export default function PaymentMethodsScreen({ navigation }: any) {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(mockPaymentMethods);
   const [animatedValues] = useState(() =>
     mockPaymentMethods.reduce((acc, method) => {
@@ -218,7 +220,11 @@ export default function PaymentMethodsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
+      <ScreenHeader
+      title={StackNames.PaymentMethodsScreen}
+      navigation={navigation}  
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.paymentMethodsContainer}>
           {paymentMethods.map(renderPaymentMethodCard)}

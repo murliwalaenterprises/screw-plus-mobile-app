@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ScreenHeader from '../components/ScreenHeader';
+import { StackNames } from '../constants/stackNames';
 
 interface Notification {
   id: string;
@@ -98,7 +100,7 @@ const getNotificationColor = (type: string) => {
   }
 };
 
-export default function NotificationsScreen() {
+export default function NotificationsScreen({ navigation }: any) {
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
   const [settings, setSettings] = useState<NotificationSettings>({
     orderUpdates: true,
@@ -283,7 +285,11 @@ export default function NotificationsScreen() {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
+       <ScreenHeader
+                title={StackNames.NotificationsScreen}
+                navigation={navigation}
+            />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Notifications</Text>
         <View style={styles.headerActions}>

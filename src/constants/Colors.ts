@@ -43,4 +43,6 @@ export const Colors = {
   },
   defaultBlack: '#000',
   defaultWhite: '#fff',
+  StatusBarBg: '#fcfbfc',
+  StatusBarTextColor: '#222',
 };

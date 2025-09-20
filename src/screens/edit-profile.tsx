@@ -23,6 +23,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../constants/Colors';
+import ScreenHeader from '../components/ScreenHeader';
+import { StackNames } from '../constants/stackNames';
 
 export default function EditProfileScreen({navigation}: any) {
     const { userProfile, updateUserProfile, user } = useAuth();
@@ -84,7 +86,11 @@ export default function EditProfileScreen({navigation}: any) {
     };
 
     return (
-        <SafeAreaView style={styles.container} edges={['left', 'right']}>
+        <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
+             <ScreenHeader
+                title={StackNames.EditProfile}
+                navigation={navigation}
+            />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.keyboardView}

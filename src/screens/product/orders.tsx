@@ -20,6 +20,7 @@ import { formatCurrency, formatDate, formatTimestampDate, getEstimatedDeliveryDa
 import { StackNames } from '../../constants/stackNames';
 import { Colors } from '../../constants/Colors';
 import TrackOrder from './TrackOrder';
+import ScreenHeader from '../../components/ScreenHeader';
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -189,7 +190,11 @@ export default function OrdersScreen({ navigation, router }: any) {
 
   if (orders?.length === 0) {
     return (
-      <SafeAreaView style={styles.container} edges={['left', 'right']}>
+      <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
+         <ScreenHeader
+                title={StackNames.Orders}
+                navigation={navigation}
+            />
         <View style={styles.emptyContainer}>
           <ShoppingBag size={64} color="#ccc" />
           <Text style={styles.emptyTitle}>No orders yet</Text>
@@ -208,7 +213,11 @@ export default function OrdersScreen({ navigation, router }: any) {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+    <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
+       <ScreenHeader
+                title={StackNames.Orders}
+                navigation={navigation}
+            />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.ordersContainer}>
           {orders.map(renderOrderItem)}

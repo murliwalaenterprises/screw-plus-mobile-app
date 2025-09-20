@@ -10,10 +10,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/stackNames';
 import { useAuth } from '../../context/AuthContext';
+import ScreenHeader from '../../components/ScreenHeader';
 
-export default function CartScreen({navigation}: any) {
+export default function CartScreen({ navigation }: any) {
   const { cart, removeFromCart, updateCartQuantity, getCartTotal, clearCart } = useStore();
-  const { user , userProfile} = useAuth();
+  const { user, userProfile } = useAuth();
   const isLoggedIn = !!userProfile;
 
   const handleQuantityChange = (item: CartItem, newQuantity: number) => {
@@ -24,7 +25,7 @@ export default function CartScreen({navigation}: any) {
     }
   };
 
-  const handleCheckout = () =>{
+  const handleCheckout = () => {
     if (!isLoggedIn) {
       navigation.navigate(StackNames.AuthStack);
       return;
@@ -100,7 +101,11 @@ export default function CartScreen({navigation}: any) {
 
   if (cart.length === 0) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['left', 'right']}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
+        <ScreenHeader
+          title={StackNames.Cart}
+          navigation={navigation}
+        />
         <View style={styles.container}>
           <View style={styles.emptyContainer}>
             <ShoppingBag size={64} color="#ccc" />
@@ -152,7 +157,7 @@ export default function CartScreen({navigation}: any) {
               colors={[Colors.light.primaryButtonBackground.start, Colors.light.primaryButtonBackground.end]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              style = {{borderRadius: 8}}
+              style={{ borderRadius: 8 }}
             >
               <View style={styles.checkoutButton}>
                 <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>

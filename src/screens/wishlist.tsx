@@ -16,6 +16,7 @@ import { firebaseService } from '../services/firebaseService';
 import { useStore } from '../store/useStore';
 import ProductCard from '../components/ProductCard';
 import { StackNames } from '../constants/stackNames';
+import ScreenHeader from '../components/ScreenHeader';
 
 export default function WishlistScreen({navigation}: any) {
     const { favorites, clearWishlist, addToCart } = useStore();
@@ -78,7 +79,11 @@ export default function WishlistScreen({navigation}: any) {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['left', 'right']}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top','left', 'right']}>
+             <ScreenHeader
+                title={StackNames.WishListScreen}
+                navigation={navigation}
+            />
             <View style={styles.container}>
 
                 {wishlistProducts.length === 0 ? (

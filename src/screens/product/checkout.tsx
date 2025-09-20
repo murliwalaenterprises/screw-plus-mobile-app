@@ -17,6 +17,7 @@ import LocationSelector from '../../components/LocationSelector';
 import OrderSuccess from './OrderSuccess';
 import { StackNames } from '../../constants/stackNames';
 import { startRazorpayPayment } from '../../services/paymentService';
+import ScreenHeader from '../../components/ScreenHeader';
 // import { sendOrderNotification } from '../../services/notificationService';
 
 export default function CheckoutScreen({ navigation }: any) {
@@ -267,7 +268,11 @@ export default function CheckoutScreen({ navigation }: any) {
 
     if (cart.length === 0) {
         return (
-            <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['left', 'right']}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
+                <ScreenHeader
+                    title={StackNames.Checkout}
+                    navigation={navigation}
+                />
                 <View style={styles.container}>
                     <View style={styles.emptyContainer}>
                         <Text style={styles.emptyText}>Your cart is empty</Text>

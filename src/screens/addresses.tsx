@@ -8,6 +8,8 @@ import { Address } from '../types/types';
 import { firebaseService } from '../services/firebaseService';
 import { formatAddress } from '../services/utilityService';
 import AddressModal from '../components/AddressModal';
+import ScreenHeader from '../components/ScreenHeader';
+import { StackNames } from '../constants/stackNames';
 
 const getAddressIcon = (type: string) => {
   switch (type) {
@@ -134,8 +136,12 @@ export default function AddressesScreen({route, navigation}: any) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['left', 'right']}>
+    <SafeAreaView style={{ flex: 1 }} edges={['top','left', 'right']}>
       {/* header ... */}
+       <ScreenHeader
+                title={StackNames.AddressesScreen}
+                navigation={navigation}
+            />
       <ScrollView style={styles.container}>
         <TouchableOpacity style={styles.addAddressButton} onPress={() => { setEditingAddress(null); setModalVisible(true); }}>
           <Plus size={20} color="#333" />

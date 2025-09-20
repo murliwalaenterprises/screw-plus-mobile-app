@@ -26,6 +26,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { firebaseService } from '../../services/firebaseService';
 import { Select } from '../../components/ui';
 import { OrderStatusOptions } from '../../constants/Constant';
+import ScreenHeader from '../../components/ScreenHeader';
 
 type OrderItem = {
     id: string;
@@ -124,7 +125,11 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
     const items: OrderItem[] = Array.isArray(order.items) ? order.items : [];
 
     return (
-        <SafeAreaView style={styles.container} edges={['left', 'right']}>
+        <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
+             <ScreenHeader
+                title={StackNames.AdminOrderDetailsScreen}
+                navigation={navigation}
+            />
             <View style={styles.container}>
                 <Animated.ScrollView
                     showsVerticalScrollIndicator={false}

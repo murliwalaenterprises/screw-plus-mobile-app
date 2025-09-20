@@ -24,6 +24,7 @@ import { formatCurrency, getStatusColor, paymentMethods } from '../../services/u
 import { StackNames } from '../../constants/stackNames';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AppHeader from '../../components/ScreenHeader';
+import ScreenHeader from '../../components/ScreenHeader';
 
 type OrderItem = {
     id: string;
@@ -68,8 +69,11 @@ export default function OrderDetailsScreen({ navigation, route }: any) {
     const items: OrderItem[] = Array.isArray(order.items) ? order.items : [];
 
     return (
-        <SafeAreaView style={styles.container} edges={['left', 'right']}>
-            <AppHeader title="Order Details" />
+        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+            <ScreenHeader
+                title={StackNames.OrderDetailsScreen}
+                navigation={navigation}
+            />
             <View style={styles.container}>
                 <Animated.ScrollView
                     showsVerticalScrollIndicator={false}
