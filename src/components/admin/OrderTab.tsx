@@ -8,7 +8,6 @@ import {
   RefreshControl,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View
 } from 'react-native';
@@ -19,6 +18,7 @@ import { firebaseService } from '../../services/firebaseService';
 import { formatCurrency, formatDate, formatTimestampDate, getEstimatedDeliveryDate, getStatusColor, getTimestampToDate, sortByDateDesc } from '../../services/utilityService';
 import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/StackNames';
+import AppText from '../ui/AppText';
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -180,18 +180,18 @@ export default function OrderTab({ navigation }: any) {
         >
           <View style={styles.orderHeaderLeft}>
             {/* <Text style={styles.orderNumber}>#{order.orderId}</Text> */}
-            <Text style={styles.orderNumber}>{order.orderNumber || 'NA'}</Text>
-            <Text style={styles.orderDate}>{formatTimestampDate(order.orderDate)}</Text>
+            <AppText style={styles.orderNumber}>{order.orderNumber || 'NA'}</AppText>
+            <AppText variant="small" style={styles.orderDate}>{formatTimestampDate(order.orderDate)}</AppText>
           </View>
 
           <View style={styles.orderHeaderRight}>
             <View style={styles.statusContainer}>
               {getStatusIcon(order.status)}
-              <Text style={[styles.statusText, { color: getStatusColor(order.status) }]}>
+              <AppText variant="small" style={[styles.statusText, { color: getStatusColor(order.status) }]}>
                 {order?.status?.charAt(0).toUpperCase() + order?.status?.slice(1)}
-              </Text>
+              </AppText>
             </View>
-            <Text style={styles.orderTotal}>{formatCurrency(order?.finalTotal)}</Text>
+            <AppText style={styles.orderTotal}>{formatCurrency(order?.finalTotal)}</AppText>
           </View>
         </TouchableOpacity>
 
@@ -200,9 +200,9 @@ export default function OrderTab({ navigation }: any) {
             <View key={index} style={styles.orderItem}>
               <Image source={{ uri: item.image }} style={styles.itemImage} />
               <View style={styles.itemDetails}>
-                <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
-                <Text style={styles.itemVariant}>{item.size} • {item.color}</Text>
-                <Text style={styles.itemPrice}>{formatCurrency(item.price)} × {item.quantity} QTY</Text>
+                <AppText style={styles.itemName} numberOfLines={1}>{item.name}</AppText>
+                <AppText variant="small" style={styles.itemVariant}>{item.size} • {item.color}</AppText>
+                <AppText style={styles.itemPrice}>{formatCurrency(item.price)} × {item.quantity} QTY</AppText>
               </View>
             </View>
           ))}
@@ -233,7 +233,7 @@ export default function OrderTab({ navigation }: any) {
             )
           } */}
           <TouchableOpacity style={[styles.actionButton]} onPress={() => goToOrder(order)}>
-            <Text style={[styles.actionButtonText]}>View Details</Text>
+            <AppText variant="medium" style={[styles.actionButtonText]}>View Details</AppText>
           </TouchableOpacity>
         </View>
       </View>
@@ -244,7 +244,7 @@ export default function OrderTab({ navigation }: any) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#003873" />
-        <Text style={styles.loadingText}>Loading products...</Text>
+        <AppText style={styles.loadingText}>Loading products...</AppText>
       </View>
     );
   }
@@ -253,10 +253,10 @@ export default function OrderTab({ navigation }: any) {
     return (
       <View style={styles.emptyContainer}>
         <ShoppingBag size={64} color="#ccc" />
-        <Text style={styles.emptyTitle}>No orders yet</Text>
-        <Text style={styles.emptySubtitle}>
+        <AppText style={styles.emptyTitle}>No orders yet</AppText>
+        <AppText style={styles.emptySubtitle}>
           Orders will appear here once customers place them.
-        </Text>
+        </AppText>
       </View>
     );
   }
@@ -266,7 +266,7 @@ export default function OrderTab({ navigation }: any) {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Package size={24} color="#003873" />
-          <Text style={styles.headerTitle}>Orders ({orders.length})</Text>
+          <AppText variant="medium" style={styles.headerTitle}>Orders ({orders.length})</AppText>
         </View>
       </View>
       <ScrollView showsVerticalScrollIndicator={false}
@@ -294,7 +294,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    fontSize: 16,
     color: '#6B7280'
   },
   header: {
@@ -312,7 +311,6 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   headerTitle: {
-    fontSize: 18,
     fontWeight: '600',
     color: '#1F2937',
     marginLeft: 8
@@ -356,18 +354,15 @@ const styles = StyleSheet.create({
     marginLeft: 12
   },
   productTitle: {
-    fontSize: 16,
     fontWeight: '600',
     color: '#1F2937',
     marginBottom: 4
   },
   productCategory: {
-    fontSize: 14,
     color: '#6B7280',
     marginBottom: 4
   },
   productPrice: {
-    fontSize: 16,
     fontWeight: '700',
     color: '#059669',
     marginBottom: 4
@@ -377,7 +372,6 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   statText: {
-    fontSize: 12,
     color: '#6B7280',
     marginRight: 8
   },
@@ -391,13 +385,11 @@ const styles = StyleSheet.create({
     paddingVertical: 60
   },
   emptyText: {
-    fontSize: 18,
     fontWeight: '600',
     color: '#4B5563',
     marginTop: 16
   },
   emptySubtext: {
-    fontSize: 14,
     color: '#9CA3AF',
     marginTop: 4
   },
@@ -425,13 +417,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   orderNumber: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 4,
   },
   orderDate: {
-    fontSize: 12,
     color: '#666',
   },
   orderHeaderRight: {
@@ -443,12 +433,10 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   statusText: {
-    fontSize: 12,
     fontWeight: '500',
     marginLeft: 4,
   },
   orderTotal: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
   },
@@ -473,18 +461,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   itemName: {
-    fontSize: 14,
     fontWeight: '500',
     color: '#2162a1',
     marginBottom: 2,
   },
   itemVariant: {
-    fontSize: 12,
     color: '#575959',
     marginBottom: 2,
   },
   itemPrice: {
-    fontSize: 12,
     color: '#0f1111',
     fontWeight: '500',
   },
@@ -512,21 +497,18 @@ const styles = StyleSheet.create({
   },
   actionButtonText: {
     color: Colors.light.primaryButtonText,
-    fontSize: 15,
     fontWeight: '500',
   },
   secondaryButtonText: {
     color: '#333',
   },
   emptyTitle: {
-    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
     marginTop: 16,
     marginBottom: 8,
   },
   emptySubtitle: {
-    fontSize: 16,
     color: '#666',
     textAlign: 'center',
     marginBottom: 24,

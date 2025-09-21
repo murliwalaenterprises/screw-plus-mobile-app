@@ -3,7 +3,6 @@ import React, { useCallback } from "react";
 import {
     View,
     FlatList,
-    Text,
     Dimensions,
     StyleSheet,
     TouchableOpacity,
@@ -49,13 +48,13 @@ const ProductListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <ScreenHeader title={StackNames.ProductListScreen} navigation={navigation}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: scale(20) }}>
                     <TouchableOpacity onPress={() => navigation.navigate(StackNames.SearchResults)}>
-                        <Search size={24} color={Colors.light.homeScreenHeaderForeground} />
+                        <Search size={24} color={Colors.StatusBarTextColor} />
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => navigation.navigate(StackNames.Cart)}>
                         <ShoppingCart
                             size={24}
-                            color={Colors.light.homeScreenHeaderForeground}
+                            color={Colors.StatusBarTextColor}
                         />
                         {cartItemsCount > 0 && (
                             <View style={styles.cartBadge}>
@@ -69,7 +68,7 @@ const ProductListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             <View style={styles.listContainer}>
                 {products.length === 0 && !loading ? (
                     <View style={styles.noProducts}>
-                        <Text style={styles.noProductsText}>No products found</Text>
+                        <AppText style={styles.noProductsText}>No products found</AppText>
                     </View>
                 ) : (
                     <FlatList
@@ -124,8 +123,8 @@ const styles = StyleSheet.create({
     },
     cartBadge: {
         position: 'absolute',
-        top: scale(2),
-        right: scale(2),
+        top: scale(-10),
+        right: scale(-10),
         backgroundColor: '#ff4757',
         borderRadius: scale(10),
         minWidth: scale(20),
@@ -135,7 +134,6 @@ const styles = StyleSheet.create({
     },
     cartBadgeText: {
         color: '#fff',
-        fontSize: scale(10), // was 12
         fontWeight: '600',
     },
 });

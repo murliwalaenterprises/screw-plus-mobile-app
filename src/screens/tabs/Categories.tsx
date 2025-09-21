@@ -149,7 +149,7 @@ export default function CategoriesScreen({ navigation }: any) {
                     <Image source={{ uri: item.image }} style={styles.subcategoryImage} />
                   </View>
                 ) : (
-                  <Sparkles size={24} color={Colors.light.homeScreenHeaderForeground} />
+                  <Sparkles size={scale(20)} color={activeCategory.id === item.id ? '#222' : '#ccc'} />
                 )}
                 <AppText
                   variant="small"

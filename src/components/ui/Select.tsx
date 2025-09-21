@@ -1,8 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList, Alert, TextInput } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList, Alert, TextInput } from 'react-native';
 import Modal from 'react-native-modal';
+import AppText from './AppText';
+import { Colors } from '../../constants/Colors';
+import { moderateScale } from 'react-native-size-matters';
 
 type Option = { label: string; value: string; disabled?: boolean; };
 
@@ -93,9 +96,9 @@ const Select: React.FC<SelectProps> = ({ label, value, valueStr, onChange, optio
                 onPress={() => setModalVisible(true)}
                 disabled={disabled}
             >
-                <Text style={{ color: value ? '#000' : '#888' }}>
+                <AppText style={{ color: value ? '#000' : '#888' }}>
                     {value ? items.find((i) => i.value === value)?.label || valueStr : '-- Select --'}
-                </Text>
+                </AppText>
             </TouchableOpacity>
 
             {/* Bottom Sheet Modal */}
@@ -103,6 +106,7 @@ const Select: React.FC<SelectProps> = ({ label, value, valueStr, onChange, optio
                 isVisible={modalVisible}
                 onBackdropPress={() => setModalVisible(false)}
                 style={styles.modal}
+                avoidKeyboard
             >
                 <View style={styles.modalContent}>
                     {loading ? (
@@ -110,7 +114,7 @@ const Select: React.FC<SelectProps> = ({ label, value, valueStr, onChange, optio
                     ) : (
                         <>
                             <View style={{ marginBottom: 10, paddingHorizontal: 2 }}>
-                                <Text style={{ fontWeight: '500' }}>{label}</Text>
+                                <AppText variant="medium" style={{ fontWeight: '500' }}>{label}</AppText>
                             </View>
 
                             {/* Search Input */}
@@ -128,16 +132,16 @@ const Select: React.FC<SelectProps> = ({ label, value, valueStr, onChange, optio
                                     const isSelected = item.value === (selectedValue || value);
                                     return (
                                         <TouchableOpacity
-                                             style={[
+                                            style={[
                                                 styles.option,
                                                 isSelected && styles.optionSelected,
-                                                item.disabled && { opacity: 0.5 }  
+                                                item.disabled && { opacity: 0.5 }
                                             ]}
                                             onPress={() => setSelectedValue(item.value)}
                                             disabled={item?.disabled}
                                         >
-                                            <Text style={{ flex: 1 }}>{item.label}</Text>
-                                            {isSelected && <Text style={{ color: 'green', fontWeight: 'bold' }}>✔</Text>}
+                                            <AppText variant="medium" style={{ flex: 1 }}>{item.label}</AppText>
+                                            {isSelected && <AppText style={{ color: 'green', fontWeight: 'bold' }}>✔</AppText>}
                                         </TouchableOpacity>
                                     );
                                 }}
@@ -148,16 +152,16 @@ const Select: React.FC<SelectProps> = ({ label, value, valueStr, onChange, optio
                                     style={[styles.actionButton, styles.secondaryButton]}
                                     onPress={handleClear}
                                 >
-                                    <Text style={[styles.actionButtonText, styles.secondaryButtonText]}>
+                                    <AppText variant="medium" style={[styles.actionButtonText, styles.secondaryButtonText]}>
                                         Clear
-                                    </Text>
+                                    </AppText>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
                                     style={styles.actionButton}
                                     onPress={handleConfirm}
                                 >
-                                    <Text style={styles.actionButtonText}>Confirm</Text>
+                                    <AppText variant="medium" style={styles.actionButtonText}>Confirm</AppText>
                                 </TouchableOpacity>
                             </View>
                         </>
@@ -170,7 +174,7 @@ const Select: React.FC<SelectProps> = ({ label, value, valueStr, onChange, optio
 
 const styles = StyleSheet.create({
     container: { marginVertical: 8 },
-    label: { fontSize: 14, marginBottom: 4, color: '#333' },
+    label: { marginBottom: 4, color: '#333' },
     inputBox: {
         borderWidth: 1,
         borderColor: '#ccc',
@@ -195,6 +199,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         padding: 8,
         marginBottom: 10,
+        fontSize: moderateScale(16)
     },
     option: {
         padding: 12,
@@ -213,10 +218,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginTop: 20,
         gap: 12,
+        marginBottom: 20
     },
     actionButton: {
         flex: 1,
-        backgroundColor: '#3B82F6',
+        backgroundColor: Colors.Primary,
         paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
@@ -225,15 +231,14 @@ const styles = StyleSheet.create({
     secondaryButton: {
         backgroundColor: 'transparent',
         borderWidth: 1,
-        borderColor: '#3B82F6',
+        borderColor: Colors.Primary,
     },
     actionButtonText: {
-        fontSize: 15,
         fontWeight: '500',
         color: '#FFFFFF',
     },
     secondaryButtonText: {
-        color: '#3B82F6',
+        color: Colors.Primary,
     },
 });
 

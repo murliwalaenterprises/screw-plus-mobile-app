@@ -42,7 +42,7 @@ export default function CartScreen({ navigation }: any) {
 
   const renderCartItem = ({ item }: { item: CartItem }) => {
     const selectedVariant: any = item.product.variants.find(product => product.size === item.selectedSize && product.color === item.selectedColor);
-    const isOutOfStock = item.quantity >= selectedVariant.stock;
+    const isOutOfStock = item.quantity >= Number(selectedVariant?.stock);
     return (
       <View style={styles.cartItem}>
         <Image source={{ uri: item.product.image }} style={styles.itemImage} />

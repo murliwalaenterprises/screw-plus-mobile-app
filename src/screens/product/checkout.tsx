@@ -311,7 +311,7 @@ export default function CheckoutScreen({ navigation }: any) {
                     {/* Delivery Address */}
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <MapPin size={20} color={Colors.light.primaryButtonBackground.end} />
+                            <MapPin size={20} color={Colors.Primary} />
                             <AppText style={styles.sectionTitle}>Delivery Address</AppText>
                         </View>
 
@@ -355,7 +355,7 @@ export default function CheckoutScreen({ navigation }: any) {
                     {/* Payment Method */}
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
-                            <CreditCard size={20} color={Colors.light.primaryButtonBackground.end} />
+                            <CreditCard size={20} color={Colors.Primary} />
                             <AppText style={styles.sectionTitle}>Payment Method</AppText>
                         </View>
                         {paymentMethods.map((method) => (
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
     selectedOption: {
         backgroundColor: '#e8f2ff',
         borderWidth: 1,
-        borderColor: Colors.light.primaryButtonBackground.end,
+        borderColor: Colors.Primary,
     },
     radioButton: {
         width: 20,
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
         width: 10,
         height: 10,
         borderRadius: 5,
-        backgroundColor: Colors.light.primaryButtonBackground.end,
+        backgroundColor: Colors.Primary,
     },
     addressText: {
         color: '#333',

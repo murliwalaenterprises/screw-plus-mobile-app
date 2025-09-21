@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Colors } from '../constants/Colors';
@@ -52,9 +53,11 @@ export default function LocationSelector({ visible, onClose, getLocations }: Loc
             style={styles.locationItem}
             onPress={() => handleSelectLocation(item)}
         >
-            <MapPin size={20} color="#666" />
-            <Text style={styles.locationText}>{item.label}</Text>
-            {selectedLocation === item.id && (<CheckCircle size={20} color={Colors.light.primaryButtonBackground.end} />)}
+            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+                <MapPin size={20} color="#666" />
+                <Text style={styles.locationText}>{item.label}</Text>
+            </View>
+            {selectedLocation === item.id && (<CheckCircle size={20} color={Colors.Primary} />)}
         </TouchableOpacity>
     );
 
@@ -81,27 +84,27 @@ export default function LocationSelector({ visible, onClose, getLocations }: Loc
         >
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Select Location</Text>
+                    <Text style={styles.title}>Choose a delivery address</Text>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
                         <X size={24} color="#333" />
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.searchContainer}>
+                {/* <View style={styles.searchContainer}>
                     <Search size={20} color="#666" style={styles.searchIcon} />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder="Search for your city"
+                        placeholder="Search your location"
                         value={searchQuery}
                         onChangeText={setSearchQuery}
                         autoCapitalize="words"
                     />
-                </View>
+                </View> */}
 
                 {isLoading ? (
                     // 🔹 Loader state
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', maxHeight: 100 }}>
-                        <ActivityIndicator size="large" color={Colors.light.primaryButtonBackground.end} />
+                        <ActivityIndicator size="small" color={Colors.Primary} />
                     </View>
                 ) : filteredLocations.length === 0 ? (
                     // 🔹 Empty state
@@ -173,6 +176,7 @@ const styles = StyleSheet.create({
     },
     locationItem: {
         flexDirection: 'row',
+        justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: 16,
         paddingHorizontal: 16,
@@ -184,6 +188,6 @@ const styles = StyleSheet.create({
         color: '#333',
         marginHorizontal: 8,
         flex: 1,
-        width: '84%',
+        maxWidth: '80%',
     },
 });

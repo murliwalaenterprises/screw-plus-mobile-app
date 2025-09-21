@@ -41,8 +41,8 @@ export default function WishlistScreen({ navigation }: any) {
 
     const handleAddAllToCart = () => {
         wishlistProducts.forEach(product => {
-            const size = product.sizes?.[0] || "Default Size";
-            const color = product.colors?.[0] || "Default Color";
+            const size = product.variants?.[0].size || "Default Size";
+            const color = product.variants?.[0].color || "Default Color";
             addToCart(product, size, color);
         });
 
