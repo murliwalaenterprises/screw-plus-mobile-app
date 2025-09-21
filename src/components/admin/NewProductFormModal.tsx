@@ -1,8 +1,9 @@
+/* eslint-disable radix */
+/* eslint-disable react-native/no-inline-styles */
 
 import {
   ChevronDown,
   PlusCircle,
-  Save,
   Trash2,
   X,
 } from "lucide-react-native";
@@ -317,14 +318,15 @@ export default function NewProductFormModal({
             {product ? "Edit Product" : "Add Product"}
           </Text>
           <TouchableOpacity
-            style={styles.saveButton}
             onPress={handleSave}
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
+              <ActivityIndicator size="small" color={'#222'} />
             ) : (
-              <Save size={20} color="#FFFFFF" />
+              <Text style={styles.title}>
+                Save
+              </Text>
             )}
           </TouchableOpacity>
         </View>

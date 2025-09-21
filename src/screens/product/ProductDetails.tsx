@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-native/no-inline-styles */
 
 import { ArrowLeft, Heart, Share2, ShoppingCart, Star } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -21,7 +24,8 @@ import { useStore } from '../../store/useStore';
 import { firebaseService } from '../../services/firebaseService';
 import { formatCurrency, getDiscountPercentage, getProductVariant } from '../../services/utilityService';
 import { Colors } from '../../constants/Colors';
-import { StackNames } from '../../constants/stackNames';
+import { StackNames } from '../../constants/StackNames';
+import { scale } from 'react-native-size-matters';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HEADER_HEIGHT = 300;
@@ -112,17 +116,12 @@ export default function ProductDetailScreen({ navigation, route }: any) {
     }
   };
 
-
   const handleShare = async () => {
-    try {
-      console.log('Sharing product:', product);
-      await Share.share({
-        message: `Check out this amazing product: ${product.title} - ${formatCurrency(getProductVariant(product).price)}`,
-        url: product.image,
-      });
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
+    console.log('Sharing product:', product);
+    await Share.share({
+      message: `Check out this amazing product: ${product.title} - ${formatCurrency(getProductVariant(product).price)}`,
+      url: product.image,
+    });
   };
 
   if (loading) {
@@ -206,13 +205,12 @@ export default function ProductDetailScreen({ navigation, route }: any) {
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
       <View style={styles.container}>
-
         {/* Animated Header */}
         <Animated.View style={[styles.animatedHeader, { opacity: headerOpacity, paddingTop: insets.top }]}>
           <View style={styles.headerContent}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
               <TouchableOpacity style={[styles.floatingButton, { backgroundColor: 'transparent' }]}
-                onPress={() => navigation.navigate(StackNames.MainAppStack)}
+                onPress={() => navigation.goBack()}
               >
                 <ArrowLeft size={20} color={'#000'} />
               </TouchableOpacity>
@@ -246,9 +244,6 @@ export default function ProductDetailScreen({ navigation, route }: any) {
                   fill={isFavorite ? 'red' : 'none'}
                 />
               </TouchableOpacity>
-              <TouchableOpacity style={[styles.floatingButton, { backgroundColor: 'transparent' }]} onPress={handleShare}>
-                <Share2 size={20} color={'#000'} />
-              </TouchableOpacity>
             </View>
           </View>
         </Animated.View>
@@ -256,7 +251,7 @@ export default function ProductDetailScreen({ navigation, route }: any) {
         {/* Floating Header Buttons */}
         <View style={[styles.floatingHeader, { paddingTop: insets.top + 12 }]}>
           <TouchableOpacity style={styles.floatingButton}
-            onPress={() => navigation.navigate(StackNames.MainAppStack)}
+            onPress={() => navigation.goBack()}
           >
             <ArrowLeft size={20} color={'#fff'} />
           </TouchableOpacity>
@@ -277,9 +272,6 @@ export default function ProductDetailScreen({ navigation, route }: any) {
                 color={'#fff'}
                 fill={isFavorite ? '#fff' : 'none'}
               />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.floatingButton} onPress={handleShare}>
-              <Share2 size={20} color={'#fff'} />
             </TouchableOpacity>
           </View>
         </View>
@@ -320,22 +312,32 @@ export default function ProductDetailScreen({ navigation, route }: any) {
               </ScrollView>
 
               {/* Image Indicators */}
-              <View style={styles.imageIndicators}>
-                {product?.images?.map((_: any, index: number) => (
-                  <View
-                    key={index}
-                    style={[
-                      styles.indicator,
-                      index === currentImageIndex && styles.activeIndicator,
-                    ]}
-                  />
-                ))}
-              </View>
+              {
+                product?.images.length > 1 && (
+                  <View style={styles.imageIndicators}>
+                    {product?.images?.map((_: any, index: number) => (
+                      <View
+                        key={index}
+                        style={[
+                          styles.indicator,
+                          index === currentImageIndex && styles.activeIndicator,
+                        ]}
+                      />
+                    ))}
+                  </View>
+                )
+              }
             </Animated.View>
           </View>
 
           <View style={styles.content}>
-            <Text style={styles.brand}>{product.brand}</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+              <Text style={styles.brand}>{product.category}</Text>
+              <TouchableOpacity onPress={handleShare} style={{ backgroundColor: '#f3f2f2cc', padding: scale(8), borderRadius: 100 }}>
+                <Share2 size={scale(16)} color={'#222'} />
+              </TouchableOpacity>
+            </View>
+
             <Text style={styles.title}>{product.title}</Text>
 
             <View style={styles.ratingContainer}>
@@ -433,7 +435,6 @@ export default function ProductDetailScreen({ navigation, route }: any) {
                     ))}
                 </View> */}
 
-
                 <View style={styles.optionsRow}>
                   {[...new Set(product.variants.filter((variant: any) => variant.size === selectedOptions.size).map((v: any) => v.color))].map(
                     (color: any, index) => (
@@ -459,8 +460,6 @@ export default function ProductDetailScreen({ navigation, route }: any) {
                 </View>
               </View>
             )}
-
-
 
             {/* Attributes */}
             {Array.isArray(product.attributes) && product.attributes.length > 0 && (
@@ -538,15 +537,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   imageContainer: {
-    height: 400,
+    height: HEADER_HEIGHT,
     overflow: 'hidden',
   },
   imageSliderContainer: {
-    height: 400,
+    height: HEADER_HEIGHT,
   },
   productImage: {
     width: SCREEN_WIDTH,
-    height: 400,
+    height: HEADER_HEIGHT,
     resizeMode: 'contain',
   },
   imageIndicators: {
@@ -566,7 +565,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   activeIndicator: {
-    backgroundColor: Colors.light.primary,
+    backgroundColor: Colors.light.primaryButtonBackground.start,
     width: 24,
   },
   header: {
@@ -618,6 +617,7 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 8,
     lineHeight: 26,
+    maxWidth: '90%'
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -727,12 +727,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: '#333',
+    backgroundColor: Colors.light.primaryButtonBackground.start,
     marginLeft: 8,
   },
   buyNowText: {
     fontSize: 16,
-    color: '#fff',
+    color: Colors.light.primaryButtonForeground,
     fontWeight: 'bold',
   },
   center: {

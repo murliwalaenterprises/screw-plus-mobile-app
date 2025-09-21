@@ -1,0 +1,141 @@
+/* eslint-disable react-native/no-inline-styles */
+import React, { useCallback } from "react";
+import {
+    View,
+    FlatList,
+    Text,
+    Dimensions,
+    StyleSheet,
+    TouchableOpacity,
+} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { moderateScale, scale } from "react-native-size-matters";
+
+import ProductCard from "../../components/ProductCard";
+import ScreenHeader from "../../components/ScreenHeader";
+import { Product } from "../../types/product";
+import { Colors } from "../../constants/Colors";
+import { StackNames } from "../../constants/StackNames";
+import { useFirebaseData } from "../../store/useFirebaseData";
+import { Search, ShoppingCart } from "lucide-react-native";
+import AppText from "../../components/ui/AppText";
+import { useStore } from "../../store/useStore";
+
+const screenWidth = Dimensions.get("window").width;
+
+const ProductListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+    const { getCartItemsCount } = useStore();
+    const { products, loading } = useFirebaseData();
+    const cartItemsCount = getCartItemsCount();
+
+    const renderProduct = useCallback(
+        ({ item }: { item: Product }) => {
+            return (
+                <View style={styles.productWrapper}>
+                    <ProductCard
+                        navigation={navigation}
+                        product={item}
+                        width={(screenWidth - 20) / 2}
+                        showCartButton
+                    />
+                </View>
+            );
+        },
+        [navigation]
+    );
+
+    return (
+        <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+            <ScreenHeader title={StackNames.ProductListScreen} navigation={navigation}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: scale(20) }}>
+                    <TouchableOpacity onPress={() => navigation.navigate(StackNames.SearchResults)}>
+                        <Search size={24} color={Colors.light.homeScreenHeaderForeground} />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate(StackNames.Cart)}>
+                        <ShoppingCart
+                            size={24}
+                            color={Colors.light.homeScreenHeaderForeground}
+                        />
+                        {cartItemsCount > 0 && (
+                            <View style={styles.cartBadge}>
+                                <AppText style={styles.cartBadgeText}>{cartItemsCount}</AppText>
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                </View>
+            </ScreenHeader>
+
+            <View style={styles.listContainer}>
+                {products.length === 0 && !loading ? (
+                    <View style={styles.noProducts}>
+                        <Text style={styles.noProductsText}>No products found</Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        data={products}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={renderProduct}
+                        numColumns={2}
+                        columnWrapperStyle={styles.row}
+                        contentContainerStyle={{ paddingBottom: moderateScale(100), paddingTop: moderateScale(28) }}
+                        showsVerticalScrollIndicator={false}
+                    />
+                )}
+            </View>
+        </SafeAreaView>
+    );
+};
+
+export default ProductListScreen;
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: Colors.StatusBarBg,
+    },
+    listContainer: {
+        flex: 1,
+        paddingHorizontal: moderateScale(8),
+    },
+    row: {
+        justifyContent: "space-between",
+    },
+    productWrapper: {
+        flex: 1,
+    },
+    noProducts: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    noProductsText: {
+        fontSize: moderateScale(16),
+        color: "gray",
+    },
+    headerButton: {
+        padding: scale(8),
+        marginLeft: scale(8),
+    },
+    cartButton: {
+        position: 'relative',
+        right: -3,
+        top: -1
+    },
+    cartBadge: {
+        position: 'absolute',
+        top: scale(2),
+        right: scale(2),
+        backgroundColor: '#ff4757',
+        borderRadius: scale(10),
+        minWidth: scale(20),
+        height: scale(20),
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    cartBadgeText: {
+        color: '#fff',
+        fontSize: scale(10), // was 12
+        fontWeight: '600',
+    },
+});

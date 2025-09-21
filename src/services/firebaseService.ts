@@ -39,9 +39,9 @@ class FirebaseService {
     const productsRef = collection(db, 'products');
     const q = query(productsRef, orderBy('createdAt', 'desc'));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+    return snapshot.docs.map(oDoc => ({
+      id: oDoc.id,
+      ...oDoc.data()
     })) as Product[];
   }
 
@@ -74,9 +74,9 @@ class FirebaseService {
     const categoriesRef = collection(db, 'categories');
     const q = query(categoriesRef, orderBy('name'));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+    return snapshot.docs.map(oDoc => ({
+      id: oDoc.id,
+      ...oDoc.data()
     })) as Category[];
   }
 
@@ -109,9 +109,9 @@ class FirebaseService {
     const bannersRef = collection(db, 'banners');
     const q = query(bannersRef, orderBy('order'));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
+    return snapshot.docs.map(oDoc => ({
+      id: oDoc.id,
+      ...oDoc.data()
     })) as Banner[];
   }
 
@@ -146,9 +146,9 @@ class FirebaseService {
     const productsRef = collection(db, 'products');
     const q = query(productsRef, orderBy('createdAt', 'desc'));
     return onSnapshot(q, (snapshot) => {
-      const products = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      const products = snapshot.docs.map(oDoc => ({
+        id: oDoc.id,
+        ...oDoc.data()
       })) as Product[];
       callback(products);
     });
@@ -158,9 +158,9 @@ class FirebaseService {
     const categoriesRef = collection(db, 'categories');
     const q = query(categoriesRef, orderBy('name'));
     return onSnapshot(q, (snapshot) => {
-      const categories = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      const categories = snapshot.docs.map(oDoc => ({
+        id: oDoc.id,
+        ...oDoc.data()
       })) as Category[];
       callback(categories);
     });
@@ -170,9 +170,9 @@ class FirebaseService {
     const bannersRef = collection(db, 'banners');
     const q = query(bannersRef, orderBy('order'));
     return onSnapshot(q, (snapshot) => {
-      const banners = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
+      const banners = snapshot.docs.map(oDoc => ({
+        id: oDoc.id,
+        ...oDoc.data()
       })) as Banner[];
       callback(banners);
     });
@@ -199,9 +199,9 @@ class FirebaseService {
   async getAddresses(userId: string): Promise<Address[]> {
     const addressesRef = collection(db, `users/${userId}/addresses`);
     const snapshot = await getDocs(addressesRef);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
+    return snapshot.docs.map(oDoc => ({
+      id: oDoc.id,
+      ...oDoc.data(),
     })) as Address[];
   }
 
@@ -224,9 +224,9 @@ class FirebaseService {
   subscribeToAddresses(userId: string, callback: (addresses: Address[]) => void) {
     const addressesRef = collection(db, `users/${userId}/addresses`);
     return onSnapshot(addressesRef, (snapshot) => {
-      const addresses = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
+      const addresses = snapshot.docs.map(oDoc => ({
+        id: oDoc.id,
+        ...oDoc.data(),
       })) as Address[];
       callback(addresses);
     });
@@ -238,9 +238,9 @@ class FirebaseService {
     const q = query(reviewsRef, orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
 
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data(),
+    return snapshot.docs.map(oDoc => ({
+      id: oDoc.id,
+      ...oDoc.data(),
     }));
   }
 
@@ -265,9 +265,9 @@ class FirebaseService {
     const q = query(reviewsRef, orderBy("createdAt", "desc"));
 
     return onSnapshot(q, (snapshot) => {
-      const reviews = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
+      const reviews = snapshot.docs.map(oDoc => ({
+        id: oDoc.id,
+        ...oDoc.data(),
       }));
       callback(reviews);
     });
@@ -278,10 +278,10 @@ class FirebaseService {
     const orderRef = collection(db, `users/${userId}/orders`);
     const snapshot = await getDocs(orderRef);
 
-    return snapshot.docs.map(doc => {
-      const data = doc.data() as Omit<Order, "id">; // Exclude id since it's from doc.id
+    return snapshot.docs.map(oDoc => {
+      const data = oDoc.data() as Omit<Order, "id">; // Exclude id since it's from doc.id
       return {
-        id: doc.id,
+        id: oDoc.id,
         ...data,
       };
     });
@@ -339,9 +339,9 @@ class FirebaseService {
   subscribeToOrder(userId: string, callback: (orders: Order[]) => void) {
     const orderRef = collection(db, `users/${userId}/orders`);
     return onSnapshot(orderRef, (snapshot) => {
-      const orders = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
+      const orders = snapshot.docs.map(oDoc => ({
+        id: oDoc.id,
+        ...oDoc.data(),
       })) as Order[];
       callback(orders);
     });
@@ -354,13 +354,13 @@ class FirebaseService {
     const ordersRef = collectionGroup(db, "orders");
 
     return onSnapshot(ordersRef, (snapshot) => {
-      const orders = snapshot.docs.map((doc) => {
-        const data = doc.data() as Omit<Order, "id">;
-        const pathParts = doc.ref.path.split("/"); // "users/{userId}/orders/{orderId}"
+      const orders = snapshot.docs.map((oDoc) => {
+        const data = oDoc.data() as Omit<Order, "id">;
+        const pathParts = oDoc.ref.path.split("/"); // "users/{userId}/orders/{orderId}"
         const userId = pathParts[1]; // extract userId
 
         return {
-          id: doc.id,
+          id: oDoc.id,
           userId,
           ...data,
         };

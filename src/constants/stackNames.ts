@@ -1,11 +1,3 @@
-import { Car } from "lucide-react-native";
-import Categories from "../screens/tabs/Categories";
-import AdminScreen from "../screens/admin";
-import PaymentMethodsScreen from "../screens/payment-methods";
-import OrderDetailsScreen from "../screens/product/OrderDetails";
-import PdfPreview from "../screens/product/Invoice";
-import AdminOrderDetailsScreen from "../screens/product/AdminOrderDetails";
-
 export const StackNames = {
 
     // Auth Stack
@@ -86,5 +78,6 @@ export const StackNames = {
     PaymentMethodsScreen: 'Payment Methods',
     OrderDetailsScreen: 'Order Details',
     PdfPreview: 'PdfPreview',
-    AdminOrderDetailsScreen: 'Order Details(Admin)',
+    AdminOrderDetailsScreen: 'Order Info',
+    ProductListScreen: 'Products'
 }

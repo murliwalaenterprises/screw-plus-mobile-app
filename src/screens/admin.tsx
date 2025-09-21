@@ -1,8 +1,8 @@
+/* eslint-disable react-native/no-inline-styles */
 
 import { BarChart3, Grid3X3, Image, Package } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
-  Dimensions,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,9 +16,8 @@ import BannersTab from '../components/admin/BannersTab';
 import StatsTab from '../components/admin/StatsTab';
 import OrderTab from '../components/admin/OrderTab';
 import ScreenHeader from '../components/ScreenHeader';
-import { StackNames } from '../constants/stackNames';
-
-const { width } = Dimensions.get('window');
+import { StackNames } from '../constants/StackNames';
+import { Colors } from '../constants/Colors';
 
 type TabType = 'products' | 'categories' | 'banners' | 'stats' | 'orders';
 
@@ -37,7 +36,7 @@ const tabs: Tab[] = [
   { id: 'orders', title: 'Orders', icon: Package, color: '#003873' },
 ];
 
-export default function AdminScreen({navigation, route}: any) {
+export default function AdminScreen({ navigation, route }: any) {
   const [activeTab, setActiveTab] = useState<TabType>('stats');
 
   const renderTabContent = () => {
@@ -49,7 +48,7 @@ export default function AdminScreen({navigation, route}: any) {
       case 'banners':
         return <BannersTab />;
       case 'stats':
-        return <StatsTab/>;
+        return <StatsTab />;
       case 'orders':
         return <OrderTab navigation={navigation} route={route} />;
       default:
@@ -58,11 +57,11 @@ export default function AdminScreen({navigation, route}: any) {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
-       <ScreenHeader
-                title={StackNames.AdminScreen}
-                navigation={navigation}
-            />
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <ScreenHeader
+        title={StackNames.AdminScreen}
+        navigation={navigation}
+      />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -107,7 +106,7 @@ export default function AdminScreen({navigation, route}: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB'
+    backgroundColor: Colors.StatusBarBg
   },
   header: {
     flexDirection: 'row',

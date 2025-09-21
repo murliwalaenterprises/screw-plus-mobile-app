@@ -16,9 +16,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
 import { Colors } from '../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
-import { StackNames } from '../constants/stackNames';
+import { StackNames } from '../constants/StackNames';
 
-export default function SignUpScreen({navigation, router}: any) {
+export default function SignUpScreen({ navigation }: any) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -93,7 +93,7 @@ export default function SignUpScreen({navigation, router}: any) {
               <Mail size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Email"
+                placeholder="Email address"
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -161,12 +161,12 @@ export default function SignUpScreen({navigation, router}: any) {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
-               <View style={styles.signUpButtonGradient}>
-                 <Text style={styles.signUpButtonText}>
-                  {isLoading ? 'Creating Account...' : 'Create Account'}
-                </Text>
-                <ArrowRight size={20} color="#fff" />
-               </View>
+                <View style={styles.signUpButtonGradient}>
+                  <Text style={styles.signUpButtonText}>
+                    {isLoading ? 'Creating Account...' : 'Create Account'}
+                  </Text>
+                  <ArrowRight size={20} color={Colors.light.primaryButtonForeground} />
+                </View>
               </LinearGradient>
             </TouchableOpacity>
 
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   signUpButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: Colors.light.primaryButtonForeground,
     marginRight: 8,
   },
   termsText: {

@@ -1,9 +1,8 @@
 
-import { Check, CheckCircle, Clock, Package, Truck, XCircle } from 'lucide-react-native';
+import { Check, CheckCircle, Clock, Package, ShoppingBag, Truck, XCircle } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   Animated,
   Image,
   RefreshControl,
@@ -16,12 +15,10 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFirebaseData } from '../../store/useFirebaseData';
 import { Order, OrderItem } from '../../types/types';
-import { useAuth } from '../../context/AuthContext';
 import { firebaseService } from '../../services/firebaseService';
 import { formatCurrency, formatDate, formatTimestampDate, getEstimatedDeliveryDate, getStatusColor, getTimestampToDate, sortByDateDesc } from '../../services/utilityService';
 import { Colors } from '../../constants/Colors';
-import { StackNames } from '../../constants/stackNames';
-// import ProductFormModal from './ProductFormModal';
+import { StackNames } from '../../constants/StackNames';
 
 const getStatusIcon = (status: string) => {
   switch (status) {
@@ -42,17 +39,13 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-export default function OrderTab({ navigation, route }: any) {
-  const { products, loading, deleteProduct } = useFirebaseData();
-  const [showForm, setShowForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Order | null>(null);
+export default function OrderTab({ navigation }: any) {
+  const { loading } = useFirebaseData();
   const [refreshing, setRefreshing] = useState(false);
 
   const [orders, setOrder] = useState<Order[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [animatedValues, setAnimatedValues] = useState<Record<string, Animated.Value>>({});
-  const { user }: any = useAuth();
-  const userId = user.uid;
 
   // React.useEffect(() => {
   //   (async () => {
@@ -62,23 +55,23 @@ export default function OrderTab({ navigation, route }: any) {
   // }, []);
 
   React.useEffect(() => {
-  const unsubscribe = firebaseService.subscribeToAllOrders((data) => {
-    const sortedData = sortByDateDesc(data, "orderDate");
+    const unsubscribe = firebaseService.subscribeToAllOrders((data) => {
+      const sortedData = sortByDateDesc(data, "orderDate");
 
-    setOrder(sortedData);
-    console.log("Subscribed to orders:", sortedData);
+      setOrder(sortedData);
+      console.log("Subscribed to orders:", sortedData);
 
-    const values: Record<string, Animated.Value> = {};
-    sortedData.forEach((order) => {
-      if (order?.orderId) {
-        values[order.orderId] = new Animated.Value(1);
-      }
+      const values: Record<string, Animated.Value> = {};
+      sortedData.forEach((order) => {
+        if (order?.orderId) {
+          values[order.orderId] = new Animated.Value(1);
+        }
+      });
+      setAnimatedValues(values);
     });
-    setAnimatedValues(values);
-  });
 
-  return () => unsubscribe();
-}, []);
+    return () => unsubscribe();
+  }, []);
 
   const goToOrder = (order: Order) => {
     console.log("Navigating to Order Details for order:", order);
@@ -256,6 +249,18 @@ export default function OrderTab({ navigation, route }: any) {
     );
   }
 
+  if (orders?.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <ShoppingBag size={64} color="#ccc" />
+        <Text style={styles.emptyTitle}>No orders yet</Text>
+        <Text style={styles.emptySubtitle}>
+          Orders will appear here once customers place them.
+        </Text>
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
       <View style={styles.header}>
@@ -382,7 +387,6 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 60
   },
@@ -513,5 +517,18 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     color: '#333',
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 24,
   },
 });

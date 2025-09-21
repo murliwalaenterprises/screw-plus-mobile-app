@@ -22,7 +22,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { StackNames } from '../constants/stackNames';
+import { StackNames } from '../constants/StackNames';
 
 interface AppSettings {
   darkMode: boolean;
@@ -32,7 +32,7 @@ interface AppSettings {
   autoUpdate: boolean;
 }
 
-export default function SettingsScreen({navigation}: any) {
+export default function SettingsScreen({ navigation }: any) {
   const [settings, setSettings] = useState<AppSettings>({
     darkMode: false,
     notifications: true,

@@ -42,7 +42,7 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
         style={styles.scrollView}
       >
         {banners.map((banner) => (
-          <TouchableOpacity key={banner.id} style={styles.bannerContainer}>
+          <TouchableOpacity key={banner.id} style={styles.bannerContainer} activeOpacity={0.8}>
             <Image source={{ uri: banner.image }} style={styles.bannerImage} />
             <View style={styles.bannerOverlay}>
               <Text style={styles.bannerTitle}>{banner.title}</Text>
@@ -86,6 +86,7 @@ const styles = StyleSheet.create({
   bannerImage: {
     width: '100%',
     height: '100%',
+    objectFit: 'cover'
   },
   bannerOverlay: {
     position: 'absolute',
@@ -93,7 +94,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.4)',
+    backgroundColor: 'rgba(0,0,0,0.09)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,

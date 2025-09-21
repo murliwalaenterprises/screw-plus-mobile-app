@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 
 import { Edit3, Package, Plus, Trash2 } from 'lucide-react-native';
 import React, { useState } from 'react';

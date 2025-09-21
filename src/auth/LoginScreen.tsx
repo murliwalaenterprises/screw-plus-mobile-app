@@ -17,7 +17,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../constants/Colors';
-import { StackNames } from '../constants/stackNames';
+import { StackNames } from '../constants/StackNames';
 import { useAuth } from '../context/AuthContext';
 import { getUserSession } from '../services/session';
 
@@ -112,7 +112,7 @@ export default function LoginScreen({ navigation }: any) {
                             <Mail size={20} color="#666" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
-                                placeholder="Email"
+                                placeholder="Email address"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
@@ -162,7 +162,7 @@ export default function LoginScreen({ navigation }: any) {
                                     <Text style={styles.loginButtonText}>
                                         {isLoading ? 'Signing In...' : 'Sign In'}
                                     </Text>
-                                    <ArrowRight size={20} color="#fff" />
+                                    <ArrowRight size={20} color={Colors.light.primaryButtonForeground} />
                                 </View>
                             </LinearGradient>
                         </TouchableOpacity>
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     loginButtonText: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#fff',
+        color: Colors.light.primaryButtonForeground,
         marginRight: 8,
     },
     divider: {

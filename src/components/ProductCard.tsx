@@ -1,80 +1,101 @@
-
-import { Heart, Star } from 'lucide-react-native';
+import { Heart, ShoppingCartIcon, Star } from 'lucide-react-native';
 import React from 'react';
-import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, TouchableOpacity, Vibration, View } from 'react-native';
+import { scale, verticalScale, moderateScale } from 'react-native-size-matters';
 import { useStore } from '../store/useStore';
-import { navigationRef, reset } from '../helper/NavigationService';
 import { Product } from '../types/product';
 import { formatCurrency, getProductVariant } from '../services/utilityService';
-import { StackNames } from '../constants/stackNames';
+import { StackNames } from '../constants/StackNames';
+import AppText from './ui/AppText';
+import { Colors } from '../constants/Colors';
 
 interface ProductCardProps {
+  navigation: any;
   product: Product;
   width?: number;
+  showCartButton?: boolean;
 }
 
-export default function ProductCard({ product, width }: ProductCardProps) {
-  const { favorites, toggleFavorite } = useStore();
+export default function ProductCard({ navigation, product, width, showCartButton }: ProductCardProps) {
+  const { favorites, toggleFavorite, addToCart } = useStore();
   const isFavorite = favorites.includes(product.id);
 
-  
-
   const handlePress = () => {
-    reset(StackNames.ProductDetails, { productId: product.id });
-    // navigationRef.navigate('ProductDetails', { productId: product.id });
+    navigation.navigate(StackNames.ProductDetails, { productId: product.id });
   };
 
   const handleFavoritePress = () => {
     toggleFavorite(product.id);
   };
 
+  const handleAddToCart = () => {
+    const cartResult = addToCart(product, product.variants[0].size, product.variants[0].color);
+    if (cartResult !== null) {
+      Vibration.vibrate(500);
+    }
+  };
+
   return (
     <TouchableOpacity style={[styles.container, { width }]} onPress={handlePress}>
       <View style={styles.imageContainer}>
-        <Image source={{ uri: product.image }} style={styles.image} />
-        <TouchableOpacity
-          style={styles.favoriteButton}
-          onPress={handleFavoritePress}
-        >
+        <Image source={product.image ? { uri: product.image } : require('../assets/images/default-product-image.png')} style={styles.image} />
+        <TouchableOpacity style={styles.favoriteButton} onPress={handleFavoritePress}>
           <Heart
-            size={20}
-            color={isFavorite ? '#ff4757' : '#666'}
+            size={moderateScale(20)}
+            color={isFavorite ? '#ff4757' : '#999'}
             fill={isFavorite ? '#ff4757' : 'transparent'}
           />
         </TouchableOpacity>
-        {product.discount && (
-          <View style={styles.discountBadge}>
-            <Text style={styles.discountText}>{product.discount}% OFF</Text>
+
+        {product.discount ? (
+          <View style={[styles.badge, styles.discountBadge]}>
+            <AppText style={styles.badgeText}>{product.discount}% OFF</AppText>
           </View>
-        )}
-        {product.isNew && (
-          <View style={styles.newBadge}>
-            <Text style={styles.newText}>NEW</Text>
+        ) : null}
+
+        {product.isNew ? (
+          <View style={[styles.badge, styles.newBadge]}>
+            <AppText style={styles.badgeText}>NEW</AppText>
           </View>
-        )}
-        {product.isBestseller && (
-          <View style={styles.bestsellerBadge}>
-            <Text style={styles.bestsellerText}>BESTSELLER</Text>
+        ) : null}
+
+        {product.isBestseller ? (
+          <View style={[styles.badge, styles.bestsellerBadge]}>
+            <AppText style={styles.badgeText}>BESTSELLER</AppText>
           </View>
-        )}
+        ) : null}
       </View>
 
       <View style={styles.content}>
-        <Text style={styles.brand}>{product.brand}</Text>
-        <Text style={styles.title} numberOfLines={1} ellipsizeMode='tail'>{product.title}</Text>
+        <AppText variant="regular" style={styles.brand}>{product.brand}</AppText>
+        <AppText variant="medium" style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
+          {product.title}
+        </AppText>
 
         <View style={styles.ratingContainer}>
-          <Star size={14} color="#ffa502" fill="#ffa502" />
-          <Text style={styles.rating}>{product.rating}</Text>
-          <Text style={styles.reviews}>({product.reviews})</Text>
+          <Star size={moderateScale(14)} color="#ffa502" fill="#ffa502" />
+          <AppText style={styles.rating}>{product.rating}</AppText>
+          <AppText style={styles.reviews}>({product.reviews})</AppText>
         </View>
 
         <View style={styles.priceContainer}>
-          <Text style={styles.price}>{formatCurrency(getProductVariant(product).price)}</Text>
-          {(getProductVariant(product).originalPrice !== getProductVariant(product).price) && (
-            <Text style={styles.originalPrice}> {formatCurrency(getProductVariant(product).originalPrice)}</Text>
+          <AppText style={styles.price}>{formatCurrency(getProductVariant(product).price)}</AppText>
+          {getProductVariant(product).originalPrice !== getProductVariant(product).price && (
+            <AppText style={styles.originalPrice}>
+              {formatCurrency(getProductVariant(product).originalPrice)}
+            </AppText>
           )}
         </View>
+
+        {/* Add to Cart */}
+        {
+          showCartButton && (
+            <TouchableOpacity style={styles.cartBtn} onPress={handleAddToCart}>
+              <ShoppingCartIcon size={scale(16)} />
+              <AppText style={styles.cartBtnText}>Add to cart</AppText>
+            </TouchableOpacity>
+          )
+        }
       </View>
     </TouchableOpacity>
   );
@@ -82,124 +103,123 @@ export default function ProductCard({ product, width }: ProductCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    marginBottom: 16,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderRadius: moderateScale(16),
+    marginBottom: verticalScale(5),
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: verticalScale(4) },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    width: '100%'
+    shadowRadius: moderateScale(8),
+    elevation: 5,
+    overflow: 'hidden',
   },
   imageContainer: {
     position: 'relative',
   },
   image: {
     width: '100%',
-    height: 120,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    height: verticalScale(140),
+    borderTopLeftRadius: moderateScale(16),
+    borderTopRightRadius: moderateScale(16),
+    objectFit: 'contain'
   },
   favoriteButton: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 8,
+    top: verticalScale(10),
+    right: scale(10),
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    borderRadius: moderateScale(20),
+    padding: moderateScale(6),
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 2,
+    elevation: 3,
+  },
+  badge: {
+    position: 'absolute',
+    top: verticalScale(10),
+    left: scale(10),
+    paddingHorizontal: scale(8),
+    paddingVertical: verticalScale(4),
+    borderRadius: moderateScale(8),
   },
   discountBadge: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    backgroundColor: '#ff4757',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  discountText: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: 'bold',
+    backgroundColor: '#ff6b81',
   },
   newBadge: {
-    position: 'absolute',
-    bottom: 8,
-    left: 8,
     backgroundColor: '#2ed573',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  newText: {
-    color: '#fff',
-    fontSize: 10,
-    fontWeight: 'bold',
+    top: undefined,
+    bottom: verticalScale(10),
   },
   bestsellerBadge: {
-    position: 'absolute',
-    bottom: 8,
-    left: 8,
     backgroundColor: '#ffa502',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
+    top: undefined,
+    bottom: verticalScale(10),
+    left: scale(10),
   },
-  bestsellerText: {
+  badgeText: {
     color: '#fff',
-    fontSize: 10,
-    fontWeight: 'bold',
+    fontSize: moderateScale(10),
+    fontWeight: '700',
   },
   content: {
-    padding: 12,
+    padding: scale(12),
   },
   brand: {
-    fontSize: 12,
-    color: '#666',
-    marginBottom: 4,
+    fontSize: moderateScale(12),
+    color: '#888',
+    marginBottom: verticalScale(2),
   },
   title: {
-    fontSize: 14,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 8,
-    lineHeight: 18,
+    marginBottom: verticalScale(6),
+    lineHeight: verticalScale(18),
   },
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: verticalScale(8),
   },
   rating: {
-    fontSize: 12,
+    fontSize: moderateScale(12),
     color: '#333',
-    marginLeft: 4,
+    marginLeft: scale(4),
     fontWeight: '500',
   },
   reviews: {
-    fontSize: 12,
-    color: '#666',
-    marginLeft: 4,
+    fontSize: moderateScale(12),
+    color: '#888',
+    marginLeft: scale(4),
   },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   price: {
-    fontSize: 16,
+    fontSize: moderateScale(16),
     fontWeight: 'bold',
     color: '#333',
   },
   originalPrice: {
-    fontSize: 14,
-    color: '#999',
+    fontSize: moderateScale(14),
+    color: '#aaa',
     textDecorationLine: 'line-through',
-    marginLeft: 8,
+    marginLeft: scale(8),
+  },
+  cartBtn: {
+    backgroundColor: Colors.light.primaryButtonBackground.start,
+    paddingVertical: moderateScale(6),
+    borderRadius: moderateScale(4),
+    alignItems: "center",
+    marginTop: verticalScale(10),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: scale(5)
+  },
+  cartBtnText: {
+    fontWeight: "600",
+    color: Colors.light.primaryButtonForeground,
   },
 });

@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import { Building, Edit3, Home, MapPin, Plus, Trash2 } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
@@ -9,7 +11,9 @@ import { firebaseService } from '../services/firebaseService';
 import { formatAddress } from '../services/utilityService';
 import AddressModal from '../components/AddressModal';
 import ScreenHeader from '../components/ScreenHeader';
-import { StackNames } from '../constants/stackNames';
+import { StackNames } from '../constants/StackNames';
+import { Colors } from '../constants/Colors';
+import { verticalScale } from 'react-native-size-matters';
 
 const getAddressIcon = (type: string) => {
   switch (type) {
@@ -22,12 +26,12 @@ const getAddressIcon = (type: string) => {
   }
 };
 
-export default function AddressesScreen({route, navigation}: any) {
+export default function AddressesScreen({ route, navigation }: any) {
   const { isAddAddress } = route?.params || {};
   const { updateSelectedLocation, selectedLocation } = useAuth();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [animatedValues, setAnimatedValues] = useState<Record<string, Animated.Value>>({});
-  const [modalVisible, setModalVisible] = useState(isAddAddress || false );
+  const [modalVisible, setModalVisible] = useState(isAddAddress || false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
 
   const { user, userProfile }: any = useAuth();
@@ -136,12 +140,12 @@ export default function AddressesScreen({route, navigation}: any) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }} edges={['top','left', 'right']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.StatusBarBg }} edges={['top', 'left', 'right']}>
       {/* header ... */}
-       <ScreenHeader
-                title={StackNames.AddressesScreen}
-                navigation={navigation}
-            />
+      <ScreenHeader
+        title={StackNames.AddressesScreen}
+        navigation={navigation}
+      />
       <ScrollView style={styles.container}>
         <TouchableOpacity style={styles.addAddressButton} onPress={() => { setEditingAddress(null); setModalVisible(true); }}>
           <Plus size={20} color="#333" />
@@ -166,6 +170,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     minHeight: '100%',
+    backgroundColor: '#f8f9fa',
+    paddingTop: verticalScale(10)
   },
   header: {
     padding: 16,

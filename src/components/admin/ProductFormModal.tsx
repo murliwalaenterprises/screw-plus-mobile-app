@@ -1,3 +1,5 @@
+/* eslint-disable radix */
+/* eslint-disable react-native/no-inline-styles */
 
 import { Save, X } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
@@ -89,7 +91,7 @@ export default function ProductFormModal({ visible, product, onClose }: ProductF
         title: formData.title,
         price: parseFloat(formData.price),
         originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
-        discount: formData.originalPrice 
+        discount: formData.originalPrice
           ? Math.round(((parseFloat(formData.originalPrice) - parseFloat(formData.price)) / parseFloat(formData.originalPrice)) * 100)
           : undefined,
         image: formData.image,
@@ -129,8 +131,8 @@ export default function ProductFormModal({ visible, product, onClose }: ProductF
           <Text style={styles.title}>
             {product ? 'Edit Product' : 'Add Product'}
           </Text>
-          <TouchableOpacity 
-            style={styles.saveButton} 
+          <TouchableOpacity
+            style={styles.saveButton}
             onPress={handleSave}
             disabled={loading}
           >

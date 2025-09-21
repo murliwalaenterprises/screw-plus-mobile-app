@@ -1,6 +1,5 @@
 import { Alert } from 'react-native';
 import RazorpayCheckout from 'react-native-razorpay';
-import { Colors } from '../constants/Colors';
 import { firebaseService } from './firebaseService';
 /**
  * Start Razorpay Payment

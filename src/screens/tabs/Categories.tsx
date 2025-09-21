@@ -1,3 +1,6 @@
+/* eslint-disable react/no-unstable-nested-components */
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { ShoppingCart, Sparkles } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
@@ -17,7 +20,9 @@ import { firebaseService } from '../../services/firebaseService';
 import ProductCard from '../../components/ProductCard';
 import { Colors } from '../../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
-import { StackNames } from '../../constants/stackNames';
+import { StackNames } from '../../constants/StackNames';
+import { scale, verticalScale } from 'react-native-size-matters';
+import AppText from '../../components/ui/AppText';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -79,35 +84,14 @@ export default function CategoriesScreen({ navigation }: any) {
     );
   }
 
-  const renderCategory = ({ item }: any) => (
-    <TouchableOpacity
-      onPress={() => {
-        setSelectedCategory(item);
-        setActiveCategory(item);
-      }}
-      style={[
-        styles.categoryItem,
-        activeCategory.id === item.id && styles.activeCategoryItem,
-      ]}>
-      {item.image ? (
-        <View style={styles.subcategoryImageContainer}>
-          <Image source={{ uri: item.image }} style={styles.subcategoryImage} />
-        </View>
-      ) : (
-        <Sparkles size={24} color={Colors.light.homeScreenHeaderForeground} />
-      )}
-      <Text
-        style={[
-          styles.categoryText,
-          activeCategory.id === item.id && styles.activeCategoryText,
-        ]}>
-        {item.name}
-      </Text>
-    </TouchableOpacity>
+  const renderProduct = ({ item }: { item: any }) => (
+    <ProductCard navigation={navigation} product={item} width={(screenWidth * 0.8) / 2 - 14} />
   );
 
-  const renderProduct = ({ item }: { item: any }) => (
-   <ProductCard product={item} width={(screenWidth * 0.82) / 2 - 24} />
+  const NoProductFound = () => (
+    <View style={styles.noProductContainer}>
+      <AppText style={styles.noProductText}>No Product Found</AppText>
+    </View>
   );
 
   return (
@@ -124,10 +108,10 @@ export default function CategoriesScreen({ navigation }: any) {
         edges={['top', 'left', 'right']}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.title}>Categories</Text>
-            <Text style={styles.subtitle}>
+            <AppText style={styles.title}>Categories</AppText>
+            <AppText style={styles.subtitle}>
               {filteredProducts.length} products found
-            </Text>
+            </AppText>
           </View>
           <View>
             <TouchableOpacity
@@ -139,7 +123,7 @@ export default function CategoriesScreen({ navigation }: any) {
               />
               {cartItemsCount > 0 && (
                 <View style={styles.cartBadge}>
-                  <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
+                  <AppText style={styles.cartBadgeText}>{cartItemsCount}</AppText>
                 </View>
               )}
             </TouchableOpacity>
@@ -167,13 +151,14 @@ export default function CategoriesScreen({ navigation }: any) {
                 ) : (
                   <Sparkles size={24} color={Colors.light.homeScreenHeaderForeground} />
                 )}
-                <Text
+                <AppText
+                  variant="small"
                   style={[
                     styles.categoryText,
                     activeCategory.id === item.id && styles.activeCategoryText,
                   ]}>
                   {item.name}
-                </Text>
+                </AppText>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -186,6 +171,7 @@ export default function CategoriesScreen({ navigation }: any) {
             numColumns={2}
             columnWrapperStyle={{ justifyContent: 'space-between' }}
             contentContainerStyle={styles.subcategoryContainer}
+            ListEmptyComponent={<NoProductFound />}
             showsVerticalScrollIndicator={false}
             style={styles.productsGrid}
           />
@@ -197,51 +183,53 @@ export default function CategoriesScreen({ navigation }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: scale(1),
     flexDirection: 'row',
     width: '100%',
   },
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 11,
+    paddingHorizontal: scale(16),
+    paddingVertical: scale(11),
     backgroundColor: 'transparent',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: scale(20), // was 24
+    fontWeight: '600',
     color: Colors.light.homeScreenHeaderForeground,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: scale(12), // was 14
     color: Colors.light.homeScreenHeaderForeground,
-    opacity: 0.8,
-    marginTop: 4,
+    opacity: scale(0.7),
+    marginTop: scale(2),
   },
   headerButton: {
-    padding: 8,
-    marginLeft: 8,
+    padding: scale(8),
+    marginLeft: scale(8),
   },
   cartButton: {
     position: 'relative',
+    right: -3,
+    top: -1
   },
   cartBadge: {
     position: 'absolute',
-    top: 2,
-    right: 2,
+    top: scale(2),
+    right: scale(2),
     backgroundColor: '#ff4757',
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
+    borderRadius: scale(10),
+    minWidth: scale(20),
+    height: scale(20),
     justifyContent: 'center',
     alignItems: 'center',
   },
   cartBadgeText: {
     color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
+    fontSize: scale(10), // was 12
+    fontWeight: '600',
   },
   loadingContainer: {
     flex: 1,
@@ -258,24 +246,23 @@ const styles = StyleSheet.create({
   },
 
   categoryItem: {
-    paddingVertical: 14,
+    paddingVertical: scale(10),
     alignItems: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: scale(6),
+  },
+  categoryText: {
+    color: '#666',
+    marginTop: scale(4),
+    textAlign: 'center',
   },
   activeCategoryItem: {
     backgroundColor: '#fff',
-    borderLeftWidth: 5,
-    borderLeftColor: Colors.light.primaryButtonBackground.end,
-  },
-  categoryText: {
-    fontSize: 14,
-    color: '#888',
-    marginTop: 6,
-    textAlign: 'center',
+    borderRightWidth: scale(2),
+    borderRightColor: Colors.Primary,
   },
   activeCategoryText: {
-    fontWeight: '500',
-    color: Colors.light.primaryButtonBackground.end,
+    fontWeight: '600',
+    color: '#000',
   },
 
   // Products Grid
@@ -285,25 +272,36 @@ const styles = StyleSheet.create({
   },
   subcategoryContainer: {
     flexGrow: 1,
-    padding: 12,
-    paddingBottom: 40,
+    padding: scale(10), // was 12
+    paddingBottom: scale(120),
   },
   subcategoryImageContainer: {
-    width: 50,
-    height: 50,
-    borderRadius: 100,
+    width: scale(35),
+    height: verticalScale(30),
+    borderRadius: scale(100),
     backgroundColor: '#fff',
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
   },
   subcategoryImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 100,
-    resizeMode: 'cover',
+    width: scale(35),
+    height: verticalScale(30),
+    borderRadius: scale(100),
+    resizeMode: 'contain',
     backgroundColor: '#f0f0f0',
     borderWidth: 1,
     borderColor: '#ddd',
+  },
+  noProductContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: scale(20),
+  },
+  noProductText: {
+    fontSize: scale(14),
+    color: "#999",
+    textAlign: "center",
   },
 });

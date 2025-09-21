@@ -16,7 +16,7 @@ import { useAuth } from '../context/AuthContext';
 import { Colors } from '../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
 
-export default function ForgotPasswordScreen({navigation, router}: any) {
+export default function ForgotPasswordScreen({ navigation, router }: any) {
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
@@ -72,7 +72,7 @@ export default function ForgotPasswordScreen({navigation, router}: any) {
                             <Mail size={20} color="#666" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
-                                placeholder="Email"
+                                placeholder="Email address"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
@@ -94,12 +94,12 @@ export default function ForgotPasswordScreen({navigation, router}: any) {
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0 }}
                             >
-                               <View style={styles.resetButtonGradient}>
-                                 <Text style={styles.resetButtonText}>
-                                    {isLoading ? 'Sending...' : 'Send Reset Link'}
-                                </Text>
-                                <ArrowRight size={20} color="#fff" />
-                               </View>
+                                <View style={styles.resetButtonGradient}>
+                                    <Text style={styles.resetButtonText}>
+                                        {isLoading ? 'Sending...' : 'Send Reset Link'}
+                                    </Text>
+                                    <ArrowRight size={20} color={Colors.light.primaryButtonForeground} />
+                                </View>
                             </LinearGradient>
                         </TouchableOpacity>
                     </View>
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     resetButtonText: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#fff',
+        color: Colors.light.primaryButtonForeground,
         marginRight: 8,
     },
     footer: {

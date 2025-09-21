@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { StatusBar, StyleSheet, Text, useColorScheme, View } from 'react-native';
 import {
@@ -32,46 +33,38 @@ function App() {
   const isDarkMode = useColorScheme() === 'dark';
   const lastRouteNameRef = React.useRef<string | null>(null);
 
-
-
   return (
     <GestureHandlerRootView>
       <SafeAreaProvider>
-        <StatusBar
-          barStyle="default" // "dark-content" or "light-content"
-          backgroundColor="transparent" // Android background color
-          translucent={true}       // true makes content go under status bar
-        />
-
-        <QueryClientProvider client={queryClient}>
-          <AuthProvider>
-            <FirebaseDataProvider>
-              {/* Set status bar style */}
-              <NavigationContainer
-                theme={MyTheme}
-                ref={navigationRef}
-                onReady={() => {
-                  routeNameRef.current =
-                    navigationRef?.current?.getCurrentRoute()?.name;
-                }}
-                onStateChange={() => {
-                  const currentRouteName =
-                    navigationRef?.current?.getCurrentRoute()?.name;
-                  lastRouteNameRef.current = currentRouteName ?? null;
-                  routeNameRef.current = currentRouteName;
-                }}
-              >
-
-                <AuthWrapper>
+        <AuthProvider>
+          <FirebaseDataProvider>
+            <NavigationContainer
+              theme={MyTheme}
+              ref={navigationRef}
+              onReady={() => {
+                routeNameRef.current =
+                  navigationRef?.current?.getCurrentRoute()?.name;
+              }}
+              onStateChange={() => {
+                const currentRouteName =
+                  navigationRef?.current?.getCurrentRoute()?.name;
+                lastRouteNameRef.current = currentRouteName ?? null;
+                routeNameRef.current = currentRouteName;
+              }}
+            >
+              <AuthWrapper>
+                <StatusBar
+                  barStyle="default"
+                  backgroundColor="transparent"
+                  translucent={true}
+                />
+                <QueryClientProvider client={queryClient}>
                   <RootStack />
-                </AuthWrapper>
-              </NavigationContainer>
-            </FirebaseDataProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-
-
-        {/* <LoginScreen/> */}
+                </QueryClientProvider>
+              </AuthWrapper>
+            </NavigationContainer>
+          </FirebaseDataProvider>
+        </AuthProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

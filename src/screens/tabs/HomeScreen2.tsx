@@ -25,7 +25,7 @@ import { darkWeatherColors, defaultHeaderColor, defaultHeaderTransparent } from 
 import { CircleUserRound, CloudRainWind, Mic, Search, UserRoundPlus } from "lucide-react-native";
 import { useFirebaseData } from "../../store/useFirebaseData";
 import BannerCarousel from "../../components/BannerCarousel";
-import { StackNames } from "../../constants/stackNames";
+import { StackNames } from "../../constants/StackNames";
 
 // 🔹 Your Category Data
 const old_categories = [

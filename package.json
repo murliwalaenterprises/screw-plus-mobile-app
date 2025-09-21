@@ -7,7 +7,10 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "dev:iphone15Pro": "npx react-native run-ios --simulator 'iPhone 15 Pro'",
+    "dev:myios": "npx react-native run-ios --device",
+    "dev:android:clean": "cd android && ./gradlew clean && cd .. && npx react-native run-android"
   },
   "dependencies": {
     "@nkzw/create-context-hook": "^1.1.0",
@@ -30,6 +33,7 @@
     "react-native-gesture-handler": "^2.28.0",
     "react-native-linear-gradient": "^2.8.3",
     "react-native-modal": "^14.0.0-rc.1",
+    "react-native-push-notification": "^8.1.1",
     "react-native-razorpay": "^2.3.0",
     "react-native-reanimated": "^4.1.0",
     "react-native-safe-area-context": "^5.6.1",
@@ -56,6 +60,7 @@
     "@types/base-64": "^1.0.2",
     "@types/jest": "^29.5.13",
     "@types/react": "^19.1.0",
+    "@types/react-native-push-notification": "^8.1.4",
     "@types/react-native-razorpay": "^2.2.6",
     "@types/react-native-vector-icons": "^6.4.18",
     "@types/react-test-renderer": "^19.1.0",

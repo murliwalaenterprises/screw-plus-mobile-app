@@ -1,10 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Colors } from '../constants/Colors';
 import { moderateScale } from 'react-native-size-matters';
 import { ChevronLeft } from 'lucide-react-native';
-// import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AppText from './ui/AppText';
+import { BlurView } from '@react-native-community/blur';
 
 const ScreenHeader: React.FC<any> = ({
     navigation,
@@ -13,31 +14,36 @@ const ScreenHeader: React.FC<any> = ({
     hideBackButton,
     customBackNavigation,
 }) => {
-    // const insets = useSafeAreaInsets();
     return (
-        <View style={[styles.header]}>
-            <View style={styles.leftContainer}>
-                {hideBackButton ? (
-                    customBackNavigation ? (
-                        <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 0 }} onPress={() => navigation.navigate(customBackNavigation)}>
-                            <ChevronLeft color="#1C1C1E" size={24} />
-                            <Text style={[styles.headerTitle, { textAlign: 'left', fontWeight: '500' }]}>Back</Text>
+        <View style={styles.wrapper}>
+            <BlurView
+                style={styles.blur}
+                blurType="light"
+                blurAmount={25}
+                reducedTransparencyFallbackColor="white"
+            />
+            <View style={styles.header}>
+                <View style={styles.leftContainer}>
+                    {!hideBackButton ? (
+                        <TouchableOpacity
+                            style={{ flexDirection: 'row', alignItems: 'center', gap: 0 }}
+                            onPress={() => (customBackNavigation ? navigation.navigate(customBackNavigation) : navigation.goBack())}
+                        >
+                            <ChevronLeft color={Colors.StatusBarTextColor} size={24} />
+                            <AppText variant="large" style={[styles.headerTitle]}>Back</AppText>
                         </TouchableOpacity>
                     ) : (
                         <View style={styles.placeholder} />
-                    )
-                ) : (
-                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', gap: 0 }} onPress={() => navigation.goBack()}>
-                        <ChevronLeft color="#1C1C1E" size={24} />
-                        <Text style={[styles.headerTitle, { textAlign: 'left' }]}>Back</Text>
-                    </TouchableOpacity>
-                )}
-            </View>
+                    )}
+                </View>
 
-            <Text style={{ color: '#000', fontSize: 16.5, fontWeight: '600' }}>{title}</Text>
+                <AppText variant="large" style={{ color: Colors.StatusBarTextColor, fontWeight: '600' }}>
+                    {title}
+                </AppText>
 
-            <View style={styles.rightContainer}>
-                {children ? children : <View style={styles.placeholder} />}
+                <View style={styles.rightContainer}>
+                    {children ? children : <View style={styles.placeholder} />}
+                </View>
             </View>
         </View>
     );
@@ -46,34 +52,27 @@ const ScreenHeader: React.FC<any> = ({
 export default ScreenHeader;
 
 const styles = StyleSheet.create({
+    wrapper: {
+        position: 'relative',
+        width: '100%',
+        zIndex: 1,
+    },
+    blur: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: moderateScale(60), // adjust height according to header
+        zIndex: 0,
+    },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: moderateScale(16),
-        // borderBottomWidth: StyleSheet.hairlineWidth,
-        borderBottomWidth: 1,
-        borderBottomColor: '#dedede',
-        paddingVertical: moderateScale(10),
-        // backgroundColor: Colors.primary,
-        // backgroundColor: '#fff',
-
-        // paddingBottom: scale(5),
-        // paddingTop: Platform.OS === 'android' ? scale(30) : scale(6),
-        // marginHorizontal: scale(10),
-        // borderRadius: scale(10),
-        // borderWidth: scale(1),
-        // borderColor: '#dedede',
-
-
-        // // ✅ Shadow for iOS
-        // shadowColor: '#000',
-        // shadowOffset: { width: 0, height: 2 },
-        // shadowOpacity: 0.1,
-        // shadowRadius: 3,
-
-        // // ✅ Elevation for Android
-        // elevation: 3,
+        paddingTop: moderateScale(14),
+        zIndex: 1, // above blur
+        backgroundColor: 'transparent', // IMPORTANT: no solid background
     },
     leftContainer: {
         flex: 1,
@@ -85,14 +84,9 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         fontWeight: '500',
-        fontSize: moderateScale(16),
-        // color: '#fff',
         color: Colors.StatusBarTextColor,
-        flex: 2,
         textAlign: 'center',
-    },
-    backButton: {
-        padding: moderateScale(4),
+        marginLeft: moderateScale(4),
     },
     placeholder: {
         width: moderateScale(32),

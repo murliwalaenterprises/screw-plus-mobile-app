@@ -13,7 +13,7 @@ import CategoryCard from '../../components/CategoryCard';
 import LocationSelector from '../../components/LocationSelector';
 import ProductCard from '../../components/ProductCard';
 import { useAuth } from '../../context/AuthContext';
-import { StackNames } from '../../constants/stackNames';
+import { StackNames } from '../../constants/StackNames';
 import { scale } from 'react-native-size-matters';
 
 export default function Home({ navigation }: any) {
@@ -42,7 +42,7 @@ export default function Home({ navigation }: any) {
 
   const renderProduct = ({ item }: { item: any }) => (
     <View style={styles.productContainer}>
-      <ProductCard product={item} width={180} />
+      <ProductCard navigation={navigation} product={item} width={180} />
     </View>
   );
 
@@ -102,7 +102,7 @@ export default function Home({ navigation }: any) {
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
         {showViewAll && (
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate(StackNames.ProductListScreen)}>
             <Text style={styles.viewAllText}>View All</Text>
           </TouchableOpacity>
         )}
@@ -128,7 +128,9 @@ export default function Home({ navigation }: any) {
         <View style={styles.container}>
           <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
             {renderHeader()}
-            <ScrollView style={{ flex: 1, backgroundColor: '#f8f9fa' }} showsVerticalScrollIndicator={false}>
+            <ScrollView style={{ flex: 1, backgroundColor: '#f8f9fa' }} showsVerticalScrollIndicator={false} contentContainerStyle={{
+              paddingBottom: 100
+            }}>
               {loading.banners ? (
                 <View style={styles.loadingBanner}>
                   <Text style={styles.loadingText}>Loading banners...</Text>

@@ -1,33 +1,31 @@
-
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Bell,
   ChevronRight,
-  CreditCard,
   Edit3,
   Heart,
   HelpCircle,
   LogOut,
   MapPin,
-  Settings,
   Shield,
   ShoppingBag,
   User
 } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Alert, Animated, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Animated, Image, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../context/AuthContext';
 import { useStore } from '../../store/useStore';
 import { Order } from '../../types/types';
 import { firebaseService } from '../../services/firebaseService';
-import { StackNames } from '../../constants/stackNames';
+import { StackNames } from '../../constants/StackNames';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
 import { formatCurrency } from '../../services/utilityService';
+import AppText from '../../components/ui/AppText';
 
 export default function Profile({ navigation }: any) {
-
-
   const { user, userProfile, logout } = useAuth();
   const { favorites } = useStore();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -47,17 +45,13 @@ export default function Profile({ navigation }: any) {
     return () => unsubscribe();
   }, []);
 
-  console.log('orders', orders);
-
   React.useEffect(() => {
     if (!userId) return;
     const unsubscribe = firebaseService?.subscribeToUser(userId, (data) => {
-      console.log('user data', data);
       setIsAdmin(data?.isAdmin || false);
     });
     return () => unsubscribe?.();
   }, [userId]);
-
 
   const handleLogout = () => {
     Alert.alert(
@@ -96,7 +90,7 @@ export default function Profile({ navigation }: any) {
     { id: 'my_orders', icon: ShoppingBag, title: "My Orders", subtitle: "Track your orders", route: StackNames.Orders, loginOnly: true },
     { id: 'wishlist', icon: Heart, title: "Wishlist", subtitle: "Your favorite items", route: StackNames.WishListScreen },
     { id: 'addresses', icon: MapPin, title: "Addresses", subtitle: "Manage delivery addresses", route: StackNames.AddressesScreen, loginOnly: true },
-    { id: 'payment_methods', icon: CreditCard, title: "Payment Methods", subtitle: "Cards & wallets", route: StackNames.PaymentMethodsScreen, loginOnly: true },
+    // { id: 'payment_methods', icon: CreditCard, title: "Payment Methods", subtitle: "Cards & wallets", route: StackNames.PaymentMethodsScreen, loginOnly: true },
     { id: 'notifications', icon: Bell, title: "Notifications", subtitle: "Alerts & updates", route: StackNames.NotificationsScreen },
     { id: 'help_support', icon: HelpCircle, title: "Help & Support", subtitle: "Get assistance", route: "" },
     // { icon: Settings, title: "Settings", subtitle: "App preferences", route: StackNames.SettingsScreen },
@@ -139,11 +133,11 @@ export default function Profile({ navigation }: any) {
             <IconComponent size={20} color={isAdminPanel ? "#8B5CF6" : "#666"} />
           </View>
           <View style={styles.menuItemText}>
-            <Text style={[styles.menuItemTitle, isAdminPanel && styles.adminMenuItemTitle]}>{item.title}</Text>
-            <Text style={styles.menuItemSubtitle}>{item.subtitle}</Text>
+            <AppText variant="medium" style={[styles.menuItemTitle, isAdminPanel && styles.adminMenuItemTitle]}>{item.title}</AppText>
+            <AppText variant="regular" style={styles.menuItemSubtitle}>{item.subtitle}</AppText>
             {isAdminPanel && (
               <View style={styles.adminBadge}>
-                <Text style={styles.adminBadgeText}>ADMIN</Text>
+                <AppText variant="small" style={styles.adminBadgeText}>ADMIN</AppText>
               </View>
             )}
           </View>
@@ -155,10 +149,10 @@ export default function Profile({ navigation }: any) {
 
   return (
     <LinearGradient
-      colors={[Colors.light.homeScreenHeaderBackground.start, Colors.light.homeScreenHeaderBackground.end]}  // gradient colors
+      colors={[Colors.light.homeScreenHeaderBackground.start, Colors.light.homeScreenHeaderBackground.end]}
       style={{ flex: 1 }}
-      start={{ x: 0, y: 0 }}  // gradient start point
-      end={{ x: 1, y: 0 }}    // gradient end point
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
     >
       <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }} edges={['top', 'left', 'right']}>
         <View style={styles.header}>
@@ -171,12 +165,12 @@ export default function Profile({ navigation }: any) {
               )}
             </View>
             <View style={styles.profileInfo}>
-              <Text style={styles.userName}>
+              <AppText variant="large" style={styles.userName}>
                 {userProfile?.displayName || user?.displayName || 'Guest User'}
-              </Text>
-              <Text style={styles.userEmail}>
+              </AppText>
+              <AppText variant="medium" style={styles.userEmail}>
                 {userProfile?.email || user?.email || 'guest@example.com'}
-              </Text>
+              </AppText>
             </View>
             {
               isLoggedIn && (
@@ -191,29 +185,29 @@ export default function Profile({ navigation }: any) {
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
+        <ScrollView showsVerticalScrollIndicator={false} style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
 
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{isLoggedIn ? orders.length : 0}</Text>
-              <Text style={styles.statLabel}>Orders</Text>
+              <AppText variant="large" style={styles.statNumber}>{isLoggedIn ? orders.length : 0}</AppText>
+              <AppText variant="medium" style={styles.statLabel}>Orders</AppText>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>{isLoggedIn ? favorites.length : 0}</Text>
-              <Text style={styles.statLabel}>Wishlist</Text>
+              <AppText variant="large" style={styles.statNumber}>{isLoggedIn ? favorites.length : 0}</AppText>
+              <AppText variant="medium" style={styles.statLabel}>Wishlist</AppText>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <Text style={styles.statNumber}>
+              <AppText variant="large" style={styles.statNumber}>
                 {formatCurrency(isLoggedIn
                   ? orders
                     .filter(order => order?.status !== 'cancelled')
                     .reduce((total, order) => Number(total) + Number(order?.finalTotal || 0), 0)
                   : 0)
-                  }
-              </Text>
-              <Text style={styles.statLabel}>Spent</Text>
+                }
+              </AppText>
+              <AppText variant="medium" style={styles.statLabel}>Spent</AppText>
             </View>
           </View>
 
@@ -229,15 +223,15 @@ export default function Profile({ navigation }: any) {
                 disabled={isLoggingOut}
               >
                 <LogOut size={20} color="#ff4757" />
-                <Text style={styles.logoutText}>
+                <AppText variant='medium' style={styles.logoutText}>
                   {isLoggingOut ? 'Logging out...' : 'Logout'}
-                </Text>
+                </AppText>
               </TouchableOpacity>
             )
           }
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Screw Plus v1.0.0</Text>
+            <AppText style={styles.footerText}>Screw Plus v1.0.0</AppText>
           </View>
         </ScrollView>
       </SafeAreaView>
@@ -287,13 +281,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userName: {
-    fontSize: 20,
     fontWeight: 'bold',
     color: Colors.light.homeScreenHeaderForeground,
     marginBottom: 4,
   },
   userEmail: {
-    fontSize: 14,
     color: Colors.light.homeScreenHeaderForeground,
     opacity: 0.8,
   },
@@ -308,13 +300,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statNumber: {
-    fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 4,
   },
   statLabel: {
-    fontSize: 12,
     color: '#666',
   },
   statDivider: {
@@ -353,13 +343,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   menuItemTitle: {
-    fontSize: 16,
     fontWeight: '500',
     color: '#333',
     marginBottom: 2,
   },
   menuItemSubtitle: {
-    fontSize: 12,
     color: '#666',
   },
   logoutButton: {
@@ -374,7 +362,6 @@ const styles = StyleSheet.create({
     borderColor: '#e9ecef',
   },
   logoutText: {
-    fontSize: 16,
     color: '#ff4757',
     fontWeight: '500',
     marginLeft: 8,
@@ -384,7 +371,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
   },
   footerText: {
-    fontSize: 12,
     color: '#999',
   },
   adminMenuItem: {
@@ -408,7 +394,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   adminBadgeText: {
-    fontSize: 10,
     color: '#FFFFFF',
     fontWeight: '600',
   },

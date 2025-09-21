@@ -16,15 +16,15 @@ import {
     Animated,
     Image,
     StyleSheet,
-    Text,
     TouchableOpacity,
     View,
 } from "react-native";
 import { formatCurrency, getStatusColor, paymentMethods } from '../../services/utilityService';
-import { StackNames } from '../../constants/stackNames';
+import { StackNames } from '../../constants/StackNames';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import AppHeader from '../../components/ScreenHeader';
 import ScreenHeader from '../../components/ScreenHeader';
+import { Colors } from '../../constants/Colors';
+import AppText from '../../components/ui/AppText';
 
 type OrderItem = {
     id: string;
@@ -69,7 +69,7 @@ export default function OrderDetailsScreen({ navigation, route }: any) {
     const items: OrderItem[] = Array.isArray(order.items) ? order.items : [];
 
     return (
-        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.StatusBarBg }} edges={['top', 'left', 'right']}>
             <ScreenHeader
                 title={StackNames.OrderDetailsScreen}
                 navigation={navigation}
@@ -89,7 +89,7 @@ export default function OrderDetailsScreen({ navigation, route }: any) {
                     <View style={styles.statusBox}>
                         <View style={styles.statusContainer}>
                             {getStatusIcon(order.status)}
-                            <Text
+                            <AppText
                                 style={[
                                     styles.statusText,
                                     { color: getStatusColor(order.status), marginBottom: 0 }
@@ -98,34 +98,34 @@ export default function OrderDetailsScreen({ navigation, route }: any) {
                                 {order.status
                                     ? order.status.charAt(0).toUpperCase() + order.status.slice(1)
                                     : ""}
-                            </Text>
+                            </AppText>
                         </View>
-                        <Text style={styles.deliveryText}>
+                        <AppText style={styles.deliveryText}>
                             Estimated Delivery by {order.estimatedDelivery}
-                        </Text>
+                        </AppText>
                     </View>
 
                     {/* Order Info */}
                     <View style={styles.orderInfo}>
                         <View style={styles.row}>
-                            <Text style={styles.label}>Order Number</Text>
-                            <Text style={styles.value}>{order.orderNumber}</Text>
+                            <AppText style={styles.label}>Order Number</AppText>
+                            <AppText style={styles.value}>{order.orderNumber}</AppText>
                         </View>
                         <View style={styles.row}>
-                            <Text style={styles.label}>Placed on</Text>
-                            <Text style={styles.value}>{order.placedOn}</Text>
+                            <AppText style={styles.label}>Placed on</AppText>
+                            <AppText style={styles.value}>{order.placedOn}</AppText>
                         </View>
                         <View style={styles.row}>
-                            <Text style={styles.label}>Payment Method</Text>
-                            <Text style={styles.value}>
+                            <AppText style={styles.label}>Payment Method</AppText>
+                            <AppText style={styles.value}>
                                 {paymentMethods.find(mode => mode.id === order.paymentMethod)?.name}
-                            </Text>
+                            </AppText>
                         </View>
                         <View style={styles.row}>
-                            <Text style={styles.label}>Total</Text>
-                            <Text style={styles.value}>
+                            <AppText style={styles.label}>Total</AppText>
+                            <AppText style={styles.value}>
                                 {formatCurrency(Number(order.total))}
-                            </Text>
+                            </AppText>
                         </View>
                     </View>
 
@@ -135,74 +135,74 @@ export default function OrderDetailsScreen({ navigation, route }: any) {
                             <Image source={{ uri: item.image }} style={styles.itemImage} />
                             <View style={{ flex: 1, marginRight: 20 }}>
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate("ProductDetails", { productId: item.productId })}
+                                    onPress={() => navigation.navigate(StackNames.ProductDetails, { productId: item.productId })}
                                 >
-                                    <Text
+                                    <AppText
                                         style={styles.itemName}
                                         numberOfLines={2}
                                         ellipsizeMode='tail'
                                     >
                                         {item.name}
-                                    </Text>
+                                    </AppText>
                                 </TouchableOpacity>
-                                <Text style={styles.itemVariant}>
+                                <AppText style={styles.itemVariant}>
                                     {item.size} • {item.color}
-                                </Text>
-                                <Text style={styles.itemPrice}>
+                                </AppText>
+                                <AppText style={styles.itemPrice}>
                                     {formatCurrency(item.price)}
-                                </Text>
+                                </AppText>
                             </View>
-                            <Text style={styles.itemQty}>Qty: {item.quantity}</Text>
+                            <AppText style={styles.itemQty}>Qty: {item.quantity}</AppText>
                         </View>
                     ))}
 
                     {/* Delivery */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>SHIPPING ADDRESS</Text>
-                        <Text style={styles.sectionText}>{order.deliveryAddress}</Text>
+                        <AppText style={styles.sectionTitle}>SHIPPING ADDRESS</AppText>
+                        <AppText style={styles.sectionText}>{order.deliveryAddress}</AppText>
                     </View>
 
                     {/* Order Summary */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>ORDER SUMMARY</Text>
+                        <AppText style={styles.sectionTitle}>ORDER SUMMARY</AppText>
                         <View style={[styles.orderInfo, { padding: 0, backgroundColor: 'transparent', marginTop: 5 }]}>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Item(s) Subtotal:</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Item(s) Subtotal:</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(Number(order.subTotal || 0))}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Tax ({order.taxPercentage || 0}%):</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Tax ({order.taxPercentage || 0}%):</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(Number(order.taxAmount || 0))}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Shipping:</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Shipping:</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(Number(order.deliveryFee || 0))}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Platform Fee:</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Platform Fee:</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(Number(order.platformFee || 0))}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Discount:</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Discount:</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(Number(order.discount || 0))}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={[styles.label, { fontWeight: '600', color: '#000' }]}>
+                                <AppText style={[styles.label, { fontWeight: '600', color: '#000' }]}>
                                     Grand Total:
-                                </Text>
-                                <Text style={styles.value}>
+                                </AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(Number(order.total || 0))}
-                                </Text>
+                                </AppText>
                             </View>
                         </View>
                     </View>
@@ -212,7 +212,7 @@ export default function OrderDetailsScreen({ navigation, route }: any) {
                 <View style={styles.footer}>
                     <TouchableOpacity style={styles.addToCartButton}>
                         <Headphones size={20} color="#333" />
-                        <Text style={styles.addToCartText}>Support</Text>
+                        <AppText style={styles.addToCartText}>Support</AppText>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.buyNowButton}
@@ -224,7 +224,7 @@ export default function OrderDetailsScreen({ navigation, route }: any) {
                         }}
                     >
                         <Download size={20} color="#fff" />
-                        <Text style={styles.buyNowText}>Invoice</Text>
+                        <AppText style={styles.buyNowText}>Invoice</AppText>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -256,8 +256,8 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     row: { flexDirection: "row", justifyContent: "space-between", marginBottom: 6 },
-    label: { fontSize: 14, color: "#555" },
-    value: { fontSize: 14, fontWeight: "600", color: "#0f1111" },
+    label: { color: "#555" },
+    value: { fontWeight: "600", color: "#0f1111" },
     statusBox: {
         backgroundColor: "#F2F2F2",
         borderRadius: 8,
@@ -278,17 +278,16 @@ const styles = StyleSheet.create({
         borderColor: "#eee",
     },
     itemImage: { width: 60, height: 60, borderRadius: 6, backgroundColor: '#fff' },
-    itemName: { fontWeight: "600", fontSize: 14, color: '#2162a1' },
-    itemPrice: { color: "#333", fontSize: 13, fontWeight: '600' },
+    itemName: { fontWeight: "600", color: '#2162a1' },
+    itemPrice: { color: "#333", fontWeight: '600' },
     itemVariant: {
-        fontSize: 12,
         color: '#575959',
         marginVertical: 5
     },
     itemQty: { fontWeight: "600", color: "#0f1111" },
     section: { marginBottom: 28, paddingHorizontal: 10 },
-    sectionTitle: { fontWeight: "700", fontSize: 14, marginBottom: 6, color: "#444" },
-    sectionText: { fontSize: 13, color: "#555" },
+    sectionTitle: { fontWeight: "700", marginBottom: 6, color: "#444" },
+    sectionText: { color: "#555" },
 
     footer: {
         flexDirection: 'row',
@@ -311,7 +310,6 @@ const styles = StyleSheet.create({
         borderColor: '#333',
     },
     addToCartText: {
-        fontSize: 16,
         color: '#333',
         fontWeight: '500',
         marginLeft: 8,
@@ -327,7 +325,6 @@ const styles = StyleSheet.create({
         gap: 8
     },
     buyNowText: {
-        fontSize: 16,
         color: '#fff',
         fontWeight: 'bold',
     },

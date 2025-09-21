@@ -7,6 +7,7 @@ const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
 export const Colors = {
+  Primary: '#0a7ea4',
   light: {
     primary: '#6EE7B7',
     success: '#2FD258',
@@ -26,8 +27,8 @@ export const Colors = {
     homeScreenHeaderForeground: '#333',
 
     primaryButtonBackground: {
-      start: '#6EE7B7',
-      end: '#3AB7BF',
+      start: '#ffd814',
+      end: '#ffd814',
     },
     primaryButtonForeground: '#333',
     primaryButton: '#333',
@@ -43,6 +44,6 @@ export const Colors = {
   },
   defaultBlack: '#000',
   defaultWhite: '#fff',
-  StatusBarBg: '#fcfbfc',
+  StatusBarBg: 'transparent',
   StatusBarTextColor: '#222',
 };

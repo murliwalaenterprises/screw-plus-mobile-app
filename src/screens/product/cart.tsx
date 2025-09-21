@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react-native';
 import React from 'react';
@@ -8,13 +9,15 @@ import { useStore } from '../../store/useStore';
 import { formatCurrency, getDiscountPercentage } from '../../services/utilityService';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
-import { StackNames } from '../../constants/stackNames';
+import { StackNames } from '../../constants/StackNames';
 import { useAuth } from '../../context/AuthContext';
 import ScreenHeader from '../../components/ScreenHeader';
+import AppText from '../../components/ui/AppText';
+import { moderateScale, scale } from 'react-native-size-matters';
 
 export default function CartScreen({ navigation }: any) {
-  const { cart, removeFromCart, updateCartQuantity, getCartTotal, clearCart } = useStore();
-  const { user, userProfile } = useAuth();
+  const { cart, removeFromCart, updateCartQuantity, clearCart } = useStore();
+  const { userProfile } = useAuth();
   const isLoggedIn = !!userProfile;
 
   const handleQuantityChange = (item: CartItem, newQuantity: number) => {
@@ -101,7 +104,7 @@ export default function CartScreen({ navigation }: any) {
 
   if (cart.length === 0) {
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: Colors.StatusBarBg }} edges={['top', 'left', 'right']}>
         <ScreenHeader
           title={StackNames.Cart}
           navigation={navigation}
@@ -120,18 +123,16 @@ export default function CartScreen({ navigation }: any) {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['left', 'right']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.StatusBarBg }} edges={['top', 'left', 'right']}>
+      <ScreenHeader
+        title={StackNames.Cart}
+        navigation={navigation}
+      >
+        <TouchableOpacity onPress={clearCart}>
+          <AppText variant="large">Clear All</AppText>
+        </TouchableOpacity>
+      </ScreenHeader>
       <View style={styles.container}>
-        <View style={styles.header}>
-          {cart.length > 0 && (
-            <Text style={styles.itemCount}>
-              {cart.length} {cart.length === 1 ? "item" : "items"}
-            </Text>
-          )}
-          <TouchableOpacity onPress={clearCart}>
-            <Text style={styles.clearButton}>Clear All</Text>
-          </TouchableOpacity>
-        </View>
 
         <FlatList
           data={cart}
@@ -224,7 +225,9 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   cartList: {
-    padding: 16,
+    paddingHorizontal: scale(16),
+    paddingTop: scale(30),
+    paddingBottom: moderateScale(100)
   },
   cartItem: {
     flexDirection: 'row',

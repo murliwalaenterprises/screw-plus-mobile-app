@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
@@ -17,7 +18,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Order, OrderItem } from '../../types/types';
 import { firebaseService } from '../../services/firebaseService';
 import { formatCurrency, formatDate, formatTimestampDate, getEstimatedDeliveryDate, getStatusColor, getTimestampToDate, sortByDateDesc } from '../../services/utilityService';
-import { StackNames } from '../../constants/stackNames';
+import { StackNames } from '../../constants/StackNames';
 import { Colors } from '../../constants/Colors';
 import TrackOrder from './TrackOrder';
 import ScreenHeader from '../../components/ScreenHeader';
@@ -47,8 +48,9 @@ export default function OrdersScreen({ navigation, router }: any) {
   const [animatedValues, setAnimatedValues] = useState<Record<string, Animated.Value>>({});
   const { user, userProfile }: any = useAuth();
   const userId = user?.uid || userProfile?.uid;
-
   const [showTrackOrder, setShowTrackOrder] = React.useState<boolean>(false);
+
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
 
   useEffect(() => {
@@ -64,8 +66,6 @@ export default function OrdersScreen({ navigation, router }: any) {
 
     return () => unsubscribe();
   }, []);
-
-  console.log("Orders:", orders);
 
   const toggleOrderExpansion = (orderId: any) => {
     if (!animatedValues[orderId]) {
@@ -131,8 +131,7 @@ export default function OrdersScreen({ navigation, router }: any) {
       <View key={order.orderId} style={styles.orderCard}>
         <TouchableOpacity
           style={styles.orderHeader}
-          onPress={() => toggleOrderExpansion(order.id)}
-        // onPress={() => console.log('Order pressed')}
+          onPress={() => toggleOrderExpansion(order?.orderId)}
         >
           <View style={styles.orderHeaderLeft}>
             <Text style={styles.orderNumber}>{order.orderNumber}</Text>
@@ -167,8 +166,11 @@ export default function OrdersScreen({ navigation, router }: any) {
 
         <View style={styles.orderActions}>
 
-          {!['delivered', 'cancelled'].includes(order.status) && (
-            <TouchableOpacity style={styles.actionButton} onPress={() => setShowTrackOrder(true)}>
+          {!['cancelled'].includes(order.status) && (
+            <TouchableOpacity style={styles.actionButton} onPress={() => {
+              setSelectedOrder(order);
+              setShowTrackOrder(true)
+            }}>
               <Text style={styles.actionButtonText}>Track Order</Text>
             </TouchableOpacity>
           )}
@@ -190,11 +192,11 @@ export default function OrdersScreen({ navigation, router }: any) {
 
   if (orders?.length === 0) {
     return (
-      <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
-         <ScreenHeader
-                title={StackNames.Orders}
-                navigation={navigation}
-            />
+      <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+        <ScreenHeader
+          title={StackNames.Orders}
+          navigation={navigation}
+        />
         <View style={styles.emptyContainer}>
           <ShoppingBag size={64} color="#ccc" />
           <Text style={styles.emptyTitle}>No orders yet</Text>
@@ -213,18 +215,19 @@ export default function OrdersScreen({ navigation, router }: any) {
   }
 
   return (
-    <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
-       <ScreenHeader
-                title={StackNames.Orders}
-                navigation={navigation}
-            />
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <ScreenHeader
+        title={StackNames.Orders}
+        navigation={navigation}
+      />
+      <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#f8f9fa' }} contentContainerStyle={{ paddingBottom: 100, paddingTop: 20 }}>
         <View style={styles.ordersContainer}>
           {orders.map(renderOrderItem)}
         </View>
       </ScrollView>
 
       <TrackOrder
+        data={selectedOrder}
         visible={showTrackOrder}
         onClose={() => setShowTrackOrder(false)}
       />
@@ -235,7 +238,7 @@ export default function OrdersScreen({ navigation, router }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.StatusBarBg,
   },
   header: {
     padding: 16,

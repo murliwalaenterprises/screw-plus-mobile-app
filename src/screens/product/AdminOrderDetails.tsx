@@ -1,10 +1,10 @@
+/* eslint-disable react-native/no-inline-styles */
 
 import {
     Check,
     CheckCircle,
     Clock,
     Download,
-    Headphones,
     Package,
     Truck,
     XCircle
@@ -16,17 +16,18 @@ import {
     Image,
     Linking,
     StyleSheet,
-    Text,
     TouchableOpacity,
     View,
 } from "react-native";
 import { getStatusColor, paymentMethods, formatCurrency } from '../../services/utilityService';
-import { StackNames } from '../../constants/stackNames';
+import { StackNames } from '../../constants/StackNames';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { firebaseService } from '../../services/firebaseService';
 import { Select } from '../../components/ui';
 import { OrderStatusOptions } from '../../constants/Constant';
 import ScreenHeader from '../../components/ScreenHeader';
+import { Colors } from '../../constants/Colors';
+import AppText from '../../components/ui/AppText';
 
 type OrderItem = {
     id: string;
@@ -125,8 +126,8 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
     const items: OrderItem[] = Array.isArray(order.items) ? order.items : [];
 
     return (
-        <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
-             <ScreenHeader
+        <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+            <ScreenHeader
                 title={StackNames.AdminOrderDetailsScreen}
                 navigation={navigation}
             />
@@ -138,14 +139,14 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
                         { useNativeDriver: false }
                     )}
                     scrollEventThrottle={16}
-                    style={{ padding: 20 }}
+                    style={{ padding: 20, backgroundColor: '#fff' }}
                     contentContainerStyle={{ paddingBottom: 80 }}
                 >
                     {/* Status */}
                     <View style={styles.statusBox}>
                         <View style={styles.statusContainer}>
                             {getStatusIcon(order.status)}
-                            <Text
+                            <AppText
                                 style={[
                                     styles.statusText,
                                     { color: getStatusColor(order.status), marginBottom: 0 }
@@ -154,43 +155,16 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
                                 {order.status
                                     ? order?.status?.charAt(0)?.toUpperCase() + order?.status?.slice(1)
                                     : ""}
-                            </Text>
+                            </AppText>
                         </View>
-                        <Text style={styles.deliveryText}>
+                        <AppText style={styles.deliveryText}>
                             Estimated Delivery by {order.estimatedDelivery}
-                        </Text>
+                        </AppText>
                     </View>
 
-                    {/* Customer Details */}
-                    <View style={[styles.section, { marginBottom: 5 }]}>
-                        <Text style={styles.sectionTitle}>CUSTOMER DETAILS</Text>
-                    </View>
-
-                    {/* Customer Info */}
-                    <View style={styles.orderInfo}>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Name</Text>
-                            <Text style={styles.value}>{order.customerName}</Text>
-                        </View>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Email</Text>
-                            <Text style={styles.value}>{order.customerEmail}</Text>
-                        </View>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Contact No</Text>
-                            <TouchableOpacity onPress={handleDialPress}>
-                                <Text style={styles.value}>{order.customerPhone}</Text>
-                            </TouchableOpacity>
-
-                        </View>
-                        <View style={styles.row}>
-                            <Text style={styles.label}>Gender</Text>
-                            <Text style={styles.value}>{order?.customerGender?.charAt(0)?.toUpperCase() + order?.customerGender?.slice(1)}</Text>
-                        </View>
-                    </View>
 
                     <View style={[styles.section, { marginBottom: 5 }]}>
-                        <Text style={styles.sectionTitle}>ORDER DETAILS</Text>
+                        <AppText style={styles.sectionTitle}>ORDER DETAILS</AppText>
                     </View>
 
                     {/* Order Info */}
@@ -200,33 +174,58 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
                             <Text style={styles.value}>{order.orderId}</Text>
                         </View> */}
                         <View style={styles.row}>
-                            <Text style={styles.label}>Order Number</Text>
-                            <Text style={styles.value}>{order.orderNumber || 'NA'}</Text>
+                            <AppText style={styles.label}>Order Number</AppText>
+                            <AppText style={styles.value}>{order.orderNumber || 'NA'}</AppText>
                         </View>
                         <View style={styles.row}>
-                            <Text style={styles.label}>Placed on</Text>
-                            <Text style={styles.value}>{order.placedOn}</Text>
+                            <AppText style={styles.label}>Placed on</AppText>
+                            <AppText style={styles.value}>{order.placedOn}</AppText>
                         </View>
                         <View style={styles.row}>
-                            <Text style={styles.label}>Payment Method</Text>
-                            <Text style={styles.value}>
+                            <AppText style={styles.label}>Payment Method</AppText>
+                            <AppText style={styles.value}>
                                 {paymentMethods.find(mode => mode.id === order.paymentMethod)?.name}
-                            </Text>
+                            </AppText>
                         </View>
                         <View style={styles.row}>
-                            <Text style={styles.label}>Total</Text>
-                            <Text style={styles.value}>
+                            <AppText style={styles.label}>Total</AppText>
+                            <AppText style={styles.value}>
                                 {formatCurrency(order?.total)}
-                            </Text>
+                            </AppText>
+                        </View>
+                    </View>
+
+                    {/* Customer Details */}
+                    <View style={[styles.section, { marginBottom: 5 }]}>
+                        <AppText style={styles.sectionTitle}>CUSTOMER DETAILS</AppText>
+                    </View>
+
+                    {/* Customer Info */}
+                    <View style={styles.orderInfo}>
+                        <View style={styles.row}>
+                            <AppText style={styles.label}>Name</AppText>
+                            <AppText style={styles.value}>{order.customerName}</AppText>
+                        </View>
+                        <View style={styles.row}>
+                            <AppText style={styles.label}>Email</AppText>
+                            <AppText style={styles.value}>{order.customerEmail}</AppText>
+                        </View>
+                        <View style={styles.row}>
+                            <AppText style={styles.label}>Contact No</AppText>
+                            <TouchableOpacity onPress={handleDialPress}>
+                                <AppText style={styles.value}>{order.customerPhone}</AppText>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.row}>
+                            <AppText style={styles.label}>Gender</AppText>
+                            <AppText style={styles.value}>{order?.customerGender?.charAt(0)?.toUpperCase() + order?.customerGender?.slice(1)}</AppText>
                         </View>
                     </View>
 
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>SHIPPING ADDRESS</Text>
-                        <Text style={styles.sectionText}>{order.deliveryAddress}</Text>
+                        <AppText style={styles.sectionTitle}>SHIPPING ADDRESS</AppText>
+                        <AppText style={styles.sectionText}>{order.deliveryAddress}</AppText>
                     </View>
-
-
 
                     {/* Items */}
                     {items.map((item, index) => (
@@ -234,24 +233,24 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
                             <Image source={{ uri: item.image }} style={styles.itemImage} />
                             <View style={{ flex: 1, marginRight: 20 }}>
                                 <TouchableOpacity
-                                    onPress={() => navigation.navigate("ProductDetails", { productId: item.productId })}
+                                    onPress={() => navigation.navigate(StackNames.ProductDetails, { productId: item.productId })}
                                 >
-                                    <Text
+                                    <AppText
                                         style={styles.itemName}
                                         numberOfLines={2}
                                         ellipsizeMode='tail'
                                     >
                                         {item.name}
-                                    </Text>
+                                    </AppText>
                                 </TouchableOpacity>
-                                <Text style={styles.itemVariant}>
+                                <AppText style={styles.itemVariant}>
                                     {item.size} • {item.color}
-                                </Text>
-                                <Text style={styles.itemPrice}>
+                                </AppText>
+                                <AppText style={styles.itemPrice}>
                                     {formatCurrency(item.price)}
-                                </Text>
+                                </AppText>
                             </View>
-                            <Text style={styles.itemQty}>Qty: {item.quantity}</Text>
+                            <AppText style={styles.itemQty}>Qty: {item.quantity}</AppText>
                         </View>
                     ))}
 
@@ -259,52 +258,52 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
 
                     {/* Order Summary */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>ORDER SUMMARY</Text>
+                        <AppText style={styles.sectionTitle}>ORDER SUMMARY</AppText>
                         <View style={[styles.orderInfo, { padding: 0, backgroundColor: 'transparent', marginTop: 5 }]}>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Item(s) Subtotal:</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Item(s) Subtotal:</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(order?.subTotal)}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Tax ({order.taxPercentage || 0}%):</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Tax ({order.taxPercentage || 0}%):</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(order?.taxAmount)}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Shipping:</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Shipping:</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(order?.deliveryFee)}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Platform Fee:</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Platform Fee:</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(order?.platformFee)}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={styles.label}>Discount:</Text>
-                                <Text style={styles.value}>
+                                <AppText style={styles.label}>Discount:</AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(order?.discount)}
-                                </Text>
+                                </AppText>
                             </View>
                             <View style={styles.row}>
-                                <Text style={[styles.label, { fontWeight: '600', color: '#000' }]}>
+                                <AppText style={[styles.label, { fontWeight: '600', color: '#000' }]}>
                                     Grand Total:
-                                </Text>
-                                <Text style={styles.value}>
+                                </AppText>
+                                <AppText style={styles.value}>
                                     {formatCurrency(order?.total)}
-                                </Text>
+                                </AppText>
                             </View>
                         </View>
                     </View>
 
                     {/* {UPDATE STATUS} */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>ORDER STATUS</Text>
+                        <AppText style={styles.sectionTitle}>ORDER STATUS</AppText>
                         <Select
                             label="Update Order Status"
                             options={OrderStatusOptions
@@ -357,7 +356,7 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
                         }}
                     >
                         <Download size={20} color="#fff" />
-                        <Text style={styles.buyNowText}>Invoice</Text>
+                        <AppText style={styles.buyNowText}>Invoice</AppText>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -366,7 +365,7 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#fff" },
+    container: { flex: 1, backgroundColor: Colors.StatusBarBg },
     cartButton: {
         backgroundColor: "#ffe6e6",
         borderRadius: 8,
@@ -389,8 +388,8 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     row: { flexDirection: "row", justifyContent: "space-between", marginBottom: 6 },
-    label: { fontSize: 14, color: "#555" },
-    value: { fontSize: 14, fontWeight: "600", color: "#0f1111" },
+    label: { color: "#555" },
+    value: { fontWeight: "600", color: "#0f1111" },
     statusBox: {
         backgroundColor: "#F2F2F2",
         borderRadius: 8,
@@ -411,17 +410,16 @@ const styles = StyleSheet.create({
         borderColor: "#eee",
     },
     itemImage: { width: 60, height: 60, borderRadius: 6, backgroundColor: '#fff' },
-    itemName: { fontWeight: "600", fontSize: 14, color: '#2162a1' },
-    itemPrice: { color: "#333", fontSize: 13, fontWeight: '600' },
+    itemName: { fontWeight: "600", color: '#2162a1' },
+    itemPrice: { color: "#333", fontWeight: '600' },
     itemVariant: {
-        fontSize: 12,
         color: '#575959',
         marginVertical: 5
     },
     itemQty: { fontWeight: "600", color: "#0f1111" },
     section: { marginBottom: 28, paddingHorizontal: 10 },
-    sectionTitle: { fontWeight: "700", fontSize: 14, marginBottom: 6, color: "#444" },
-    sectionText: { fontSize: 13, color: "#555" },
+    sectionTitle: { fontWeight: "700", marginBottom: 6, color: "#444" },
+    sectionText: { color: "#555" },
 
     footer: {
         flexDirection: 'row',
@@ -444,7 +442,6 @@ const styles = StyleSheet.create({
         borderColor: '#333',
     },
     addToCartText: {
-        fontSize: 16,
         color: '#333',
         fontWeight: '500',
         marginLeft: 8,
@@ -460,7 +457,6 @@ const styles = StyleSheet.create({
         gap: 8
     },
     buyNowText: {
-        fontSize: 16,
         color: '#fff',
         fontWeight: 'bold',
     },

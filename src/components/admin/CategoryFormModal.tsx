@@ -1,3 +1,4 @@
+/* eslint-disable radix */
 
 import { Save, X } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
@@ -86,8 +87,8 @@ export default function CategoryFormModal({ visible, category, onClose }: Catego
           <Text style={styles.title}>
             {category ? 'Edit Category' : 'Add Category'}
           </Text>
-          <TouchableOpacity 
-            style={styles.saveButton} 
+          <TouchableOpacity
+            style={styles.saveButton}
             onPress={handleSave}
             disabled={loading}
           >

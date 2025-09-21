@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react/no-unstable-nested-components */
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -9,7 +9,7 @@ import {
   SearchIcon,
   User2,
 } from "lucide-react-native";
-import { StackNames } from "../constants/stackNames";
+import { StackNames } from "../constants/StackNames";
 import Home from "../screens/tabs/Home";
 import Categories from "../screens/tabs/Categories";
 import Explore from "../screens/tabs/Explore";
@@ -50,8 +50,6 @@ export default function BottomTabs() {
               blurAmount={25}
               style={{
                 flex: 1,
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
                 overflow: "hidden",
               }}
             />

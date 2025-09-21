@@ -14,10 +14,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
-import { StackNames } from '../constants/stackNames';
+import { StackNames } from '../constants/StackNames';
 import { getOnboardingSession } from '../services/session';
 import { firebaseService } from '../services/firebaseService';
 import { Colors } from '../constants/Colors';
+import { scale, verticalScale } from 'react-native-size-matters';
 
 const { width } = Dimensions.get('window');
 
@@ -135,7 +136,7 @@ export default function OnboardingScreen({ navigation }: any) {
             <View style={styles.footer}>
                 <TouchableOpacity onPress={handleNext} style={styles.nextButton}>
                     <LinearGradient
-                        colors={[Colors.light.homeScreenHeaderBackground.start, Colors.light.homeScreenHeaderBackground.end]}
+                        colors={[Colors.light.primaryButtonBackground.start, Colors.light.primaryButtonBackground.end]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                     >
@@ -143,7 +144,7 @@ export default function OnboardingScreen({ navigation }: any) {
                             <Text style={styles.nextButtonText}>
                                 {currentIndex === onBoardSlides.length - 1 ? 'Get Started' : 'Next'}
                             </Text>
-                            <ChevronRight size={20} color="#fff" />
+                            <ChevronRight size={20} color={Colors.light.primaryButtonForeground} />
                         </View>
                     </LinearGradient>
                 </TouchableOpacity>
@@ -164,11 +165,13 @@ const styles = StyleSheet.create({
         paddingTop: 10,
     },
     skipButton: {
-        paddingVertical: 8,
-        paddingHorizontal: 16,
+        paddingVertical: verticalScale(4),
+        paddingHorizontal: scale(20),
+        backgroundColor: '#f2efefcc',
+        borderRadius: scale(20)
     },
     skipText: {
-        fontSize: 16,
+        fontSize: scale(13),
         color: '#666',
         fontWeight: '500',
     },
@@ -252,13 +255,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingVertical: 16,
-        paddingHorizontal: 32,
+        paddingVertical: verticalScale(10),
     },
     nextButtonText: {
-        fontSize: 18,
+        fontSize: scale(14),
         fontWeight: '600',
-        color: '#fff',
-        marginRight: 8,
+        color: Colors.light.primaryButtonForeground,
     },
 });

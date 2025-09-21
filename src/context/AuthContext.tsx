@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail, signInWithCredential, signInWithEmailAndPassword, signOut, updateProfile, User } from "firebase/auth";
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from "react";
 import { auth, db } from "../config/firebase";
@@ -134,7 +135,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             await updateProfile(userCredential.user, { displayName });
 
-            const userProfile: UserProfile = {
+            const oUserProfile: UserProfile = {
                 uid: userCredential.user.uid,
                 email: userCredential.user.email!,
                 displayName,
@@ -142,7 +143,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 updatedAt: new Date(),
             };
 
-            await setDoc(doc(db, 'users', userCredential.user.uid), userProfile);
+            await setDoc(doc(db, 'users', userCredential.user.uid), oUserProfile);
 
             return { success: true };
         } catch (error: any) {
@@ -156,8 +157,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const signIn = useCallback(async (email: string, password: string) => {
         try {
             setIsLoading(true);
-            const user = await signInWithEmailAndPassword(auth, email, password);
-            console.log('Signed in user:', user);
+            const oUser = await signInWithEmailAndPassword(auth, email, password);
+            console.log('Signed in user:', oUser);
             return { success: true };
 
         } catch (error: any) {

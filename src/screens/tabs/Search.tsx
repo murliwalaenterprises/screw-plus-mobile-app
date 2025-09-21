@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 
 import { Search as SearchIcon, X } from 'lucide-react-native';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -10,7 +11,7 @@ import ProductCard from '../../components/ProductCard';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
 
-export default function Search({navigation, route}: any) {
+export default function Search({ navigation }: any) {
     const { searchQuery, setSearchQuery } = useStore();
     const [localQuery, setLocalQuery] = useState(searchQuery);
     const [products, setProducts] = useState<any[]>([]);
@@ -57,7 +58,7 @@ export default function Search({navigation, route}: any) {
 
     const renderProduct = ({ item }: { item: any }) => (
         <View style={styles.productContainer}>
-            <ProductCard product={item} />
+            <ProductCard navigation={navigation} product={item} />
         </View>
     );
 

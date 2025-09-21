@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Colors } from '../constants/Colors';
 import { firebaseService } from '../services/firebaseService';
 import { formatAddress } from '../services/utilityService';
@@ -23,8 +25,8 @@ interface LocationSelectorProps {
 }
 
 export default function LocationSelector({ visible, onClose, getLocations }: LocationSelectorProps) {
-    const { updateSelectedLocation, selectedLocation, user } = useAuth();
-    const userId: any = user?.uid; // TODO: replace with auth userId
+    const { updateSelectedLocation, selectedLocation, user, userProfile } = useAuth();
+    const userId: any = user?.uid || userProfile?.uid;
 
     const [searchQuery, setSearchQuery] = useState('');
     const [locations, setLocations] = useState<{ id: any, label: string }[]>([]);
@@ -59,13 +61,13 @@ export default function LocationSelector({ visible, onClose, getLocations }: Loc
     useEffect(() => {
         const unsubscribe = firebaseService.subscribeToAddresses(userId, (data) => {
             // console.log('Addresses updated:', JSON.stringify(data, null, 2));
-            const locations = data.map((addr, index) => ({
+            const oLocations = data.map((addr, index) => ({
                 id: addr.id ?? index,
                 label: formatAddress(addr),
             }));
             // 🔹 Ensure proper object structure
-            setLocations(locations);
-            getLocations(locations);
+            setLocations(oLocations);
+            getLocations(oLocations);
         });
         return () => unsubscribe();
     }, []);

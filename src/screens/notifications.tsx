@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import { Bell, Heart, Package, Settings as SettingsIcon, Tag, Trash2 } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
@@ -11,7 +12,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../components/ScreenHeader';
-import { StackNames } from '../constants/stackNames';
+import { StackNames } from '../constants/StackNames';
+import { Colors } from '../constants/Colors';
 
 interface Notification {
   id: string;
@@ -111,7 +113,7 @@ export default function NotificationsScreen({ navigation }: any) {
     smsNotifications: false,
   });
   const [showSettings, setShowSettings] = useState(false);
-  const [animatedValues] = useState(() => 
+  const [animatedValues] = useState(() =>
     mockNotifications?.reduce((acc, notification) => {
       acc[notification.id] = new Animated.Value(1);
       return acc;
@@ -119,8 +121,8 @@ export default function NotificationsScreen({ navigation }: any) {
   );
 
   const markAsRead = (notificationId: string) => {
-    setNotifications(prev => 
-      prev.map(notif => 
+    setNotifications(prev =>
+      prev.map(notif =>
         notif.id === notificationId ? { ...notif, isRead: true } : notif
       )
     );
@@ -159,14 +161,14 @@ export default function NotificationsScreen({ navigation }: any) {
           },
         ]}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.notificationContent}
           onPress={() => markAsRead(notification.id)}
         >
           <View style={[styles.iconContainer, { backgroundColor: getNotificationColor(notification.type) }]}>
             {getNotificationIcon(notification.type)}
           </View>
-          
+
           <View style={styles.notificationText}>
             <Text style={styles.notificationTitle}>{notification.title}</Text>
             <Text style={styles.notificationMessage} numberOfLines={2}>
@@ -174,8 +176,8 @@ export default function NotificationsScreen({ navigation }: any) {
             </Text>
             <Text style={styles.notificationTime}>{notification.time}</Text>
           </View>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => deleteNotification(notification.id)}
           >
@@ -189,7 +191,7 @@ export default function NotificationsScreen({ navigation }: any) {
   const renderSettings = () => (
     <View style={styles.settingsContainer}>
       <Text style={styles.sectionTitle}>Notification Settings</Text>
-      
+
       <View style={styles.settingItem}>
         <View style={styles.settingLeft}>
           <Package size={20} color="#3742fa" />
@@ -285,22 +287,20 @@ export default function NotificationsScreen({ navigation }: any) {
   );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top','left', 'right']}>
-       <ScreenHeader
-                title={StackNames.NotificationsScreen}
-                navigation={navigation}
-            />
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Notifications</Text>
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
+      <ScreenHeader
+        title={StackNames.NotificationsScreen}
+        navigation={navigation}
+      >
         <View style={styles.headerActions}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.headerButton}
             onPress={() => setShowSettings(!showSettings)}
           >
             <SettingsIcon size={20} color="#333" />
           </TouchableOpacity>
           {notifications.length > 0 && (
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.headerButton}
               onPress={clearAllNotifications}
             >
@@ -308,11 +308,11 @@ export default function NotificationsScreen({ navigation }: any) {
             </TouchableOpacity>
           )}
         </View>
-      </View>
+      </ScreenHeader>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#f8f9fa' }}>
         {showSettings && renderSettings()}
-        
+
         <View style={styles.notificationsContainer}>
           {notifications.length === 0 ? (
             <View style={styles.emptyState}>
@@ -332,7 +332,7 @@ export default function NotificationsScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.StatusBarBg,
   },
   header: {
     flexDirection: 'row',

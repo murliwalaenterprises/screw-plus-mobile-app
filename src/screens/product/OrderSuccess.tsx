@@ -1,44 +1,46 @@
 
 import { CheckCircle } from "lucide-react-native"; // ✅ Lucide icon
 import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { StackNames } from "../../constants/stackNames";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { StackNames } from "../../constants/StackNames";
 import { formatCurrency } from "../../services/utilityService";
+import { Colors } from "../../constants/Colors";
+import AppText from "../../components/ui/AppText";
 
 const OrderSuccess = ({ order, navigation }: any) => {
     return (
         <View style={styles.container}>
             {/* ✅ Success Icon */}
-            <CheckCircle size={80} color="green" />
+            <CheckCircle size={80} color={Colors.light.success} />
 
             {/* ✅ Success Message */}
-            <Text style={styles.successTitle}>Order Placed Successfully</Text>
-            <Text style={styles.successSubtitle}>
+            <AppText variant="large" style={styles.successTitle}>Order Placed Successfully</AppText>
+            <AppText variant="medium" style={styles.successSubtitle}>
                 Your order has been confirmed and will be delivered soon.
-            </Text>
+            </AppText>
 
             {/* ✅ Order Details Card */}
             <View style={styles.card}>
-                <Text style={styles.cardTitle}>Order Details</Text>
+                <AppText variant="medium" style={styles.cardTitle}>Order Details</AppText>
 
                 <View style={styles.row}>
-                    <Text style={styles.label}>Order No</Text>
-                    <Text style={styles.value}>#{order.orderNumber}</Text>
+                    <AppText style={styles.label}>Order No</AppText>
+                    <AppText style={styles.value}>#{order.orderNumber}</AppText>
                 </View>
 
                 <View style={styles.row}>
-                    <Text style={styles.label}>Order Date</Text>
-                    <Text style={styles.value}>{order?.date}</Text>
+                    <AppText style={styles.label}>Order Date</AppText>
+                    <AppText style={styles.value}>{order?.date}</AppText>
                 </View>
 
                 <View style={styles.row}>
-                    <Text style={styles.label}>Total Amount</Text>
-                    <Text style={styles.value}>{formatCurrency(Number(order?.amount))}</Text>
+                    <AppText style={styles.label}>Total Amount</AppText>
+                    <AppText style={styles.value}>{formatCurrency(Number(order?.amount))}</AppText>
                 </View>
 
                 <View style={styles.row}>
-                    <Text style={styles.label}>Status</Text>
-                    <Text style={[styles.value, styles.status]}>{order?.status?.charAt(0).toUpperCase() + order?.status?.slice(1)}</Text>
+                    <AppText style={styles.label}>Status</AppText>
+                    <AppText style={[styles.value, styles.status]}>{order?.status?.charAt(0).toUpperCase() + order?.status?.slice(1)}</AppText>
                 </View>
             </View>
 
@@ -46,18 +48,18 @@ const OrderSuccess = ({ order, navigation }: any) => {
             {/* Footer */}
             <View style={styles.footer}>
                 <TouchableOpacity style={styles.addToCartButton} onPress={() => navigation.navigate(StackNames?.Orders)}>
-                    <Text style={styles.addToCartText}>View Orders</Text>
+                    <AppText style={styles.addToCartText}>View Orders</AppText>
                 </TouchableOpacity>
 
             </View>
             <View style={styles.durationTimeline}>
                 <View style={styles.durationLine} />
                 <View style={styles.durationLabel}>
-                    <Text style={styles.durationTimelineText}>OR</Text>
+                    <AppText style={styles.durationTimelineText}>OR</AppText>
                 </View>
             </View>
             <TouchableOpacity onPress={() => navigation.navigate(StackNames.MainAppStack)}>
-                <Text>Continue Shopping</Text>
+                <AppText variant="medium">Continue Shopping</AppText>
             </TouchableOpacity>
 
         </View>
@@ -69,19 +71,17 @@ export default OrderSuccess;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // justifyContent: "center",
+        justifyContent: "center",
         alignItems: "center",
         padding: 20,
         backgroundColor: "#fff",
     },
     successTitle: {
-        fontSize: 20,
         fontWeight: "600",
         marginTop: 16,
         color: "#000",
     },
     successSubtitle: {
-        fontSize: 14,
         textAlign: "center",
         marginTop: 4,
         marginBottom: 20,
@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     cardTitle: {
-        fontSize: 16,
         fontWeight: "600",
         marginBottom: 12,
         color: "#000",
@@ -111,11 +110,9 @@ const styles = StyleSheet.create({
         marginVertical: 4,
     },
     label: {
-        fontSize: 14,
         color: "#666",
     },
     value: {
-        fontSize: 14,
         fontWeight: "500",
         color: "#000",
     },
@@ -143,7 +140,6 @@ const styles = StyleSheet.create({
         borderColor: '#333',
     },
     addToCartText: {
-        fontSize: 16,
         color: '#333',
         fontWeight: '500',
         marginLeft: 8,
@@ -159,7 +155,6 @@ const styles = StyleSheet.create({
         gap: 8
     },
     buyNowText: {
-        fontSize: 16,
         color: '#fff',
         fontWeight: 'bold',
     },
@@ -182,12 +177,11 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         borderRadius: 20,
         borderWidth: 1,
-        borderColor: "#007AFF",
+        borderColor: "#E0E0E0",
     },
     durationTimelineText: {
         marginLeft: 6,
-        fontSize: 14,
         fontWeight: "600",
-        color: "#007AFF"
+        color: "gray"
     },
 });

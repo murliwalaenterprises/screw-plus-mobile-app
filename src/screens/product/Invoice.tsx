@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 const PdfPreview = ({ navigation, route }: any) => {
@@ -16,7 +16,6 @@ const PdfPreview = ({ navigation, route }: any) => {
 
   return (
     <View style={styles.container}>
-
       <>
         {
           Platform.OS === 'android' ? (

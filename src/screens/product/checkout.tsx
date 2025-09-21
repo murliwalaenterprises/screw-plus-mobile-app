@@ -4,7 +4,7 @@
 
 import { CheckCircle, ChevronDown, CreditCard, MapPin, Plus } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, Vibration, View } from 'react-native';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, Vibration, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStore } from '../../store/useStore';
 import { useAuth } from '../../context/AuthContext';
@@ -15,9 +15,11 @@ import { Colors } from '../../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
 import LocationSelector from '../../components/LocationSelector';
 import OrderSuccess from './OrderSuccess';
-import { StackNames } from '../../constants/stackNames';
+import { StackNames } from '../../constants/StackNames';
 import { startRazorpayPayment } from '../../services/paymentService';
 import ScreenHeader from '../../components/ScreenHeader';
+import AppText from '../../components/ui/AppText';
+import { moderateScale } from 'react-native-size-matters';
 // import { sendOrderNotification } from '../../services/notificationService';
 
 export default function CheckoutScreen({ navigation }: any) {
@@ -43,17 +45,13 @@ export default function CheckoutScreen({ navigation }: any) {
     const tax = Math.round(cartTotal * (taxPercentage / 100));
     const finalTotal = cartTotal + deliveryFee + tax + platformFee;
 
-    console.log('payment methods', selectedPayment);
-    console.log('user=====', user)
-
     const handleOrderConfirmation = async (order: any) => {
         const userId = user?.uid || userProfile?.uid;
-        console.log('handleOrderConfirmation called', { user, userProfile });
         if (!userId) {
             Alert.alert('Error', 'User not logged in');
             return;
         }
-        console.log('order', JSON.stringify(order, null, 2));
+
         setOrderDetails(order);
 
         try {
@@ -67,13 +65,13 @@ export default function CheckoutScreen({ navigation }: any) {
             console.error("Error adding order:", err);
             Alert.alert("Error", "Failed to place your order.");
         } finally {
-            setLoadingSuccess(false); // 👈 stop loader once Firebase call finishes
+            setLoadingSuccess(false);
         }
     };
 
     const handleRazorpayPayment = async (order: Order) => {
         try {
-            const oOrderDetails = {
+            let oOrderDetails = {
                 ...order,
                 orderId: order.orderId || '',
                 finalTotal: finalTotal,
@@ -86,6 +84,7 @@ export default function CheckoutScreen({ navigation }: any) {
                 MTxnId: `MT${Date.now()}`,
                 orderDate: new Date().toISOString(),
                 status: 'pending',
+                paymentId: ''
             };
             const options = {
                 amount: finalTotal * 100, // Amount in paise
@@ -108,8 +107,6 @@ export default function CheckoutScreen({ navigation }: any) {
                 companyName: oOrderDetails.CompanyName,
                 transactionId: oOrderDetails?.MTxnId,  // Collect Transaction ID from Backend
                 onSuccess: async (data) => {
-                    console.log('Payment Success:', data);
-                    console.log('orderDetails', oOrderDetails);
                     if (data.razorpay_payment_id && data.razorpay_signature && data.razorpay_order_id) {
                         const resPayload = {
                             'razorpay_signature': data.razorpay_signature,
@@ -118,22 +115,8 @@ export default function CheckoutScreen({ navigation }: any) {
                             'razorpay_mobile': options.prefill.contact,
                             'razorpay_email': options.prefill.email,
                         };
-                        console.log('resPayload', resPayload);
+                        oOrderDetails.paymentId = resPayload.razorpay_payment_id;
                         handleOrderConfirmation(oOrderDetails);
-                        // Alert.alert(
-                        //     'Order Placed Successfully!',
-                        //     `Your order has been placed successfully. Order total: ₹${finalTotal.toLocaleString()}`,
-                        //     [
-                        //         {
-                        //             text: 'View Orders',
-                        //             onPress: () => navigation.navigate(StackNames.Orders)
-                        //         },
-                        //         {
-                        //             text: 'Continue Shopping',
-                        //             onPress: () => navigation.navigate(StackNames.MainAppStack)
-                        //         }
-                        //     ]
-                        // );
                     }
                 },
                 onError: (error) => {
@@ -244,9 +227,9 @@ export default function CheckoutScreen({ navigation }: any) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" color="#4CAF50" />
-                <Text style={{ marginTop: 12, fontSize: 16, color: "#333" }}>
+                <AppText style={{ marginTop: 12, color: "#333" }}>
                     Placing your order...
-                </Text>
+                </AppText>
             </View>
         );
     }
@@ -275,12 +258,12 @@ export default function CheckoutScreen({ navigation }: any) {
                 />
                 <View style={styles.container}>
                     <View style={styles.emptyContainer}>
-                        <Text style={styles.emptyText}>Your cart is empty</Text>
+                        <AppText style={styles.emptyText}>Your cart is empty</AppText>
                         <TouchableOpacity
                             style={styles.shopButton}
                             onPress={() => navigation.navigate(StackNames.MainAppStack)}
                         >
-                            <Text style={styles.shopButtonText}>Continue Shopping</Text>
+                            <AppText style={styles.shopButtonText}>Continue Shopping</AppText>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -297,12 +280,16 @@ export default function CheckoutScreen({ navigation }: any) {
     };
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['left', 'right']}>
+        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top', 'left', 'right']}>
+            <ScreenHeader
+                title={StackNames.Checkout}
+                navigation={navigation}
+            />
             <View style={styles.container}>
                 <ScrollView style={styles.content} showsVerticalScrollIndicator={false} automaticallyAdjustKeyboardInsets>
                     {/* Order Summary */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Order Summary</Text>
+                        <AppText style={styles.sectionTitle}>Order Summary</AppText>
                         {cart.map((item, index) => {
 
                             const selectedVariant: any = item.product.variants.find(product => product.size === item.selectedSize && product.color === item.selectedColor);
@@ -310,12 +297,12 @@ export default function CheckoutScreen({ navigation }: any) {
                             return (
                                 <View key={index} style={styles.orderItem}>
                                     <View style={styles.orderItemInfo}>
-                                        <Text style={styles.orderItemName}>{item.product.title}</Text>
-                                        <Text style={styles.orderItemDetails}>
+                                        <AppText style={styles.orderItemName}>{item.product.title}</AppText>
+                                        <AppText variant="small" style={styles.orderItemDetails}>
                                             Size: {item.selectedSize} | Color: {item.selectedColor} | Qty: {item.quantity}
-                                        </Text>
+                                        </AppText>
                                     </View>
-                                    <Text style={styles.orderItemPrice}>{formatCurrency(selectedVariant.price * item.quantity)}</Text>
+                                    <AppText variant="small" style={styles.orderItemPrice}>{formatCurrency(selectedVariant.price * item.quantity)}</AppText>
                                 </View>
                             )
                         })}
@@ -325,14 +312,14 @@ export default function CheckoutScreen({ navigation }: any) {
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
                             <MapPin size={20} color={Colors.light.primaryButtonBackground.end} />
-                            <Text style={styles.sectionTitle}>Delivery Address</Text>
+                            <AppText style={styles.sectionTitle}>Delivery Address</AppText>
                         </View>
 
                         {
                             !selectedLocation ? (
                                 <TouchableOpacity style={styles.addAddressButton} onPress={() => navigation.navigate(StackNames.AddressesScreen, { isAddAddress: true })}>
                                     <Plus size={20} color="#333" />
-                                    <Text style={styles.addAddressText}>Add New Address</Text>
+                                    <AppText style={styles.addAddressText}>Add New Address</AppText>
                                 </TouchableOpacity>
                             ) :
                                 (
@@ -340,7 +327,7 @@ export default function CheckoutScreen({ navigation }: any) {
                                         style={[styles.addressOption, { justifyContent: 'space-between' }]}
                                         onPress={() => setShowLocationSelector(true)}
                                     >
-                                        <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">{getSelectedLocation(selectedLocation)}</Text>
+                                        <AppText style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">{getSelectedLocation(selectedLocation)}</AppText>
                                         <ChevronDown size={16} color="#333" />
                                     </TouchableOpacity>
                                 )
@@ -369,7 +356,7 @@ export default function CheckoutScreen({ navigation }: any) {
                     <View style={styles.section}>
                         <View style={styles.sectionHeader}>
                             <CreditCard size={20} color={Colors.light.primaryButtonBackground.end} />
-                            <Text style={styles.sectionTitle}>Payment Method</Text>
+                            <AppText style={styles.sectionTitle}>Payment Method</AppText>
                         </View>
                         {paymentMethods.map((method) => (
                             <TouchableOpacity
@@ -383,15 +370,15 @@ export default function CheckoutScreen({ navigation }: any) {
                                 <View style={styles.radioButton}>
                                     {selectedPayment === method.id && <View style={styles.radioButtonInner} />}
                                 </View>
-                                <Text style={styles.paymentIcon}>{method.icon}</Text>
-                                <Text style={styles.paymentText}>{method.name}</Text>
+                                <AppText style={styles.paymentIcon}>{method.icon}</AppText>
+                                <AppText style={styles.paymentText}>{method.name}</AppText>
                             </TouchableOpacity>
                         ))}
                     </View>
 
                     {/* Order Notes */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Order Notes (Optional)</Text>
+                        <AppText style={styles.sectionTitle}>Order Notes (Optional)</AppText>
                         <TextInput
                             style={styles.notesInput}
                             placeholder="Add any special instructions..."
@@ -405,26 +392,26 @@ export default function CheckoutScreen({ navigation }: any) {
 
                     {/* Price Breakdown */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Price Details</Text>
+                        <AppText variant="medium" style={[styles.sectionTitle, { marginBottom: moderateScale(10) }]}>Price Details</AppText>
                         <View style={styles.priceRow}>
-                            <Text style={styles.priceLabel}>Subtotal</Text>
-                            <Text style={styles.priceValue}>{formatCurrency(cartTotal)}</Text>
+                            <AppText style={styles.priceLabel}>Subtotal</AppText>
+                            <AppText style={styles.priceValue}>{formatCurrency(cartTotal)}</AppText>
                         </View>
                         <View style={styles.priceRow}>
-                            <Text style={styles.priceLabel}>Delivery Fee</Text>
-                            <Text style={styles.priceValue}>{formatCurrency(deliveryFee)}</Text>
+                            <AppText style={styles.priceLabel}>Delivery Fee</AppText>
+                            <AppText style={styles.priceValue}>{formatCurrency(deliveryFee)}</AppText>
                         </View>
                         <View style={styles.priceRow}>
-                            <Text style={styles.priceLabel}>Tax ({taxPercentage}%)</Text>
-                            <Text style={styles.priceValue}>{formatCurrency(tax)}</Text>
+                            <AppText style={styles.priceLabel}>Tax ({taxPercentage}%)</AppText>
+                            <AppText style={styles.priceValue}>{formatCurrency(tax)}</AppText>
                         </View>
                         <View style={styles.priceRow}>
-                            <Text style={styles.priceLabel}>Platform Fee</Text>
-                            <Text style={styles.priceValue}>{formatCurrency(platformFee)}</Text>
+                            <AppText style={styles.priceLabel}>Platform Fee</AppText>
+                            <AppText style={styles.priceValue}>{formatCurrency(platformFee)}</AppText>
                         </View>
                         <View style={[styles.priceRow, styles.totalRow]}>
-                            <Text style={styles.totalLabel}>Total</Text>
-                            <Text style={styles.totalValue}>{formatCurrency(finalTotal)}</Text>
+                            <AppText style={styles.totalLabel}>Total</AppText>
+                            <AppText style={styles.totalValue}>{formatCurrency(finalTotal)}</AppText>
                         </View>
                     </View>
                 </ScrollView>
@@ -442,9 +429,9 @@ export default function CheckoutScreen({ navigation }: any) {
                         >
                             <View style={[styles.placeOrderButton, isProcessing && styles.disabledButton]}>
                                 <CheckCircle size={20} color={Colors.light.primaryButtonForeground} />
-                                <Text style={styles.placeOrderText}>
+                                <AppText style={styles.placeOrderText}>
                                     {isProcessing ? 'Processing...' : `Place Order • ${formatCurrency(finalTotal)}`}
-                                </Text>
+                                </AppText>
                             </View>
                         </LinearGradient>
                     </TouchableOpacity>
@@ -476,7 +463,6 @@ const styles = StyleSheet.create({
         borderBottomColor: '#e9ecef',
     },
     headerTitle: {
-        fontSize: 18,
         fontWeight: 'bold',
         color: '#333',
     },
@@ -495,7 +481,6 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     sectionTitle: {
-        fontSize: 16,
         fontWeight: 'bold',
         color: '#333',
         marginLeft: 8,
@@ -512,17 +497,14 @@ const styles = StyleSheet.create({
         flex: 0.9,
     },
     orderItemName: {
-        fontSize: 14,
         fontWeight: '500',
         color: '#333',
         marginBottom: 4,
     },
     orderItemDetails: {
-        fontSize: 12,
         color: '#666',
     },
     orderItemPrice: {
-        fontSize: 14,
         fontWeight: 'bold',
         color: '#333',
     },
@@ -566,16 +548,13 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.light.primaryButtonBackground.end,
     },
     addressText: {
-        fontSize: 14,
         color: '#333',
         flex: 1,
     },
     paymentIcon: {
-        fontSize: 20,
         marginRight: 12,
     },
     paymentText: {
-        fontSize: 14,
         color: '#333',
         flex: 1,
     },
@@ -584,7 +563,6 @@ const styles = StyleSheet.create({
         borderColor: '#e9ecef',
         borderRadius: 8,
         padding: 12,
-        fontSize: 14,
         color: '#333',
         textAlignVertical: 'top',
         marginTop: 8,
@@ -596,11 +574,9 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
     },
     priceLabel: {
-        fontSize: 14,
         color: '#666',
     },
     priceValue: {
-        fontSize: 14,
         color: '#333',
         fontWeight: '500',
     },
@@ -611,14 +587,12 @@ const styles = StyleSheet.create({
         paddingTop: 12,
     },
     totalLabel: {
-        fontSize: 16,
         fontWeight: 'bold',
         color: '#333',
     },
     totalValue: {
-        fontSize: 16,
         fontWeight: 'bold',
-        color: Colors.light.primaryButtonBackground.end,
+        color: '#000',
     },
     footer: {
         backgroundColor: '#fff',
@@ -640,7 +614,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#ccc',
     },
     placeOrderText: {
-        fontSize: 16,
         fontWeight: 'bold',
         color: Colors.light.primaryButtonForeground,
         marginLeft: 8,
@@ -652,7 +625,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 32,
     },
     emptyText: {
-        fontSize: 18,
         color: '#666',
         marginBottom: 24,
     },
@@ -663,12 +635,10 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     shopButtonText: {
-        fontSize: 16,
         fontWeight: 'bold',
         color: '#fff',
     },
     locationText: {
-        fontSize: 14,
         fontWeight: '600',
         color: '#333',
         marginHorizontal: 6,
@@ -687,7 +657,6 @@ const styles = StyleSheet.create({
         borderStyle: 'dashed',
     },
     addAddressText: {
-        fontSize: 16,
         fontWeight: '500',
         color: '#333',
         marginLeft: 8,

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { StackNames } from '../constants/stackNames';
+import { StackNames } from '../constants/StackNames';
 import { useAuth } from '../context/AuthContext';
 import { navigationRef, reset } from '../helper/NavigationService';
 

@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import { Building, Home, MapPin } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
@@ -40,7 +42,7 @@ export default function AddressModal({ visible, onClose, onSave, editingAddress 
 
     useEffect(() => {
         if (editingAddress) {
-            const { id, ...rest } = editingAddress;
+            const { ...rest } = editingAddress;
             setForm(rest);
         } else {
             setForm(initialState);

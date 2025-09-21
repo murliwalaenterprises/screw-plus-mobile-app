@@ -1,5 +1,6 @@
+/* eslint-disable react-native/no-inline-styles */
 
-import { Heart, ShoppingCart } from 'lucide-react-native';
+import { Heart, ShoppingBagIcon } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
     ActivityIndicator,
@@ -15,10 +16,13 @@ import { Product } from '../types/product';
 import { firebaseService } from '../services/firebaseService';
 import { useStore } from '../store/useStore';
 import ProductCard from '../components/ProductCard';
-import { StackNames } from '../constants/stackNames';
+import { StackNames } from '../constants/StackNames';
 import ScreenHeader from '../components/ScreenHeader';
+import { Colors } from '../constants/Colors';
+import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
+import AppText from '../components/ui/AppText';
 
-export default function WishlistScreen({navigation}: any) {
+export default function WishlistScreen({ navigation }: any) {
     const { favorites, clearWishlist, addToCart } = useStore();
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
@@ -53,7 +57,7 @@ export default function WishlistScreen({navigation}: any) {
 
     const renderProduct = ({ item }: { item: Product }) => (
         <View style={styles.productContainer}>
-            <ProductCard product={item} />
+            <ProductCard navigation={navigation} product={item} />
         </View>
     );
 
@@ -79,40 +83,32 @@ export default function WishlistScreen({navigation}: any) {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }} edges={['top','left', 'right']}>
-             <ScreenHeader
+        <SafeAreaView style={{ flex: 1, backgroundColor: Colors.StatusBarBg }} edges={['top', 'left', 'right']}>
+            <ScreenHeader
                 title={StackNames.WishListScreen}
                 navigation={navigation}
-            />
+            >
+                {wishlistProducts.length && (<TouchableOpacity
+                    style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: scale(5) }}
+                    onPress={handleAddAllToCart}
+                >
+                    <ShoppingBagIcon size={scale(22)} color="#000" />
+                    <AppText variant="small">{`Move to\nCart List`}</AppText>
+                </TouchableOpacity>)}
+            </ScreenHeader>
             <View style={styles.container}>
-
                 {wishlistProducts.length === 0 ? (
                     renderEmptyWishlist()
                 ) : (
-                    <>
-                        <View style={[styles.actionsContainer, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}>
-                            <TouchableOpacity
-                                style={[styles.addAllButton, {flex: 1}]}
-                                onPress={handleAddAllToCart}
-                            >
-                                <ShoppingCart size={20} color="#fff" />
-                                <Text style={styles.addAllText}>Add All to Cart</Text>
-                            </TouchableOpacity>
-                            {wishlistProducts.length > 0 && (
-                                <Text style={styles.itemCount}>{wishlistProducts.length} items</Text>
-                            )}
-                        </View>
-
-                        <FlatList
-                            data={wishlistProducts}
-                            renderItem={renderProduct}
-                            numColumns={2}
-                            columnWrapperStyle={styles.row}
-                            contentContainerStyle={styles.productsContainer}
-                            showsVerticalScrollIndicator={false}
-                            keyExtractor={(item) => item.id}
-                        />
-                    </>
+                    <FlatList
+                        data={wishlistProducts}
+                        renderItem={renderProduct}
+                        numColumns={2}
+                        columnWrapperStyle={styles.row}
+                        contentContainerStyle={styles.productsContainer}
+                        showsVerticalScrollIndicator={false}
+                        keyExtractor={(item) => item.id}
+                    />
                 )}
             </View>
         </SafeAreaView>
@@ -169,7 +165,9 @@ const styles = StyleSheet.create({
         marginLeft: 8,
     },
     productsContainer: {
-        padding: 16,
+        paddingHorizontal: moderateScale(16),
+        paddingTop: moderateScale(30),
+        paddingBottom: moderateScale(100)
     },
     row: {
         justifyContent: 'space-between',
@@ -180,9 +178,10 @@ const styles = StyleSheet.create({
     },
     emptyState: {
         flex: 1,
-        justifyContent: 'center',
+        // justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 32,
+        paddingHorizontal: verticalScale(32),
+        paddingTop: verticalScale(20)
     },
     emptyTitle: {
         fontSize: 24,
