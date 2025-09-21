@@ -28,6 +28,7 @@ import { OrderStatusOptions } from '../../constants/Constant';
 import ScreenHeader from '../../components/ScreenHeader';
 import { Colors } from '../../constants/Colors';
 import AppText from '../../components/ui/AppText';
+import { sendOrderNotification } from '../../services/notificationService';
 
 type OrderItem = {
     id: string;
@@ -327,6 +328,7 @@ export default function AdminOrderDetailsScreen({ navigation, route }: any) {
                                                 ...prevOrder,
                                                 status: updatedStatus
                                             }));
+                                            // sendOrderNotification(updatedStatus, order?.orderNumber);
                                             Alert.alert('Success', 'Order status updated successfully');
                                         })
                                         .catch((error) => {

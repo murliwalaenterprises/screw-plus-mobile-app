@@ -13,13 +13,14 @@ import AdminScreen from '../screens/Admin';
 import WishlistScreen from '../screens/Wishlist';
 import AddressesScreen from '../screens/Addresses';
 import NotificationsScreen from '../screens/Notifications';
-import SettingsScreen from '../screens/settings';
+import SettingsScreen from '../screens/Settings';
 import PaymentMethodsScreen from '../screens/PaymentMethods';
 import OrderDetailsScreen from '../screens/product/OrderDetails';
 import PdfPreview from '../screens/product/Invoice';
 import AdminOrderDetailsScreen from '../screens/product/AdminOrderDetails';
 import ProductListScreen from '../screens/product/ProductListScreen';
 import Search from '../screens/tabs/Search';
+import About from '../screens/About';
 
 
 const Stack = createNativeStackNavigator();
@@ -49,6 +50,7 @@ const RootStack = () => {
             <Stack.Screen name={StackNames.AdminOrderDetailsScreen} component={AdminOrderDetailsScreen} />
             <Stack.Screen name={StackNames.ProductListScreen} component={ProductListScreen} />
             <Stack.Screen name={StackNames.SearchResults} component={Search} />
+            <Stack.Screen name={StackNames.AboutUs} component={About} />
         </Stack.Navigator>
     );
 };

@@ -6,6 +6,7 @@ import {
   Edit3,
   Heart,
   HelpCircle,
+  Info,
   LogOut,
   MapPin,
   Shield,
@@ -24,14 +25,18 @@ import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
 import { formatCurrency } from '../../services/utilityService';
 import AppText from '../../components/ui/AppText';
+import { getVersion } from 'react-native-device-info';
 
 export default function Profile({ navigation }: any) {
   const { user, userProfile, logout } = useAuth();
   const { favorites } = useStore();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [currentVersion, setCurrentVersion] = useState('1.0.0');
 
   const userId: any = user?.uid;
   const isLoggedIn = !!userProfile;
+
+
 
   const [orders, setOrder] = useState<Order[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -46,6 +51,11 @@ export default function Profile({ navigation }: any) {
   }, []);
 
   React.useEffect(() => {
+    (function fetchAppVersion() {
+      const version = getVersion();
+      setCurrentVersion(version);
+    })();
+
     if (!userId) return;
     const unsubscribe = firebaseService?.subscribeToUser(userId, (data) => {
       setIsAdmin(data?.isAdmin || false);
@@ -92,6 +102,7 @@ export default function Profile({ navigation }: any) {
     { id: 'addresses', icon: MapPin, title: "Addresses", subtitle: "Manage delivery addresses", route: StackNames.AddressesScreen, loginOnly: true },
     // { id: 'payment_methods', icon: CreditCard, title: "Payment Methods", subtitle: "Cards & wallets", route: StackNames.PaymentMethodsScreen, loginOnly: true },
     { id: 'notifications', icon: Bell, title: "Notifications", subtitle: "Alerts & updates", route: StackNames.NotificationsScreen },
+    { id: 'about', icon: Info, title: "About Us", subtitle: "About Us", route: StackNames.AboutUs },
     { id: 'help_support', icon: HelpCircle, title: "Help & Support", subtitle: "Get assistance", route: "" },
     // { icon: Settings, title: "Settings", subtitle: "App preferences", route: StackNames.SettingsScreen },
   ];
@@ -231,7 +242,7 @@ export default function Profile({ navigation }: any) {
           }
 
           <View style={styles.footer}>
-            <AppText style={styles.footerText}>Screw Plus v1.0.0</AppText>
+            <AppText style={styles.footerText}>{currentVersion}</AppText>
           </View>
         </ScrollView>
       </SafeAreaView>
