@@ -52,5 +52,8 @@ export const defaultHeaderColor = [
 
 export const defaultHeaderTransparent = ['rgba(0,0,0, 0.6)', 'rgba(0,0,0,0.4)', 'rgba(0,0,0,0)'];
 
-
+export const IconConfig = {
+    size: 20,
+    textSize: 14
+}
 

@@ -36,7 +36,7 @@ export default function BottomTabs() {
           paddingTop: 10,
           paddingBottom: Platform.OS === "android" ? 10 : 20,
           marginBottom: Platform.OS === "android" ? 2 : 0,
-          backgroundColor: "transparent", // Important for blur
+          backgroundColor: "rgba(255,255,255,0.8)", // Important for blur
           borderTopWidth: 0,
           elevation: Platform.OS === "android" ? 5 : 0,
         },

@@ -21,10 +21,10 @@ export const Colors = {
     placeholderTextColor: '#666',
     link: '#005cc5',
     homeScreenHeaderBackground: {
-      start: '#ec5c10',
-      end: '#e8890d',
+      start: '#f5cdb3ff',
+      end: '#fa751cff',
     },
-    homeScreenHeaderForeground: '#fff',
+    homeScreenHeaderForeground: '#2d2d2dff',
 
     primaryButtonBackground: {
       start: '#ffd814',

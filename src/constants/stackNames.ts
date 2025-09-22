@@ -79,5 +79,6 @@ export const StackNames = {
     OrderDetailsScreen: 'Order Details',
     PdfPreview: 'PdfPreview',
     AdminOrderDetailsScreen: 'Order Info',
-    ProductListScreen: 'Products'
+    ProductListScreen: 'Products',
+    InvoiceScreen: 'Invoice'
 }

@@ -14,7 +14,9 @@ import LocationSelector from '../../components/LocationSelector';
 import ProductCard from '../../components/ProductCard';
 import { useAuth } from '../../context/AuthContext';
 import { StackNames } from '../../constants/StackNames';
-import { scale } from 'react-native-size-matters';
+import { scale, verticalScale } from 'react-native-size-matters';
+import AutoHeightImage from '../../components/AutoHeightImage';
+import { IconConfig } from '../../constants/Constant';
 
 export default function Home({ navigation }: any) {
   const { getCartItemsCount } = useStore();
@@ -74,19 +76,19 @@ export default function Home({ navigation }: any) {
           style={styles.headerButton}
           onPress={() => navigation.navigate(StackNames.Search)}
         >
-          <Search size={24} color={Colors.light.homeScreenHeaderForeground} />
+          <Search size={IconConfig.size} color={Colors.light.homeScreenHeaderForeground} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.headerButton}
           onPress={() => navigation.navigate(StackNames.NotificationsScreen)}
         >
-          <Bell size={24} color={Colors.light.homeScreenHeaderForeground} />
+          <Bell size={IconConfig.size} color={Colors.light.homeScreenHeaderForeground} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.headerButton, styles.cartButton]}
           onPress={() => navigation.navigate(StackNames.Cart)}
         >
-          <ShoppingCart size={24} color={Colors.light.homeScreenHeaderForeground} />
+          <ShoppingCart size={IconConfig.size} color={Colors.light.homeScreenHeaderForeground} />
           {cartItemsCount > 0 && (
             <View style={styles.cartBadge}>
               <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
@@ -102,7 +104,7 @@ export default function Home({ navigation }: any) {
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
         {showViewAll && (
-          <TouchableOpacity onPress={() => navigation.navigate(StackNames.ProductListScreen)}>
+          <TouchableOpacity onPress={() => navigation.navigate(StackNames.ProductListScreen, { query: 'all' })}>
             <Text style={styles.viewAllText}>View All</Text>
           </TouchableOpacity>
         )}
@@ -139,6 +141,24 @@ export default function Home({ navigation }: any) {
                 <BannerCarousel banners={banners} />
               )}
 
+              {/* Ads */}
+              <View style={{ marginBottom: verticalScale(10) }}>
+                {
+                  [
+                    'https://www.mynameart.com/uploads/images/happy-diwali-diya-flame-gif-free-download.gif',
+                    'https://cdn.vectorstock.com/i/500p/47/98/mega-sale-diwali-banner-with-offer-details-vector-43864798.jpg',
+                    'https://img.freepik.com/free-vector/biggest-happy-diwali-sale-banner-with-decorative-diya_1017-21248.jpg',
+                    'https://i.pinimg.com/originals/34/ce/8f/34ce8f39d7bf12c4bba8ef6c3142361a.gif'
+                  ].map((bannerImg, index) => (
+                    <TouchableOpacity activeOpacity={0.8} key={index + 1}>
+                      <AutoHeightImage
+                        uri={bannerImg}
+                      />
+                    </TouchableOpacity>
+                  ))
+                }
+              </View>
+
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Shop by Category</Text>
                 {loading.categories ? (
@@ -152,7 +172,7 @@ export default function Home({ navigation }: any) {
                     style={styles.categoriesContainer}
                   >
                     {categories.map((category: any) => (
-                      <CategoryCard key={category.id} category={category} />
+                      <CategoryCard navigation={navigation} key={category.id} category={category} />
                     ))}
                   </ScrollView>
                 )}

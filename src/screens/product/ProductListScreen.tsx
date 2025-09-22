@@ -1,5 +1,6 @@
+/* eslint-disable react/no-unstable-nested-components */
 /* eslint-disable react-native/no-inline-styles */
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
     View,
     FlatList,
@@ -19,13 +20,20 @@ import { useFirebaseData } from "../../store/useFirebaseData";
 import { Search, ShoppingCart } from "lucide-react-native";
 import AppText from "../../components/ui/AppText";
 import { useStore } from "../../store/useStore";
+import { IconConfig } from "../../constants/Constant";
+import { filterProducts } from "../../services/utilityService";
 
 const screenWidth = Dimensions.get("window").width;
 
-const ProductListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
+const ProductListScreen: React.FC<{ navigation: any, route: any }> = ({ navigation, route }) => {
+
+    const { query } = route.params || {};
+
     const { getCartItemsCount } = useStore();
-    const { products, loading } = useFirebaseData();
+    const { products } = useFirebaseData();
     const cartItemsCount = getCartItemsCount();
+
+    const [filteredProducts, setFilteredProducts] = useState(products || []);
 
     const renderProduct = useCallback(
         ({ item }: { item: Product }) => {
@@ -43,17 +51,24 @@ const ProductListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
         [navigation]
     );
 
+    React.useEffect(() => {
+        if (products.length) {
+            const filteredList = filterProducts(products, query);
+            setFilteredProducts(filteredList);
+        }
+    }, [query, products]);
+
     return (
         <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
-            <ScreenHeader title={StackNames.ProductListScreen} navigation={navigation}>
+            <ScreenHeader title={query.title ? query.title : StackNames.ProductListScreen} navigation={navigation}>
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: scale(20) }}>
                     <TouchableOpacity onPress={() => navigation.navigate(StackNames.SearchResults)}>
-                        <Search size={24} color={Colors.StatusBarTextColor} />
+                        <Search size={IconConfig.size} color={Colors.StatusBarTextColor} />
                     </TouchableOpacity>
                     <TouchableOpacity
                         onPress={() => navigation.navigate(StackNames.Cart)}>
                         <ShoppingCart
-                            size={24}
+                            size={IconConfig.size}
                             color={Colors.StatusBarTextColor}
                         />
                         {cartItemsCount > 0 && (
@@ -66,21 +81,20 @@ const ProductListScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
             </ScreenHeader>
 
             <View style={styles.listContainer}>
-                {products.length === 0 && !loading ? (
-                    <View style={styles.noProducts}>
-                        <AppText style={styles.noProductsText}>No products found</AppText>
-                    </View>
-                ) : (
-                    <FlatList
-                        data={products}
-                        keyExtractor={(item) => item.id.toString()}
-                        renderItem={renderProduct}
-                        numColumns={2}
-                        columnWrapperStyle={styles.row}
-                        contentContainerStyle={{ paddingBottom: moderateScale(100), paddingTop: moderateScale(28) }}
-                        showsVerticalScrollIndicator={false}
-                    />
-                )}
+                <FlatList
+                    data={filteredProducts}
+                    keyExtractor={(item) => item.id.toString()}
+                    renderItem={renderProduct}
+                    numColumns={2}
+                    columnWrapperStyle={styles.row}
+                    contentContainerStyle={{ paddingBottom: moderateScale(100), paddingTop: moderateScale(28) }}
+                    showsVerticalScrollIndicator={false}
+                    ListEmptyComponent={() => (
+                        <View style={styles.noProducts}>
+                            <AppText style={styles.noProductsText}>No products found</AppText>
+                        </View>
+                    )}
+                />
             </View>
         </SafeAreaView>
     );

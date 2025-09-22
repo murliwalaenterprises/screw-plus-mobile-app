@@ -1,27 +1,28 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Category } from '../types/product';
 import { useStore } from '../store/useStore';
-// import { router } from 'expo-router';
+import { StackNames } from '../constants/StackNames';
+import AppText from './ui/AppText';
 
 interface CategoryCardProps {
+  navigation: any;
   category: Category;
 }
 
-export default function CategoryCard({ category }: CategoryCardProps) {
+export default function CategoryCard({ navigation, category }: CategoryCardProps) {
   const { setSelectedCategory } = useStore();
 
   const handlePress = () => {
     setSelectedCategory(category.name);
-    // router.push('/(tabs)/categories' as any);
+    navigation.navigate(StackNames.ProductListScreen, { query: { title: category.name, category: category.name } })
   };
 
   return (
     <TouchableOpacity style={styles.container} onPress={handlePress}>
       <Image source={{ uri: category.image }} style={styles.image} />
       <View style={styles.overlay}>
-        <Text style={styles.name}>{category.name}</Text>
-        <Text style={styles.count}>{category.productCount} items</Text>
+        <AppText variant="small" style={styles.name}>{category.name}</AppText>
       </View>
     </TouchableOpacity>
   );
@@ -29,8 +30,8 @@ export default function CategoryCard({ category }: CategoryCardProps) {
 
 const styles = StyleSheet.create({
   container: {
-    width: 120,
-    height: 120,
+    width: 80,
+    height: 80,
     borderRadius: 8,
     marginRight: 12,
     overflow: 'hidden',
@@ -49,8 +50,6 @@ const styles = StyleSheet.create({
   },
   name: {
     color: '#fff',
-    fontSize: 14,
-    fontWeight: 'bold',
   },
   count: {
     color: '#fff',

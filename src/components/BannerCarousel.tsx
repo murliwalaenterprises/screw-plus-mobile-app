@@ -73,7 +73,6 @@ export default function BannerCarousel({ banners }: BannerCarouselProps) {
 const styles = StyleSheet.create({
   container: {
     height: 200,
-    marginBottom: 20,
   },
   scrollView: {
     flex: 1,

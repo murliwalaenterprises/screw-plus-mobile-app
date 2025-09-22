@@ -1,9 +1,13 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
+import ScreenHeader from '../../components/ScreenHeader';
+import { StackNames } from '../../constants/StackNames';
+import { Download } from 'lucide-react-native';
 
 const PdfPreview = ({ navigation, route }: any) => {
-  // ✅ get params from route
   const { invoiceNo, invoiceUri } = route.params || {};
 
   useEffect(() => {
@@ -15,33 +19,26 @@ const PdfPreview = ({ navigation, route }: any) => {
   }, [invoiceNo, navigation]);
 
   return (
-    <View style={styles.container}>
-      <>
-        {
-          Platform.OS === 'android' ? (
-            <WebView
-              source={{ uri: `https://drive.google.com/viewerng/viewer?embedded=true&url=${invoiceUri}` }}
-              style={styles.webview}
-              scalesPageToFit={true}
-              automaticallyAdjustContentInsets={true}
-              injectedJavaScript={`
-                                            const meta = document.createElement('meta'); 
-                                            meta.setAttribute('name', 'viewport'); 
-                                            meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes'); 
-                                            document.getElementsByTagName('head')[0].appendChild(meta);
-                                            true;
-                                        `}
-            />
-          ) : Platform.OS === 'ios' ? (
-            <WebView
-              source={{ uri: invoiceUri }}
-              style={styles.webview}
-            />
-          ) : null
-        }
-      </>
-
-    </View>
+    <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
+      <ScreenHeader title={StackNames.InvoiceScreen} navigation={navigation} >
+        <TouchableOpacity><Download size={20} color="#333" /></TouchableOpacity>
+      </ScreenHeader>
+      <View style={{ flex: 1, marginTop: 20 }}>
+        <WebView
+          style={styles.webview}
+          source={{ uri: Platform.OS === 'android' ? `https://drive.google.com/viewerng/viewer?embedded=true&url=${invoiceUri}` : invoiceUri }}
+          scalesPageToFit={true}
+          automaticallyAdjustContentInsets={true}
+          injectedJavaScript={`
+                const meta = document.createElement('meta'); 
+                meta.setAttribute('name', 'viewport'); 
+                meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=yes'); 
+                document.getElementsByTagName('head')[0].appendChild(meta);
+                true;
+            `}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -50,7 +47,6 @@ export default PdfPreview;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   webview: {
     flex: 1,

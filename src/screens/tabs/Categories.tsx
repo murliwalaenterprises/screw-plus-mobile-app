@@ -23,6 +23,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { StackNames } from '../../constants/StackNames';
 import { scale, verticalScale } from 'react-native-size-matters';
 import AppText from '../../components/ui/AppText';
+import { IconConfig } from '../../constants/Constant';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -85,7 +86,7 @@ export default function CategoriesScreen({ navigation }: any) {
   }
 
   const renderProduct = ({ item }: { item: any }) => (
-    <ProductCard navigation={navigation} product={item} width={(screenWidth * 0.8) / 2 - 14} />
+    <ProductCard navigation={navigation} product={item} width={(screenWidth * 0.8) / 2 - 14} showCartButton />
   );
 
   const NoProductFound = () => (
@@ -118,7 +119,7 @@ export default function CategoriesScreen({ navigation }: any) {
               style={[styles.headerButton, styles.cartButton]}
               onPress={() => navigation.navigate(StackNames.Cart)}>
               <ShoppingCart
-                size={24}
+                size={IconConfig.size}
                 color={Colors.light.homeScreenHeaderForeground}
               />
               {cartItemsCount > 0 && (
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
   cartButton: {
     position: 'relative',
     right: -3,
-    top: -1
+    top: 0
   },
   cartBadge: {
     position: 'absolute',

@@ -1,3 +1,4 @@
+import { Product } from "../types/product";
 import { Address } from "../types/types";
 import APIService from "./APIService";
 
@@ -203,3 +204,38 @@ export const paymentMethods = [
     { id: 'online', name: 'UPI Payment', icon: '📱' },
     // { id: 'wallet', name: 'Digital Wallet', icon: '💰' }
 ];
+
+export function filterProducts(products: Product[], query: any): Product[] {
+    if (!products.length) return [];
+
+    // agar query "all" hai to sab return karo
+    if (!query || query === "all") return products;
+
+    return products.filter((product) => {
+        let match = true;
+
+        // category filter
+        if (query.category && product.category !== query.category) {
+            match = false;
+        }
+
+        // search keyword filter
+        if (query.keyword) {
+            const keyword = query.keyword.toLowerCase();
+            const values = Object.values(product).join(" ").toLowerCase();
+            if (!values.includes(keyword)) {
+                match = false;
+            }
+        }
+
+        // price filter
+        if (query.minPrice && product.price < query.minPrice) {
+            match = false;
+        }
+        if (query.maxPrice && product.price > query.maxPrice) {
+            match = false;
+        }
+
+        return match;
+    });
+}
