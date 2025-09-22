@@ -97,13 +97,10 @@ export default function CategoriesScreen({ navigation }: any) {
 
   return (
     <LinearGradient
-      colors={[
-        Colors.light.homeScreenHeaderBackground.start,
-        Colors.light.homeScreenHeaderBackground.end,
-      ]}
       style={{ flex: 1 }}
+      colors={Colors.homeScreenHeaderBackground}
       start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}>
+      end={{ x: 0, y: 1 }}>
       <SafeAreaView
         style={{ flex: 1, backgroundColor: 'transparent' }}
         edges={['top', 'left', 'right']}>
@@ -120,7 +117,7 @@ export default function CategoriesScreen({ navigation }: any) {
               onPress={() => navigation.navigate(StackNames.Cart)}>
               <ShoppingCart
                 size={IconConfig.size}
-                color={Colors.light.homeScreenHeaderForeground}
+                color={Colors.homeScreenHeaderForeground}
               />
               {cartItemsCount > 0 && (
                 <View style={styles.cartBadge}>
@@ -199,11 +196,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: scale(20), // was 24
     fontWeight: '600',
-    color: Colors.light.homeScreenHeaderForeground,
+    color: Colors.homeScreenHeaderForeground,
   },
   subtitle: {
     fontSize: scale(12), // was 14
-    color: Colors.light.homeScreenHeaderForeground,
+    color: Colors.homeScreenHeaderForeground,
     opacity: scale(0.7),
     marginTop: scale(2),
   },

@@ -91,7 +91,7 @@ export default function ProductCard({ navigation, product, width, showCartButton
         {
           showCartButton && (
             <TouchableOpacity style={styles.cartBtn} onPress={handleAddToCart}>
-              <ShoppingCartIcon size={scale(16)} />
+              <ShoppingCartIcon size={scale(14)} />
               <AppText style={styles.cartBtnText}>Add to cart</AppText>
             </TouchableOpacity>
           )
@@ -219,7 +219,6 @@ const styles = StyleSheet.create({
     gap: scale(5)
   },
   cartBtnText: {
-    fontWeight: "600",
     color: Colors.light.primaryButtonForeground,
   },
 });

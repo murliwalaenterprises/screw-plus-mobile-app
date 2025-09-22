@@ -26,6 +26,7 @@ import { Colors } from '../../constants/Colors';
 import { formatCurrency } from '../../services/utilityService';
 import AppText from '../../components/ui/AppText';
 import { getVersion } from 'react-native-device-info';
+import { navigationRef } from '../../helper/NavigationService';
 
 export default function Profile({ navigation }: any) {
   const { user, userProfile, logout } = useAuth();
@@ -35,8 +36,6 @@ export default function Profile({ navigation }: any) {
 
   const userId: any = user?.uid;
   const isLoggedIn = !!userProfile;
-
-
 
   const [orders, setOrder] = useState<Order[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -81,8 +80,7 @@ export default function Profile({ navigation }: any) {
             console.log('result', result)
             setIsLoggingOut(false);
             if (result?.success) {
-              // navigation.navigate(StackNames.AuthStack);
-              navigation.reset({
+              navigationRef.reset({
                 index: 0,
                 routes: [{ name: StackNames.AuthStack }],
               });
@@ -160,10 +158,10 @@ export default function Profile({ navigation }: any) {
 
   return (
     <LinearGradient
-      colors={[Colors.light.homeScreenHeaderBackground.start, Colors.light.homeScreenHeaderBackground.end]}
       style={{ flex: 1 }}
+      colors={Colors.homeScreenHeaderBackground}
       start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 0 }}
+      end={{ x: 0, y: 1 }}
     >
       <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }} edges={['top', 'left', 'right']}>
         <View style={styles.header}>
@@ -293,11 +291,11 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: 'bold',
-    color: Colors.light.homeScreenHeaderForeground,
+    color: Colors.homeScreenHeaderForeground,
     marginBottom: 4,
   },
   userEmail: {
-    color: Colors.light.homeScreenHeaderForeground,
+    color: Colors.homeScreenHeaderForeground,
     opacity: 0.8,
   },
   statsContainer: {

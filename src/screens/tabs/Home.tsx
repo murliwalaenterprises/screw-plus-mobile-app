@@ -76,19 +76,19 @@ export default function Home({ navigation }: any) {
           style={styles.headerButton}
           onPress={() => navigation.navigate(StackNames.Search)}
         >
-          <Search size={IconConfig.size} color={Colors.light.homeScreenHeaderForeground} />
+          <Search size={IconConfig.size} color={Colors.homeScreenHeaderForeground} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.headerButton}
           onPress={() => navigation.navigate(StackNames.NotificationsScreen)}
         >
-          <Bell size={IconConfig.size} color={Colors.light.homeScreenHeaderForeground} />
+          <Bell size={IconConfig.size} color={Colors.homeScreenHeaderForeground} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.headerButton, styles.cartButton]}
           onPress={() => navigation.navigate(StackNames.Cart)}
         >
-          <ShoppingCart size={IconConfig.size} color={Colors.light.homeScreenHeaderForeground} />
+          <ShoppingCart size={IconConfig.size} color={Colors.homeScreenHeaderForeground} />
           {cartItemsCount > 0 && (
             <View style={styles.cartBadge}>
               <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
@@ -120,10 +120,10 @@ export default function Home({ navigation }: any) {
 
   return (
     <LinearGradient
-      colors={[Colors.light.homeScreenHeaderBackground.start, Colors.light.homeScreenHeaderBackground.end]}  // gradient colors
       style={styles.container}
-      start={{ x: 0, y: 0 }}  // gradient start point
-      end={{ x: 1, y: 0 }}    // gradient end point
+      colors={Colors.homeScreenHeaderBackground}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
     >
       <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }} edges={['top', 'left', 'right']}>
         <StatusBar barStyle={'default'} />
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 14,
-    color: Colors.light.homeScreenHeaderForeground,
+    color: Colors.homeScreenHeaderForeground,
     fontWeight: '700',
     marginBottom: 2,
     marginLeft: 6

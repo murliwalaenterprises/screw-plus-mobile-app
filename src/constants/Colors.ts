@@ -8,6 +8,8 @@ const tintColorDark = '#fff';
 
 export const Colors = {
   Primary: '#0a7ea4',
+  homeScreenHeaderBackground: ["#690ce9", "rgba(180, 17, 239, 0.3)", "#ffffff"],
+  homeScreenHeaderForeground: '#fff',
   light: {
     primary: '#6EE7B7',
     success: '#2FD258',
@@ -21,8 +23,8 @@ export const Colors = {
     placeholderTextColor: '#666',
     link: '#005cc5',
     homeScreenHeaderBackground: {
-      start: '#f5cdb3ff',
-      end: '#fa751cff',
+      start: '#fa751cff',
+      end: '#f5cdb3ff',
     },
     homeScreenHeaderForeground: '#2d2d2dff',
 

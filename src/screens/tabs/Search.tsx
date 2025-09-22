@@ -82,16 +82,16 @@ export default function Search({ navigation }: any) {
 
     return (
         <LinearGradient
-            colors={[Colors.light.homeScreenHeaderBackground.start, Colors.light.homeScreenHeaderBackground.end]}  // gradient colors
             style={{ flex: 1 }}
-            start={{ x: 0, y: 0 }}  // gradient start point
-            end={{ x: 1, y: 0 }}    // gradient end point
+            colors={Colors.homeScreenHeaderBackground}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 0, y: 1 }}
         >
             <SafeAreaView style={{ flex: 1, backgroundColor: 'transparent' }} edges={['top', 'left', 'right']}>
                 <View style={styles.searchContainer}>
                     {!isFocused && (
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-                            <Text style={{ fontSize: 28, fontWeight: '600', color: Colors.light.homeScreenHeaderForeground }}>Search</Text>
+                            <Text style={{ fontSize: 28, fontWeight: '600', color: Colors.homeScreenHeaderForeground }}>Search</Text>
                         </View>
                     )}
                     {/* Search bar + cancel */}
@@ -124,7 +124,7 @@ export default function Search({ navigation }: any) {
 
                         {isFocused && (
                             <TouchableOpacity onPress={handleCancel}>
-                                <Text style={{ fontSize: 20, fontWeight: '500', color: Colors.light.homeScreenHeaderForeground }}>Cancel</Text>
+                                <Text style={{ fontSize: 20, fontWeight: '500', color: Colors.homeScreenHeaderForeground }}>Cancel</Text>
                             </TouchableOpacity>
                         )}
                     </View>

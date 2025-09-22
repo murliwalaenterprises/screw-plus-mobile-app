@@ -79,7 +79,6 @@ const ProductListScreen: React.FC<{ navigation: any, route: any }> = ({ navigati
                     </TouchableOpacity>
                 </View>
             </ScreenHeader>
-
             <View style={styles.listContainer}>
                 <FlatList
                     data={filteredProducts}
