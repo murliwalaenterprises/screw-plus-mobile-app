@@ -19,6 +19,7 @@ import { Colors } from "../constants/Colors";
 import { Platform, View } from "react-native";
 import { BlurView } from "@react-native-community/blur";
 import { scale } from "react-native-size-matters";
+import { IconConfig } from "../constants/Constant";
 
 const Tab = createBottomTabNavigator();
 
@@ -41,7 +42,10 @@ export default function BottomTabs() {
           elevation: Platform.OS === "android" ? 5 : 0,
         },
         tabBarIconStyle: {
-          marginBottom: scale(5),
+          marginBottom: scale(2),
+        },
+        tabBarLabelStyle: {
+          fontSize: IconConfig.textSize
         },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (
@@ -84,8 +88,8 @@ export default function BottomTabs() {
         component={Home}
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <HomeIcon color={color} size={size} />
+          tabBarIcon: ({ color }) => (
+            <HomeIcon color={color} size={IconConfig.size} />
           ),
           headerShown: false,
         }}
@@ -95,8 +99,8 @@ export default function BottomTabs() {
         component={Categories}
         options={{
           title: "Categories",
-          tabBarIcon: ({ color, size }) => (
-            <List color={color} size={size} />
+          tabBarIcon: ({ color }) => (
+            <List color={color} size={IconConfig.size} />
           ),
           headerShown: false,
         }}
@@ -106,8 +110,8 @@ export default function BottomTabs() {
         component={Explore}
         options={{
           title: "Explore",
-          tabBarIcon: ({ color, size }) => (
-            <Compass color={color} size={size} />
+          tabBarIcon: ({ color }) => (
+            <Compass color={color} size={IconConfig.size} />
           ),
           headerShown: false,
         }}
@@ -117,8 +121,8 @@ export default function BottomTabs() {
         component={Search}
         options={{
           title: "Search",
-          tabBarIcon: ({ color, size }) => (
-            <SearchIcon color={color} size={size} />
+          tabBarIcon: ({ color }) => (
+            <SearchIcon color={color} size={IconConfig.size} />
           ),
           headerShown: false,
         }}
@@ -128,8 +132,8 @@ export default function BottomTabs() {
         component={Profile}
         options={{
           title: "Profile",
-          tabBarIcon: ({ color, size }) => (
-            <User2 color={color} size={size} />
+          tabBarIcon: ({ color }) => (
+            <User2 color={color} size={IconConfig.size} />
           ),
           headerShown: false,
         }}

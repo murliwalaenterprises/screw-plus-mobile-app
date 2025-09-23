@@ -3,7 +3,7 @@ import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Category } from '../types/product';
 import { useStore } from '../store/useStore';
 import { StackNames } from '../constants/StackNames';
-import AppText from './ui/AppText';
+import { AppText } from './ui';
 
 interface CategoryCardProps {
   navigation: any;

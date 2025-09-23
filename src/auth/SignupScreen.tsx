@@ -1,5 +1,5 @@
 
-import { ArrowRight, Eye, EyeOff, Lock, Mail, User } from 'lucide-react-native';
+import { ArrowRight, Eye, EyeOff, Lock, Mail, Phone, User } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   Alert,
@@ -21,6 +21,7 @@ import { StackNames } from '../constants/StackNames';
 export default function SignUpScreen({ navigation }: any) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +31,7 @@ export default function SignUpScreen({ navigation }: any) {
   const { signUp, completeOnboarding } = useAuth();
 
   const handleSignUp = async () => {
-    if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+    if (!name.trim() || !phone.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -85,6 +86,21 @@ export default function SignUpScreen({ navigation }: any) {
                 onChangeText={setName}
                 autoCapitalize="words"
                 testID="name-input"
+                placeholderTextColor={Colors.light.placeholderTextColor}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Phone size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Phone number"
+                value={phone}
+                onChangeText={setPhone}
+                keyboardType="phone-pad"
+                autoCapitalize="none"
+                autoCorrect={false}
+                maxLength={10}
                 placeholderTextColor={Colors.light.placeholderTextColor}
               />
             </View>

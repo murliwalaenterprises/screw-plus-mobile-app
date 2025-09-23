@@ -18,10 +18,10 @@ import { Colors } from "../../constants/Colors";
 import { StackNames } from "../../constants/StackNames";
 import { useFirebaseData } from "../../store/useFirebaseData";
 import { Search, ShoppingCart } from "lucide-react-native";
-import AppText from "../../components/ui/AppText";
 import { useStore } from "../../store/useStore";
 import { IconConfig } from "../../constants/Constant";
 import { filterProducts } from "../../services/utilityService";
+import { AppText } from "../../components/ui";
 
 const screenWidth = Dimensions.get("window").width;
 

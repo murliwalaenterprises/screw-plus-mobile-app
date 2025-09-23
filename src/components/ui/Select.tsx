@@ -3,9 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, TouchableOpacity, StyleSheet, ActivityIndicator, FlatList, Alert, TextInput } from 'react-native';
 import Modal from 'react-native-modal';
-import AppText from './AppText';
 import { Colors } from '../../constants/Colors';
 import { moderateScale } from 'react-native-size-matters';
+import { AppText } from '.';
 
 type Option = { label: string; value: string; disabled?: boolean; };
 

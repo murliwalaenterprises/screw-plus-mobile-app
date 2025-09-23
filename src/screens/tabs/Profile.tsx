@@ -24,9 +24,9 @@ import { StackNames } from '../../constants/StackNames';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
 import { formatCurrency } from '../../services/utilityService';
-import AppText from '../../components/ui/AppText';
 import { getVersion } from 'react-native-device-info';
 import { navigationRef } from '../../helper/NavigationService';
+import { AppText } from '../../components/ui';
 
 export default function Profile({ navigation }: any) {
   const { user, userProfile, logout } = useAuth();
@@ -240,7 +240,7 @@ export default function Profile({ navigation }: any) {
           }
 
           <View style={styles.footer}>
-            <AppText style={styles.footerText}>{currentVersion}</AppText>
+            <AppText style={styles.footerText}>v{currentVersion}</AppText>
           </View>
         </ScrollView>
       </SafeAreaView>

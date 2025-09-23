@@ -12,8 +12,8 @@ import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/StackNames';
 import { useAuth } from '../../context/AuthContext';
 import ScreenHeader from '../../components/ScreenHeader';
-import AppText from '../../components/ui/AppText';
 import { moderateScale, scale } from 'react-native-size-matters';
+import { AppText } from '../../components/ui';
 
 export default function CartScreen({ navigation }: any) {
   const { cart, removeFromCart, updateCartQuantity, clearCart } = useStore();

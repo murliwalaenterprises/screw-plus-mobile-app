@@ -6,8 +6,8 @@ import React, { useEffect, useState } from 'react';
 import { Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 import { Address } from '../types/types';
 import { Colors } from '../constants/Colors';
-import AppText from './ui/AppText';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { AppText } from './ui';
 
 interface AddressModalProps {
     visible: boolean;

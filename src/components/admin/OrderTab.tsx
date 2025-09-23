@@ -18,7 +18,7 @@ import { firebaseService } from '../../services/firebaseService';
 import { formatCurrency, formatDate, formatTimestampDate, getEstimatedDeliveryDate, getStatusColor, getTimestampToDate, sortByDateDesc } from '../../services/utilityService';
 import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/StackNames';
-import AppText from '../ui/AppText';
+import { AppText } from '../ui';
 
 const getStatusIcon = (status: string) => {
   switch (status) {

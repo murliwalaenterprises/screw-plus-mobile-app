@@ -4,8 +4,8 @@ import React from 'react';
 import { Colors } from '../constants/Colors';
 import { moderateScale } from 'react-native-size-matters';
 import { ChevronLeft } from 'lucide-react-native';
-import AppText from './ui/AppText';
 import { BlurView } from '@react-native-community/blur';
+import { AppText } from './ui';
 
 const ScreenHeader: React.FC<any> = ({
     navigation,

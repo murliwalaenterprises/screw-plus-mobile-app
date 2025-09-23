@@ -9,6 +9,7 @@
     "start": "react-native start",
     "test": "jest",
     "dev:iphone15Pro": "npx react-native run-ios --simulator 'iPhone 15 Pro'",
+    "dev:iOS26": "npx react-native run-ios --simulator 'iPhone 16 Pro iOS26'",
     "dev:myios": "npx react-native run-ios --device",
     "dev:android:clean": "cd android && ./gradlew clean && cd .. && npx react-native run-android"
   },

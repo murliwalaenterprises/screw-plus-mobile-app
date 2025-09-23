@@ -23,7 +23,7 @@ import { StackNames } from '../../constants/StackNames';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/ScreenHeader';
 import { Colors } from '../../constants/Colors';
-import AppText from '../../components/ui/AppText';
+import { AppText } from '../../components/ui';
 
 type OrderItem = {
     id: string;

@@ -22,8 +22,8 @@ import { Colors } from '../../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
 import { StackNames } from '../../constants/StackNames';
 import { scale, verticalScale } from 'react-native-size-matters';
-import AppText from '../../components/ui/AppText';
 import { IconConfig } from '../../constants/Constant';
+import { AppText } from '../../components/ui';
 
 const screenWidth = Dimensions.get('window').width;
 

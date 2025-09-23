@@ -6,8 +6,8 @@ import { useStore } from '../store/useStore';
 import { Product } from '../types/product';
 import { formatCurrency, getProductVariant } from '../services/utilityService';
 import { StackNames } from '../constants/StackNames';
-import AppText from './ui/AppText';
 import { Colors } from '../constants/Colors';
+import { AppText } from './ui';
 
 interface ProductCardProps {
   navigation: any;

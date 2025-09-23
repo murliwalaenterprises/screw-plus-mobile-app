@@ -5,7 +5,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { StackNames } from "../../constants/StackNames";
 import { formatCurrency } from "../../services/utilityService";
 import { Colors } from "../../constants/Colors";
-import AppText from "../../components/ui/AppText";
+import { AppText } from "../../components/ui";
 
 const OrderSuccess = ({ order, navigation }: any) => {
     return (

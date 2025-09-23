@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 
 import {
@@ -23,11 +24,10 @@ import { getStatusColor, paymentMethods, formatCurrency } from '../../services/u
 import { StackNames } from '../../constants/StackNames';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { firebaseService } from '../../services/firebaseService';
-import { Select } from '../../components/ui';
+import { AppText, Select } from '../../components/ui';
 import { OrderStatusOptions } from '../../constants/Constant';
 import ScreenHeader from '../../components/ScreenHeader';
 import { Colors } from '../../constants/Colors';
-import AppText from '../../components/ui/AppText';
 import { sendOrderNotification } from '../../services/notificationService';
 
 type OrderItem = {

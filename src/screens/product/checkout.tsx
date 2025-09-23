@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import { CheckCircle, ChevronDown, CreditCard, MapPin, Plus } from 'lucide-react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, TextInput, TouchableOpacity, Vibration, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useStore } from '../../store/useStore';
@@ -18,8 +17,8 @@ import OrderSuccess from './OrderSuccess';
 import { StackNames } from '../../constants/StackNames';
 import { startRazorpayPayment } from '../../services/paymentService';
 import ScreenHeader from '../../components/ScreenHeader';
-import AppText from '../../components/ui/AppText';
 import { moderateScale } from 'react-native-size-matters';
+import { AppText } from '../../components/ui';
 // import { sendOrderNotification } from '../../services/notificationService';
 
 export default function CheckoutScreen({ navigation }: any) {

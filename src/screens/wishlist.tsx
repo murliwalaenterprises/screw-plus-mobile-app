@@ -20,7 +20,7 @@ import { StackNames } from '../constants/StackNames';
 import ScreenHeader from '../components/ScreenHeader';
 import { Colors } from '../constants/Colors';
 import { moderateScale, scale, verticalScale } from 'react-native-size-matters';
-import AppText from '../components/ui/AppText';
+import { AppText } from '../components/ui';
 
 export default function WishlistScreen({ navigation }: any) {
     const { favorites, clearWishlist, addToCart } = useStore();
