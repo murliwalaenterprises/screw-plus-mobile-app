@@ -1,11 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Search } from 'lucide-react-native';
 import BottomTabs from './BottomTabs';
 import AuthStack from './AuthStack';
 import { StackNames } from '../constants/StackNames';
 import OnboardingScreen from '../screens/OnBoarding';
 import ProductDetailScreen from '../screens/product/ProductDetails';
 import CartScreen from '../screens/product/Cart';
-import { Search } from 'lucide-react-native';
 import About from '../screens/About';
 import AddressesScreen from '../screens/Addresses';
 import AdminScreen from '../screens/Admin';
@@ -16,10 +16,9 @@ import AdminOrderDetailsScreen from '../screens/product/AdminOrderDetails';
 import CheckoutScreen from '../screens/product/Checkout';
 import PdfPreview from '../screens/product/Invoice';
 import OrderDetailsScreen from '../screens/product/OrderDetails';
-import OrdersScreen from '../screens/product/orders';
+import OrdersScreen from '../screens/product/Orders';
 import ProductListScreen from '../screens/product/ProductListScreen';
 import WishlistScreen from '../screens/Wishlist';
-
 
 const Stack = createNativeStackNavigator();
 

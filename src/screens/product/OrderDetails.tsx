@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 
 import {
@@ -12,6 +13,7 @@ import {
 } from 'lucide-react-native';
 import React from "react";
 import {
+    Alert,
     Animated,
     Image,
     StyleSheet,
@@ -24,6 +26,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ScreenHeader from '../../components/ScreenHeader';
 import { Colors } from '../../constants/Colors';
 import { AppText } from '../../components/ui';
+import { generateInvoicePDF } from '../../services/pdfService';
+import Share from 'react-native-share';
+
 
 type OrderItem = {
     id: string;
@@ -66,6 +71,24 @@ export default function OrderDetailsScreen({ navigation, route }: any) {
 
     // ✅ extract items safely
     const items: OrderItem[] = Array.isArray(order.items) ? order.items : [];
+
+
+    const handleGenerate = async () => {
+        try {
+            const path = await generateInvoicePDF(order);
+
+            // PDF Share karna hai
+            await Share.open({
+                url: path,
+                type: 'application/pdf',
+            });
+
+            Alert.alert("PDF Generated", `Saved at: ${path}`);
+        } catch (err) {
+            console.log(err);
+            Alert.alert("Error", "Failed to generate PDF");
+        }
+    };
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: Colors.StatusBarBg }} edges={['top', 'left', 'right']}>
@@ -221,6 +244,7 @@ export default function OrderDetailsScreen({ navigation, route }: any) {
                                 invoiceUri: invoiceUri, // pass your PDF link here
                             });
                         }}
+                    // onPress={handleGenerate}
                     >
                         <Download size={20} color="#fff" />
                         <AppText style={styles.buyNowText}>Invoice</AppText>
