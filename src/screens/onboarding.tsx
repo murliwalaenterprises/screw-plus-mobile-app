@@ -29,7 +29,6 @@ export default function OnboardingScreen({ navigation }: any) {
     const [onBoardSlides, setOnBoardSlides] = useState<any[]>([]);
     const fadeAnim = useRef(new Animated.Value(1)).current;
 
-
     useEffect(() => {
         firebaseService.subscribeToAppConfig((config: any) => {
             console.log("App Config:", config);
@@ -38,7 +37,7 @@ export default function OnboardingScreen({ navigation }: any) {
                 setOnBoardSlides(onBoardSliders);
             }
         })
-    }, [])
+    }, []);
 
     React.useEffect(() => {
         getOnboardingSession().then((hasCompletedOnboarding: boolean) => {

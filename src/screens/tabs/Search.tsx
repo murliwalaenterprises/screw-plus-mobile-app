@@ -10,8 +10,10 @@ import { useFocusEffect } from '@react-navigation/native';
 import ProductCard from '../../components/ProductCard';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
+import { useAppConfig } from '../../store/useAppConfig';
 
 export default function Search({ navigation }: any) {
+    const { topBarBackgroundColor, topBarForegroundColor }: any = useAppConfig();
     const { searchQuery, setSearchQuery } = useStore();
     const [localQuery, setLocalQuery] = useState(searchQuery);
     const [products, setProducts] = useState<any[]>([]);
@@ -83,7 +85,7 @@ export default function Search({ navigation }: any) {
     return (
         <LinearGradient
             style={{ flex: 1 }}
-            colors={Colors.homeScreenHeaderBackground}
+            colors={topBarBackgroundColor}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
         >
@@ -91,7 +93,7 @@ export default function Search({ navigation }: any) {
                 <View style={styles.searchContainer}>
                     {!isFocused && (
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-                            <Text style={{ fontSize: 28, fontWeight: '600', color: Colors.homeScreenHeaderForeground }}>Search</Text>
+                            <Text style={{ fontSize: 28, fontWeight: '600', color: topBarForegroundColor }}>Search</Text>
                         </View>
                     )}
                     {/* Search bar + cancel */}
@@ -124,7 +126,7 @@ export default function Search({ navigation }: any) {
 
                         {isFocused && (
                             <TouchableOpacity onPress={handleCancel}>
-                                <Text style={{ fontSize: 20, fontWeight: '500', color: Colors.homeScreenHeaderForeground }}>Cancel</Text>
+                                <Text style={{ fontSize: 20, fontWeight: '500', color: topBarForegroundColor }}>Cancel</Text>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -172,7 +174,7 @@ export default function Search({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#f8f9fa' },
+    container: { flex: 1, backgroundColor: Colors.ScreenBGColor },
     searchContainer: {
         backgroundColor: 'transparent',
         paddingHorizontal: 16,

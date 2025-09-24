@@ -15,20 +15,23 @@ import Categories from "../screens/tabs/Categories";
 import Explore from "../screens/tabs/Explore";
 import Profile from "../screens/tabs/Profile";
 import Search from "../screens/tabs/Search";
-import { Colors } from "../constants/Colors";
 import { Platform, View } from "react-native";
 import { BlurView } from "@react-native-community/blur";
 import { scale } from "react-native-size-matters";
 import { IconConfig } from "../constants/Constant";
+import { useAppConfig } from "../store/useAppConfig";
 
 const Tab = createBottomTabNavigator();
 
 export default function BottomTabs() {
+
+  const { activeTabColor }: any = useAppConfig();
+
   return (
     <Tab.Navigator
       screenOptions={{
         tabBarShowLabel: true,
-        tabBarActiveTintColor: Colors.light.tint,
+        tabBarActiveTintColor: activeTabColor,
         tabBarInactiveTintColor: "#8e8e93",
         tabBarStyle: {
           position: "absolute",

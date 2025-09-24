@@ -220,7 +220,7 @@ export default function OrdersScreen({ navigation, router }: any) {
         title={StackNames.Orders}
         navigation={navigation}
       />
-      <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: '#f8f9fa' }} contentContainerStyle={{ paddingBottom: 100, paddingTop: 20 }}>
+      <ScrollView showsVerticalScrollIndicator={false} style={{ backgroundColor: Colors.ScreenBGColor }} contentContainerStyle={{ paddingBottom: 100, paddingTop: 20 }}>
         <View style={styles.ordersContainer}>
           {orders.map(renderOrderItem)}
         </View>

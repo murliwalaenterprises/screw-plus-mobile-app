@@ -27,8 +27,10 @@ import { formatCurrency } from '../../services/utilityService';
 import { getVersion } from 'react-native-device-info';
 import { navigationRef } from '../../helper/NavigationService';
 import { AppText } from '../../components/ui';
+import { useAppConfig } from '../../store/useAppConfig';
 
 export default function Profile({ navigation }: any) {
+  const { topBarBackgroundColor, topBarForegroundColor }: any = useAppConfig();
   const { user, userProfile, logout } = useAuth();
   const { favorites } = useStore();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -159,7 +161,7 @@ export default function Profile({ navigation }: any) {
   return (
     <LinearGradient
       style={{ flex: 1 }}
-      colors={Colors.homeScreenHeaderBackground}
+      colors={topBarBackgroundColor}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
     >
@@ -174,10 +176,10 @@ export default function Profile({ navigation }: any) {
               )}
             </View>
             <View style={styles.profileInfo}>
-              <AppText variant="large" style={styles.userName}>
+              <AppText variant="large" style={[styles.userName, { color: topBarForegroundColor }]}>
                 {userProfile?.displayName || user?.displayName || 'Guest User'}
               </AppText>
-              <AppText variant="medium" style={styles.userEmail}>
+              <AppText variant="medium" style={[styles.userEmail, { color: topBarForegroundColor }]}>
                 {userProfile?.email || user?.email || 'guest@example.com'}
               </AppText>
             </View>
@@ -251,7 +253,7 @@ export default function Profile({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: Colors.ScreenBGColor,
   },
   header: {
     backgroundColor: 'transparent',
@@ -291,11 +293,9 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontWeight: 'bold',
-    color: Colors.homeScreenHeaderForeground,
     marginBottom: 4,
   },
   userEmail: {
-    color: Colors.homeScreenHeaderForeground,
     opacity: 0.8,
   },
   statsContainer: {

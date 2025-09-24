@@ -118,7 +118,7 @@ export default function WishlistScreen({ navigation }: any) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: Colors.ScreenBGColor,
     },
     header: {
         flexDirection: 'row',

@@ -41,7 +41,7 @@ export default function ProductCard({ navigation, product, width, showCartButton
         <Image source={product.image ? { uri: product.image } : require('../assets/images/default-product-image.png')} style={styles.image} />
         <TouchableOpacity style={styles.favoriteButton} onPress={handleFavoritePress}>
           <Heart
-            size={moderateScale(20)}
+            size={moderateScale(16)}
             color={isFavorite ? '#ff4757' : '#999'}
             fill={isFavorite ? '#ff4757' : 'transparent'}
           />
@@ -49,39 +49,39 @@ export default function ProductCard({ navigation, product, width, showCartButton
 
         {product.discount ? (
           <View style={[styles.badge, styles.discountBadge]}>
-            <AppText style={styles.badgeText}>{product.discount}% OFF</AppText>
+            <AppText variant="tiny" style={styles.badgeText}>{product.discount}% OFF</AppText>
           </View>
         ) : null}
 
         {product.isNew ? (
-          <View style={[styles.badge, styles.newBadge]}>
-            <AppText style={styles.badgeText}>NEW</AppText>
+          <View style={[styles.badge, styles.newBadge, { bottom: verticalScale(product.isBestseller ? 30 : 10) }]}>
+            <AppText variant="tiny" style={styles.badgeText}>NEW</AppText>
           </View>
         ) : null}
 
         {product.isBestseller ? (
           <View style={[styles.badge, styles.bestsellerBadge]}>
-            <AppText style={styles.badgeText}>BESTSELLER</AppText>
+            <AppText variant="tiny" style={styles.badgeText}>BESTSELLER</AppText>
           </View>
         ) : null}
       </View>
 
       <View style={styles.content}>
-        <AppText variant="regular" style={styles.brand}>{product.brand}</AppText>
-        <AppText variant="medium" style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
+        <AppText variant="small" style={styles.brand}>{product.brand}</AppText>
+        <AppText style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
           {product.title}
         </AppText>
 
         <View style={styles.ratingContainer}>
           <Star size={moderateScale(14)} color="#ffa502" fill="#ffa502" />
-          <AppText style={styles.rating}>{product.rating}</AppText>
-          <AppText style={styles.reviews}>({product.reviews})</AppText>
+          <AppText variant="small" style={styles.rating}>{product.rating}</AppText>
+          <AppText variant="small" style={styles.reviews}>({product.reviews})</AppText>
         </View>
 
         <View style={styles.priceContainer}>
           <AppText style={styles.price}>{formatCurrency(getProductVariant(product).price)}</AppText>
           {getProductVariant(product).originalPrice !== getProductVariant(product).price && (
-            <AppText style={styles.originalPrice}>
+            <AppText style={styles.originalPrice} variant="small">
               {formatCurrency(getProductVariant(product).originalPrice)}
             </AppText>
           )}
@@ -115,13 +115,14 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     position: 'relative',
+    backgroundColor: '#f3f3f3ff'
   },
   image: {
     width: '100%',
-    height: verticalScale(140),
+    height: verticalScale(100),
     borderTopLeftRadius: moderateScale(16),
     borderTopRightRadius: moderateScale(16),
-    objectFit: 'contain'
+    objectFit: 'cover'
   },
   favoriteButton: {
     position: 'absolute',
@@ -160,14 +161,12 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     color: '#fff',
-    fontSize: moderateScale(10),
-    fontWeight: '700',
+    fontWeight: '600',
   },
   content: {
     padding: scale(12),
   },
   brand: {
-    fontSize: moderateScale(12),
     color: '#888',
     marginBottom: verticalScale(2),
   },
@@ -180,16 +179,14 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: verticalScale(8),
+    marginBottom: verticalScale(5),
   },
   rating: {
-    fontSize: moderateScale(12),
     color: '#333',
     marginLeft: scale(4),
     fontWeight: '500',
   },
   reviews: {
-    fontSize: moderateScale(12),
     color: '#888',
     marginLeft: scale(4),
   },
@@ -198,12 +195,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   price: {
-    fontSize: moderateScale(16),
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '600',
+    color: 'green',
   },
   originalPrice: {
-    fontSize: moderateScale(14),
     color: '#aaa',
     textDecorationLine: 'line-through',
     marginLeft: scale(8),

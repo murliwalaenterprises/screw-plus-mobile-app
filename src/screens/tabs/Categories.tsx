@@ -24,10 +24,13 @@ import { StackNames } from '../../constants/StackNames';
 import { scale, verticalScale } from 'react-native-size-matters';
 import { IconConfig } from '../../constants/Constant';
 import { AppText } from '../../components/ui';
+import { useAppConfig } from '../../store/useAppConfig';
 
 const screenWidth = Dimensions.get('window').width;
 
 export default function CategoriesScreen({ navigation }: any) {
+  const { topBarBackgroundColor, topBarForegroundColor }: any = useAppConfig();
+
   const { selectedCategory, setSelectedCategory, getCartItemsCount } = useStore();
   const [activeCategory, setActiveCategory] = useState({
     color: '#f0f0f0',
@@ -98,7 +101,7 @@ export default function CategoriesScreen({ navigation }: any) {
   return (
     <LinearGradient
       style={{ flex: 1 }}
-      colors={Colors.homeScreenHeaderBackground}
+      colors={topBarBackgroundColor}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}>
       <SafeAreaView
@@ -106,8 +109,8 @@ export default function CategoriesScreen({ navigation }: any) {
         edges={['top', 'left', 'right']}>
         <View style={styles.header}>
           <View>
-            <AppText style={styles.title}>Categories</AppText>
-            <AppText style={styles.subtitle}>
+            <AppText style={[styles.title, { color: topBarForegroundColor }]}>Categories</AppText>
+            <AppText style={[styles.subtitle, { color: topBarForegroundColor }]}>
               {filteredProducts.length} products found
             </AppText>
           </View>
@@ -117,7 +120,7 @@ export default function CategoriesScreen({ navigation }: any) {
               onPress={() => navigation.navigate(StackNames.Cart)}>
               <ShoppingCart
                 size={IconConfig.size}
-                color={Colors.homeScreenHeaderForeground}
+                color={topBarForegroundColor}
               />
               {cartItemsCount > 0 && (
                 <View style={styles.cartBadge}>
@@ -196,11 +199,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: scale(20), // was 24
     fontWeight: '600',
-    color: Colors.homeScreenHeaderForeground,
   },
   subtitle: {
     fontSize: scale(12), // was 14
-    color: Colors.homeScreenHeaderForeground,
     opacity: scale(0.7),
     marginTop: scale(2),
   },
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
   // Products Grid
   productsGrid: {
     width: '80%', // was '75%'
-    backgroundColor: '#fff',
+    backgroundColor: Colors.ScreenBGColor,
   },
   subcategoryContainer: {
     flexGrow: 1,

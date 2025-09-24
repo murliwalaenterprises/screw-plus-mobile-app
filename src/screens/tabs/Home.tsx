@@ -1,10 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-native/no-inline-styles */
 
 import { useFirebaseData } from '../../store/useFirebaseData';
 import { useStore } from '../../store/useStore';
 import { Bell, ChevronDown, MapPin, Search, ShoppingCart } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Animated, FlatList, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, FlatList, Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -17,6 +18,8 @@ import { StackNames } from '../../constants/StackNames';
 import { scale, verticalScale } from 'react-native-size-matters';
 import AutoHeightImage from '../../components/AutoHeightImage';
 import { IconConfig } from '../../constants/Constant';
+import { firebaseService } from '../../services/firebaseService';
+import { useAppConfig } from '../../store/useAppConfig';
 
 export default function Home({ navigation }: any) {
   const { getCartItemsCount } = useStore();
@@ -24,6 +27,12 @@ export default function Home({ navigation }: any) {
   const { selectedLocation } = useAuth();
   const [fadeAnim] = useState(new Animated.Value(0));
   const [showLocationSelector, setShowLocationSelector] = useState(false);
+  // const [isShowSlider, setIsShowSlider] = useState(true);
+  // const [aHomeScreenAds, setHomeScreenAds] = useState<string[]>([]);
+
+
+  const { topBarBrandLogo, topBarBackgroundColor, topBarForegroundColor, homeScreenAds, isShowSlider, setConfig }: any = useAppConfig();
+
 
   console.log('Products', products);
   const featuredProducts = products?.slice(0, 6);
@@ -32,7 +41,6 @@ export default function Home({ navigation }: any) {
   const cartItemsCount = getCartItemsCount();
 
   const [locations, setLocations] = useState<{ id: string, label: string }[]>([]);
-
 
   useEffect(() => {
     Animated.timing(fadeAnim, {
@@ -59,36 +67,44 @@ export default function Home({ navigation }: any) {
   const renderHeader = () => (
     <View style={styles.header}>
       <View style={styles.headerLeft}>
-        <Text style={styles.welcomeText}>Deliver to</Text>
-        <TouchableOpacity
-          style={styles.locationButton}
-          onPress={() => setShowLocationSelector(true)}
-        >
-          <MapPin size={16} color="#333" />
-          <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">
-            {getSelectedLocation(selectedLocation)}
-          </Text>
-          <ChevronDown size={16} color="#333" />
-        </TouchableOpacity>
+        {
+          topBarBrandLogo ? (
+            <Image source={{ uri: topBarBrandLogo }} width={85} height={30} />
+          ) : (
+            <>
+              <Text style={[styles.welcomeText, { color: topBarForegroundColor }]}>Deliver to</Text>
+              <TouchableOpacity
+                style={styles.locationButton}
+                onPress={() => setShowLocationSelector(true)}
+              >
+                <MapPin size={16} color="#333" />
+                <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">
+                  {getSelectedLocation(selectedLocation)}
+                </Text>
+                <ChevronDown size={16} color="#333" />
+              </TouchableOpacity>
+            </>
+          )
+        }
       </View>
       <View style={styles.headerRight}>
         <TouchableOpacity
           style={styles.headerButton}
           onPress={() => navigation.navigate(StackNames.Search)}
         >
-          <Search size={IconConfig.size} color={Colors.homeScreenHeaderForeground} />
+          <Search size={IconConfig.size} color={topBarForegroundColor} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.headerButton}
           onPress={() => navigation.navigate(StackNames.NotificationsScreen)}
         >
-          <Bell size={IconConfig.size} color={Colors.homeScreenHeaderForeground} />
+          <Bell size={IconConfig.size} color={topBarForegroundColor} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.headerButton, styles.cartButton]}
           onPress={() => navigation.navigate(StackNames.Cart)}
         >
-          <ShoppingCart size={IconConfig.size} color={Colors.homeScreenHeaderForeground} />
+          <ShoppingCart size={IconConfig.size} color={topBarForegroundColor} />
           {cartItemsCount > 0 && (
             <View style={styles.cartBadge}>
               <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
@@ -118,10 +134,19 @@ export default function Home({ navigation }: any) {
     </View>
   );
 
+  useEffect(() => {
+    const unsubscribe = firebaseService.subscribeToAppConfig((config: any) => {
+      console.log("App Config:", config);
+      if (config) setConfig(config);
+    });
+
+    return () => unsubscribe && unsubscribe();
+  }, []);
+
   return (
     <LinearGradient
       style={styles.container}
-      colors={Colors.homeScreenHeaderBackground}
+      colors={topBarBackgroundColor}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
     >
@@ -130,26 +155,27 @@ export default function Home({ navigation }: any) {
         <View style={styles.container}>
           <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
             {renderHeader()}
-            <ScrollView style={{ flex: 1, backgroundColor: '#f8f9fa' }} showsVerticalScrollIndicator={false} contentContainerStyle={{
+            <ScrollView style={{ flex: 1, backgroundColor: Colors.ScreenBGColor }} showsVerticalScrollIndicator={false} contentContainerStyle={{
               paddingBottom: 100
             }}>
-              {loading.banners ? (
-                <View style={styles.loadingBanner}>
-                  <Text style={styles.loadingText}>Loading banners...</Text>
-                </View>
-              ) : (
-                <BannerCarousel banners={banners} />
-              )}
+              {
+                isShowSlider && (
+                  <>
+                    {loading.banners ? (
+                      <View style={styles.loadingBanner}>
+                        <Text style={styles.loadingText}>Loading banners...</Text>
+                      </View>
+                    ) : (
+                      <BannerCarousel banners={banners} />
+                    )}
+                  </>
+                )
+              }
 
               {/* Ads */}
               <View style={{ marginBottom: verticalScale(10) }}>
                 {
-                  [
-                    'https://www.mynameart.com/uploads/images/happy-diwali-diya-flame-gif-free-download.gif',
-                    'https://cdn.vectorstock.com/i/500p/47/98/mega-sale-diwali-banner-with-offer-details-vector-43864798.jpg',
-                    'https://img.freepik.com/free-vector/biggest-happy-diwali-sale-banner-with-decorative-diya_1017-21248.jpg',
-                    'https://i.pinimg.com/originals/34/ce/8f/34ce8f39d7bf12c4bba8ef6c3142361a.gif'
-                  ].map((bannerImg, index) => (
+                  homeScreenAds.map((bannerImg: any, index: number) => (
                     <TouchableOpacity activeOpacity={0.8} key={index + 1}>
                       <AutoHeightImage
                         uri={bannerImg}
@@ -250,7 +276,6 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 14,
-    color: Colors.homeScreenHeaderForeground,
     fontWeight: '700',
     marginBottom: 2,
     marginLeft: 6

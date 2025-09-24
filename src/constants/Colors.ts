@@ -3,13 +3,13 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-const tintColorLight = '#0a7ea4';
+const tintColorLight = '#FF7417';
 const tintColorDark = '#fff';
 
 export const Colors = {
   Primary: '#0a7ea4',
-  homeScreenHeaderBackground: ["#690ce9", "rgba(180, 17, 239, 0.3)", "#ffffff"],
-  homeScreenHeaderForeground: '#fff',
+  // homeScreenHeaderBackground: ["#690ce9", "rgba(180, 17, 239, 0.3)", "#ffffff"],
+  // homeScreenHeaderForeground: '#fff',
   light: {
     primary: '#6EE7B7',
     success: '#2FD258',
@@ -48,4 +48,5 @@ export const Colors = {
   defaultWhite: '#fff',
   StatusBarBg: 'transparent',
   StatusBarTextColor: '#222',
+  ScreenBGColor: '#f8f9fa',
 };

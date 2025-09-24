@@ -285,7 +285,7 @@ export default function CheckoutScreen({ navigation }: any) {
                 navigation={navigation}
             />
             <View style={styles.container}>
-                <ScrollView style={styles.content} showsVerticalScrollIndicator={false} automaticallyAdjustKeyboardInsets>
+                <ScrollView style={styles.content} showsVerticalScrollIndicator={false} automaticallyAdjustKeyboardInsets contentContainerStyle={{ paddingTop: 20 }}>
                     {/* Order Summary */}
                     <View style={styles.section}>
                         <AppText style={styles.sectionTitle}>Order Summary</AppText>
@@ -449,7 +449,7 @@ export default function CheckoutScreen({ navigation }: any) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: Colors.ScreenBGColor,
     },
     header: {
         flexDirection: 'row',
