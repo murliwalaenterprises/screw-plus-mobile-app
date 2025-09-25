@@ -3,6 +3,7 @@
 import {
   Bell,
   ChevronRight,
+  CreditCard,
   Edit3,
   Heart,
   HelpCircle,
@@ -100,7 +101,7 @@ export default function Profile({ navigation }: any) {
     { id: 'my_orders', icon: ShoppingBag, title: "My Orders", subtitle: "Track your orders", route: StackNames.Orders, loginOnly: true },
     { id: 'wishlist', icon: Heart, title: "Wishlist", subtitle: "Your favorite items", route: StackNames.WishListScreen },
     { id: 'addresses', icon: MapPin, title: "Addresses", subtitle: "Manage delivery addresses", route: StackNames.AddressesScreen, loginOnly: true },
-    // { id: 'payment_methods', icon: CreditCard, title: "Payment Methods", subtitle: "Cards & wallets", route: StackNames.PaymentMethodsScreen, loginOnly: true },
+    { id: 'payment_methods', icon: CreditCard, title: "Payment Methods", subtitle: "Cards & wallets", route: StackNames.PaymentMethodsScreen, loginOnly: true },
     { id: 'notifications', icon: Bell, title: "Notifications", subtitle: "Alerts & updates", route: StackNames.NotificationsScreen },
     { id: 'about', icon: Info, title: "About Us", subtitle: "About Us", route: StackNames.AboutUs },
     { id: 'help_support', icon: HelpCircle, title: "Help & Support", subtitle: "Get assistance", route: "" },

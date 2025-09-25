@@ -20,6 +20,7 @@ import AutoHeightImage from '../../components/AutoHeightImage';
 import { IconConfig } from '../../constants/Constant';
 import { firebaseService } from '../../services/firebaseService';
 import { useAppConfig } from '../../store/useAppConfig';
+import { AppText } from '../../components/ui';
 
 export default function Home({ navigation }: any) {
   const { getCartItemsCount } = useStore();
@@ -27,11 +28,8 @@ export default function Home({ navigation }: any) {
   const { selectedLocation } = useAuth();
   const [fadeAnim] = useState(new Animated.Value(0));
   const [showLocationSelector, setShowLocationSelector] = useState(false);
-  // const [isShowSlider, setIsShowSlider] = useState(true);
-  // const [aHomeScreenAds, setHomeScreenAds] = useState<string[]>([]);
 
-
-  const { topBarBrandLogo, topBarBackgroundColor, topBarForegroundColor, homeScreenAds, isShowSlider, setConfig }: any = useAppConfig();
+  const { topBarBrandLogo, topBarBackgroundColor, topBarForegroundColor, homeScreenAds, isShowSlider, isShowCategorySection, setConfig }: any = useAppConfig();
 
 
   console.log('Products', products);
@@ -65,11 +63,28 @@ export default function Home({ navigation }: any) {
   };
 
   const renderHeader = () => (
-    <View style={styles.header}>
+    <View style={[styles.header, { paddingLeft: !topBarBrandLogo ? 16 : 0 }]}>
       <View style={styles.headerLeft}>
         {
           topBarBrandLogo ? (
-            <Image source={{ uri: topBarBrandLogo }} width={85} height={30} />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-start",
+                alignItems: "center", // vertical center
+              }}
+            >
+              <Image
+                source={{ uri: topBarBrandLogo }}
+                style={{
+                  width: 120,        // max width
+                  height: undefined, // height auto adjust
+                  aspectRatio: 4,    // maintain proportion
+                  resizeMode: "contain",
+                }}
+              />
+            </View>
+
           ) : (
             <>
               <Text style={[styles.welcomeText, { color: topBarForegroundColor }]}>Deliver to</Text>
@@ -155,6 +170,24 @@ export default function Home({ navigation }: any) {
         <View style={styles.container}>
           <Animated.View style={[styles.content, { opacity: fadeAnim }]}>
             {renderHeader()}
+            {
+              topBarBrandLogo && (
+                <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', width: '100%', paddingBottom: 5 }}>
+                  <TouchableOpacity
+                    style={[styles.locationButton, { width: '92%', flexDirection: 'row', justifyContent: 'space-between' }]}
+                    onPress={() => setShowLocationSelector(true)}
+                  >
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <MapPin size={16} color="#333" />
+                      <AppText variant="small" style={{ marginHorizontal: scale(5) }} numberOfLines={1} ellipsizeMode="tail">
+                        {getSelectedLocation(selectedLocation)}
+                      </AppText>
+                    </View>
+                    <ChevronDown size={16} color="#333" />
+                  </TouchableOpacity>
+                </View>
+              )
+            }
             <ScrollView style={{ flex: 1, backgroundColor: Colors.ScreenBGColor }} showsVerticalScrollIndicator={false} contentContainerStyle={{
               paddingBottom: 100
             }}>
@@ -185,24 +218,28 @@ export default function Home({ navigation }: any) {
                 }
               </View>
 
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Shop by Category</Text>
-                {loading.categories ? (
-                  <View style={styles.loadingContainer}>
-                    <Text style={styles.loadingText}>Loading categories...</Text>
+              {
+                isShowCategorySection && (
+                  <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Shop by Category</Text>
+                    {loading.categories ? (
+                      <View style={styles.loadingContainer}>
+                        <Text style={styles.loadingText}>Loading categories...</Text>
+                      </View>
+                    ) : (
+                      <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        style={styles.categoriesContainer}
+                      >
+                        {categories.map((category: any) => (
+                          <CategoryCard navigation={navigation} key={category.id} category={category} />
+                        ))}
+                      </ScrollView>
+                    )}
                   </View>
-                ) : (
-                  <ScrollView
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    style={styles.categoriesContainer}
-                  >
-                    {categories.map((category: any) => (
-                      <CategoryCard navigation={navigation} key={category.id} category={category} />
-                    ))}
-                  </ScrollView>
-                )}
-              </View>
+                )
+              }
 
               {loading.products ? (
                 <View style={styles.loadingContainer}>
@@ -251,7 +288,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingRight: 16,
     paddingVertical: 6,
     backgroundColor: 'transparent',
   },

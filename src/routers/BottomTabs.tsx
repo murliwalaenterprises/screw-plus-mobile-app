@@ -48,7 +48,8 @@ export default function BottomTabs() {
           marginBottom: scale(2),
         },
         tabBarLabelStyle: {
-          fontSize: IconConfig.textSize
+          fontSize: scale(9),
+          fontWeight: '400'
         },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (

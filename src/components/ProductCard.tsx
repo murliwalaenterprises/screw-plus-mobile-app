@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Heart, ShoppingCartIcon, Star } from 'lucide-react-native';
 import React from 'react';
 import { Image, StyleSheet, TouchableOpacity, Vibration, View } from 'react-native';
@@ -47,17 +48,22 @@ export default function ProductCard({ navigation, product, width, showCartButton
           />
         </TouchableOpacity>
 
-        {product.discount ? (
+        {/* {product.discount ? (
           <View style={[styles.badge, styles.discountBadge]}>
             <AppText variant="tiny" style={styles.badgeText}>{product.discount}% OFF</AppText>
           </View>
-        ) : null}
-
+        ) : null} */}
         {product.isNew ? (
-          <View style={[styles.badge, styles.newBadge, { bottom: verticalScale(product.isBestseller ? 30 : 10) }]}>
+          <View style={[styles.badge, styles.newBadge]}>
             <AppText variant="tiny" style={styles.badgeText}>NEW</AppText>
           </View>
         ) : null}
+
+        {/* {product.isNew ? (
+          <View style={[styles.badge, styles.newBadge, { bottom: verticalScale(product.isBestseller ? 30 : 10) }]}>
+            <AppText variant="tiny" style={styles.badgeText}>NEW</AppText>
+          </View>
+        ) : null} */}
 
         {product.isBestseller ? (
           <View style={[styles.badge, styles.bestsellerBadge]}>
@@ -68,7 +74,7 @@ export default function ProductCard({ navigation, product, width, showCartButton
 
       <View style={styles.content}>
         <AppText variant="small" style={styles.brand}>{product.brand}</AppText>
-        <AppText style={styles.title} numberOfLines={1} ellipsizeMode='tail'>
+        <AppText variant="small" style={styles.title} numberOfLines={2} ellipsizeMode='tail'>
           {product.title}
         </AppText>
 
@@ -91,8 +97,7 @@ export default function ProductCard({ navigation, product, width, showCartButton
         {
           showCartButton && (
             <TouchableOpacity style={styles.cartBtn} onPress={handleAddToCart}>
-              <ShoppingCartIcon size={scale(14)} />
-              <AppText style={styles.cartBtnText}>Add to cart</AppText>
+              <AppText variant="small" style={styles.cartBtnText}>Add to cart</AppText>
             </TouchableOpacity>
           )
         }
@@ -150,8 +155,8 @@ const styles = StyleSheet.create({
   },
   newBadge: {
     backgroundColor: '#2ed573',
-    top: undefined,
-    bottom: verticalScale(10),
+    // top: undefined,
+    // bottom: verticalScale(10),
   },
   bestsellerBadge: {
     backgroundColor: '#ffa502',
@@ -211,7 +216,7 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(10),
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: scale(5)
+    gap: scale(5),
   },
   cartBtnText: {
     color: Colors.light.primaryButtonForeground,

@@ -29,7 +29,7 @@ import { useAppConfig } from '../../store/useAppConfig';
 const screenWidth = Dimensions.get('window').width;
 
 export default function CategoriesScreen({ navigation }: any) {
-  const { topBarBackgroundColor, topBarForegroundColor }: any = useAppConfig();
+  const { activeTabColor, topBarBackgroundColor, topBarForegroundColor }: any = useAppConfig();
 
   const { selectedCategory, setSelectedCategory, getCartItemsCount } = useStore();
   const [activeCategory, setActiveCategory] = useState({
@@ -89,7 +89,7 @@ export default function CategoriesScreen({ navigation }: any) {
   }
 
   const renderProduct = ({ item }: { item: any }) => (
-    <ProductCard navigation={navigation} product={item} width={(screenWidth * 0.8) / 2 - 14} showCartButton />
+    <ProductCard navigation={navigation} product={item} width={(screenWidth * 0.8) / 2 - 14} />
   );
 
   const NoProductFound = () => (
@@ -143,7 +143,7 @@ export default function CategoriesScreen({ navigation }: any) {
                 }}
                 style={[
                   styles.categoryItem,
-                  activeCategory.id === item.id && styles.activeCategoryItem,
+                  activeCategory.id === item.id && [styles.activeCategoryItem, { borderRightColor: activeTabColor }],
                 ]}>
                 {item.image ? (
                   <View style={styles.subcategoryImageContainer}>
@@ -153,7 +153,7 @@ export default function CategoriesScreen({ navigation }: any) {
                   <Sparkles size={scale(20)} color={activeCategory.id === item.id ? '#222' : '#ccc'} />
                 )}
                 <AppText
-                  variant="small"
+                  variant="tiny"
                   style={[
                     styles.categoryText,
                     activeCategory.id === item.id && styles.activeCategoryText,
