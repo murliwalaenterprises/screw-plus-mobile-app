@@ -17,7 +17,7 @@ import OrderSuccess from './OrderSuccess';
 import { StackNames } from '../../constants/StackNames';
 import { startRazorpayPayment } from '../../services/paymentService';
 import ScreenHeader from '../../components/ScreenHeader';
-import { moderateScale } from 'react-native-size-matters';
+import { moderateScale, scale } from 'react-native-size-matters';
 import { AppText } from '../../components/ui';
 // import { sendOrderNotification } from '../../services/notificationService';
 
@@ -424,7 +424,7 @@ export default function CheckoutScreen({ navigation }: any) {
                             colors={[Colors.light.primaryButtonBackground.start, Colors.light.primaryButtonBackground.end]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
-                            style={{ borderRadius: 8 }}
+                            style={{ borderRadius: scale(12) }}
                         >
                             <View style={[styles.placeOrderButton, isProcessing && styles.disabledButton]}>
                                 <CheckCircle size={20} color={Colors.light.primaryButtonForeground} />
@@ -596,8 +596,8 @@ const styles = StyleSheet.create({
     footer: {
         backgroundColor: '#fff',
         paddingHorizontal: 16,
-        paddingTop: 16,
-        paddingBottom: 24,
+        paddingTop: 10,
+        paddingBottom: 28,
         borderTopWidth: 1,
         borderTopColor: '#e9ecef',
     },
@@ -606,14 +606,14 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         // backgroundColor: '#333',
-        paddingVertical: 16,
-        borderRadius: 12,
+        paddingVertical: 12,
+        borderRadius: scale(12)
     },
     disabledButton: {
         backgroundColor: '#ccc',
     },
     placeOrderText: {
-        fontWeight: 'bold',
+        fontWeight: '500',
         color: Colors.light.primaryButtonForeground,
         marginLeft: 8,
     },

@@ -61,7 +61,7 @@ export default function Home({ navigation }: any) {
   };
 
   const renderHeader = () => (
-    <View style={[styles.header, { paddingLeft: !topBarBrandLogo ? 16 : 0 }]}>
+    <View style={[styles.header, { paddingLeft: 16 }]}>
       <View style={styles.headerLeft}>
         {
           topBarBrandLogo ? (
@@ -178,7 +178,7 @@ export default function Home({ navigation }: any) {
                   >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                       <MapPin size={16} color="#333" />
-                      <AppText variant="small" style={{ marginHorizontal: scale(5) }} numberOfLines={1} ellipsizeMode="tail">
+                      <AppText variant="small" style={{ maxWidth: 280, marginHorizontal: scale(5) }} numberOfLines={1} ellipsizeMode="tail">
                         {getSelectedLocation(selectedLocation)}
                       </AppText>
                     </View>
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    paddingHorizontal: 12,
+    // paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
     marginBottom: 4,

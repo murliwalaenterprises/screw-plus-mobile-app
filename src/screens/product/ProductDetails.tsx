@@ -25,7 +25,8 @@ import { firebaseService } from '../../services/firebaseService';
 import { formatCurrency, getDiscountPercentage, getProductVariant } from '../../services/utilityService';
 import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/StackNames';
-import { scale } from 'react-native-size-matters';
+import { moderateScale, scale } from 'react-native-size-matters';
+import { AppText } from '../../components/ui';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HEADER_HEIGHT = 300;
@@ -84,11 +85,12 @@ export default function ProductDetailScreen({ navigation, route }: any) {
     if (!selectedOptions.size || !selectedOptions.color) {
       Alert.alert('Please select size and color');
       return;
-    }
-    const cartResult = addToCart(product, selectedOptions.size, selectedOptions.color);
-    if (cartResult !== null) {
-      Alert.alert('Added to cart!');
-      Vibration.vibrate(500);
+    } else {
+      const cartResult = addToCart(product, selectedOptions.size, selectedOptions.color);
+      if (cartResult !== null) {
+        Alert.alert('Added to cart!');
+        Vibration.vibrate(500);
+      }
     }
   };
 
@@ -100,19 +102,16 @@ export default function ProductDetailScreen({ navigation, route }: any) {
         item.selectedColor === selectedOptions.color
     );
 
-    const cartResult = addToCart(product, selectedOptions.size, selectedOptions.color);
-
-    if (cartResult !== null) {
-      if (existingItem) {
-        navigation.navigate(StackNames.Cart);
-      } else {
-        if (!selectedOptions.size || !selectedOptions.color) {
-          Alert.alert('Please select size and color');
-          return;
-        }
-
-        navigation.navigate(StackNames.Cart);
+    if (existingItem) {
+      addToCart(product, selectedOptions.size, selectedOptions.color);
+      navigation.navigate(StackNames.Cart);
+    } else {
+      if (!selectedOptions.size || !selectedOptions.color) {
+        Alert.alert('Please select size and color');
+        return;
       }
+      addToCart(product, selectedOptions.size, selectedOptions.color);
+      navigation.navigate(StackNames.Cart);
     }
   };
 
@@ -127,7 +126,7 @@ export default function ProductDetailScreen({ navigation, route }: any) {
   if (loading) {
     return (
       <SafeAreaView style={styles.center}>
-        <ActivityIndicator size="large" color="#333" />
+        <ActivityIndicator size="small" color="#333" />
       </SafeAreaView>
     );
   }
@@ -212,7 +211,7 @@ export default function ProductDetailScreen({ navigation, route }: any) {
               <TouchableOpacity style={[styles.floatingButton, { backgroundColor: 'transparent' }]}
                 onPress={() => navigation.goBack()}
               >
-                <ArrowLeft size={20} color={'#000'} />
+                <ArrowLeft size={moderateScale(16)} color={'#000'} />
               </TouchableOpacity>
               <View style={{ width: 200 }}>
                 <Text style={{ fontSize: 14, fontWeight: '500', marginBottom: 3 }} numberOfLines={1} ellipsizeMode='tail'>{product.title}</Text>
@@ -239,7 +238,7 @@ export default function ProductDetailScreen({ navigation, route }: any) {
             <View style={styles.floatingActions}>
               <TouchableOpacity style={[styles.floatingButton, { backgroundColor: 'transparent' }]} onPress={() => toggleFavorite(product.id)}>
                 <Heart
-                  size={20}
+                  size={moderateScale(16)}
                   color={isFavorite ? 'red' : '#000'}
                   fill={isFavorite ? 'red' : 'none'}
                 />
@@ -253,13 +252,13 @@ export default function ProductDetailScreen({ navigation, route }: any) {
           <TouchableOpacity style={styles.floatingButton}
             onPress={() => navigation.goBack()}
           >
-            <ArrowLeft size={20} color={'#fff'} />
+            <ArrowLeft size={moderateScale(16)} color={'#fff'} />
           </TouchableOpacity>
           <View style={styles.floatingActions}>
             <TouchableOpacity
               style={styles.floatingButton} onPress={() => navigation.navigate(StackNames.Cart)}
             >
-              <ShoppingCart size={20} color={'#fff'} />
+              <ShoppingCart size={moderateScale(16)} color={'#fff'} />
               {cartItemsCount > 0 && (
                 <View style={styles.cartBadge}>
                   <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
@@ -268,7 +267,7 @@ export default function ProductDetailScreen({ navigation, route }: any) {
             </TouchableOpacity>
             <TouchableOpacity style={styles.floatingButton} onPress={() => toggleFavorite(product.id)}>
               <Heart
-                size={20}
+                size={moderateScale(16)}
                 color={'#fff'}
                 fill={isFavorite ? '#fff' : 'none'}
               />
@@ -519,11 +518,10 @@ export default function ProductDetailScreen({ navigation, route }: any) {
         {/* Footer */}
         <View style={styles.footer}>
           <TouchableOpacity style={[styles.addToCartButton, { opacity: isOutOfStock ? 0.2 : 1 }]} onPress={handleAddToCart} disabled={isOutOfStock}>
-            <ShoppingCart size={20} color="#333" />
-            <Text style={styles.addToCartText}>Add to Cart</Text>
+            <AppText style={styles.addToCartText}>Add to cart</AppText>
           </TouchableOpacity>
           <TouchableOpacity style={[styles.buyNowButton, { opacity: isOutOfStock ? 0.2 : 1 }]} onPress={handleBuyNow} disabled={isOutOfStock}>
-            <Text style={styles.buyNowText}>Buy Now</Text>
+            <AppText style={styles.buyNowText}>Buy at {formatCurrency(selectedOptions.price)}</AppText>
           </TouchableOpacity>
         </View>
       </View>
@@ -589,8 +587,8 @@ const styles = StyleSheet.create({
   },
   cartBadge: {
     position: 'absolute',
-    top: 2,
-    right: 2,
+    top: -4,
+    right: -4,
     backgroundColor: '#ff4757',
     borderRadius: 10,
     minWidth: 20,
@@ -698,11 +696,9 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     paddingHorizontal: 16,
-    paddingTop: 12,
+    paddingTop: 5,
     paddingBottom: 28,
     backgroundColor: '#fff',
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
   },
   addToCartButton: {
     flex: 1,
@@ -710,13 +706,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: scale(12),
     borderWidth: 1,
-    borderColor: '#333',
-    marginRight: 8,
+    borderColor: '#dedede',
   },
   addToCartText: {
-    fontSize: 16,
     color: '#333',
     fontWeight: '500',
     marginLeft: 8,
@@ -726,14 +720,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    borderRadius: 8,
+    borderRadius: scale(12),
     backgroundColor: Colors.light.primaryButtonBackground.start,
     marginLeft: 8,
   },
   buyNowText: {
-    fontSize: 16,
     color: Colors.light.primaryButtonForeground,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
   center: {
     flex: 1,
@@ -795,9 +788,10 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   floatingButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    // width: 44,
+    // height: 44,
+    padding: moderateScale(8),
+    borderRadius: scale(100),
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     justifyContent: 'center',
     alignItems: 'center',

@@ -48,10 +48,10 @@ export default function CartScreen({ navigation }: any) {
         <Image source={{ uri: item.product.image }} style={styles.itemImage} />
 
         <View style={styles.itemDetails}>
-          <AppText style={styles.itemTitle} numberOfLines={2}>
+          <AppText variant="small" style={styles.itemTitle} numberOfLines={2}>
             {item.product.title}
           </AppText>
-          <AppText style={styles.itemVariant}>
+          <AppText variant="small" style={[styles.itemVariant, { marginTop: 5, marginBottom: 10 }]}>
             Size: {item.selectedSize} | Color: {item.selectedColor}
           </AppText>
           {selectedVariant ? (
@@ -77,7 +77,7 @@ export default function CartScreen({ navigation }: any) {
               style={styles.quantityButton}
               onPress={() => handleQuantityChange(item, item.quantity - 1)}
             >
-              <Minus size={16} color="#666" />
+              <Minus size={moderateScale(16)} color="#666" />
             </TouchableOpacity>
 
             <AppText style={styles.quantity}>{item.quantity}</AppText>
@@ -87,7 +87,7 @@ export default function CartScreen({ navigation }: any) {
               onPress={() => handleQuantityChange(item, item.quantity + 1)}
               disabled={isOutOfStock}
             >
-              <Plus size={16} color="#666" />
+              <Plus size={moderateScale(16)} color="#666" />
             </TouchableOpacity>
           </View>
         </View>
@@ -96,7 +96,7 @@ export default function CartScreen({ navigation }: any) {
           style={styles.removeButton}
           onPress={() => handleRemoveItem(item)}
         >
-          <Trash2 size={20} color="#ff4757" />
+          <Trash2 size={moderateScale(16)} color="#ff4757" />
         </TouchableOpacity>
       </View>
     )
@@ -158,7 +158,7 @@ export default function CartScreen({ navigation }: any) {
               colors={[Colors.light.primaryButtonBackground.start, Colors.light.primaryButtonBackground.end]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              style={{ borderRadius: 8 }}
+              style={{ borderRadius: scale(12) }}
             >
               <View style={styles.checkoutButton}>
                 <AppText style={styles.checkoutButtonText}>Proceed to Checkout</AppText>
@@ -238,7 +238,7 @@ const styles = StyleSheet.create({
   },
   itemImage: {
     width: 80,
-    height: 80,
+    height: undefined,
     borderRadius: 8,
   },
   itemDetails: {
@@ -283,9 +283,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   quantityButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    padding: moderateScale(2),
+    borderRadius: 100,
     backgroundColor: '#f8f9fa',
     justifyContent: 'center',
     alignItems: 'center',
@@ -295,15 +294,15 @@ const styles = StyleSheet.create({
   quantity: {
     fontWeight: '600',
     color: '#333',
-    marginHorizontal: 16,
+    marginHorizontal: scale(8),
   },
   removeButton: {
-    padding: 8,
+    paddingLeft: 8,
   },
   footer: {
     backgroundColor: '#fff',
     paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingTop: 10,
     paddingBottom: 28,
     borderTopWidth: 1,
     borderTopColor: '#e9ecef',
@@ -324,11 +323,11 @@ const styles = StyleSheet.create({
   checkoutButton: {
     // backgroundColor: '#333',
     paddingVertical: 16,
-    borderRadius: 8,
+    borderRadius: scale(12),
     alignItems: 'center',
   },
   checkoutButtonText: {
     color: Colors.light.primaryButtonForeground,
-    fontWeight: 'bold',
+    fontWeight: '500',
   },
 });

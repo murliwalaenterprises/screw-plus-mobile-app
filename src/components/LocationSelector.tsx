@@ -18,6 +18,8 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../context/AuthContext';
+import { moderateScale, scale } from 'react-native-size-matters';
+import { AppText } from './ui';
 
 interface LocationSelectorProps {
     visible: boolean;
@@ -55,7 +57,7 @@ export default function LocationSelector({ visible, onClose, getLocations }: Loc
         >
             <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
                 <MapPin size={20} color="#666" />
-                <Text style={styles.locationText}>{item.label}</Text>
+                <AppText style={styles.locationText}>{item.label}</AppText>
             </View>
             {selectedLocation === item.id && (<CheckCircle size={20} color={Colors.Primary} />)}
         </TouchableOpacity>
@@ -84,9 +86,9 @@ export default function LocationSelector({ visible, onClose, getLocations }: Loc
         >
             <SafeAreaView style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.title}>Choose a delivery address</Text>
+                    <AppText style={styles.title}>Choose a delivery address</AppText>
                     <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                        <X size={24} color="#333" />
+                        <X size={moderateScale(18)} color="#333" />
                     </TouchableOpacity>
                 </View>
 
@@ -109,7 +111,7 @@ export default function LocationSelector({ visible, onClose, getLocations }: Loc
                 ) : filteredLocations.length === 0 ? (
                     // 🔹 Empty state
                     <View style={{ padding: 20, alignItems: 'center' }}>
-                        <Text style={{ color: '#666' }}>No locations found</Text>
+                        <AppText style={{ color: '#666' }}>No locations found</AppText>
                     </View>
                 ) : (
                     // 🔹 List state
@@ -142,17 +144,15 @@ const styles = StyleSheet.create({
         borderBottomColor: '#f0f0f0',
     },
     title: {
-        fontSize: 18,
         fontWeight: '600',
         color: '#333',
     },
     closeButton: {
-        width: 40,
-        height: 40,
         borderRadius: 20,
         backgroundColor: '#f5f5f5',
         alignItems: 'center',
         justifyContent: 'center',
+        padding: scale(5)
     },
     searchContainer: {
         flexDirection: 'row',
@@ -184,7 +184,6 @@ const styles = StyleSheet.create({
         borderBottomColor: '#f0f0f0',
     },
     locationText: {
-        fontSize: 16,
         color: '#333',
         marginHorizontal: 8,
         flex: 1,
