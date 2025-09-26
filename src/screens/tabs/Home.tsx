@@ -29,10 +29,8 @@ export default function Home({ navigation }: any) {
   const [fadeAnim] = useState(new Animated.Value(0));
   const [showLocationSelector, setShowLocationSelector] = useState(false);
 
-  const { topBarBrandLogo, topBarBackgroundColor, topBarForegroundColor, homeScreenAds, isShowSlider, isShowCategorySection, setConfig }: any = useAppConfig();
+  const { topBarBrandLogo, topBarBackgroundColor, topBarForegroundColor, homeScreenAds, isVisibleSlider, isVisibleCategorySection, setConfig }: any = useAppConfig();
 
-
-  console.log('Products', products);
   const featuredProducts = products?.slice(0, 6);
   const newArrivals = products?.filter(p => p.isNew).slice(0, 4);
   const bestSellers = products?.filter(p => p.isBestseller).slice(0, 4);
@@ -193,7 +191,7 @@ export default function Home({ navigation }: any) {
               paddingBottom: 85
             }}>
               {
-                isShowSlider && (
+                isVisibleSlider && (
                   <>
                     {loading.banners ? (
                       <View style={styles.loadingBanner}>
@@ -220,7 +218,7 @@ export default function Home({ navigation }: any) {
               </View>
 
               {
-                isShowCategorySection && (
+                isVisibleCategorySection && (
                   <View style={[styles.section, { paddingHorizontal: 20 }]}>
                     <Text style={[styles.sectionTitle, { marginBottom: 10 }]}>Shop by Category</Text>
                     {loading.categories ? (

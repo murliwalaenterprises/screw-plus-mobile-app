@@ -370,8 +370,6 @@ class FirebaseService {
     });
   }
 
-  // Users
-
   subscribeToUser(userId: string, callback: (user: any) => void) {
     const userRef = doc(db, "users", userId);
     return onSnapshot(userRef, (snapshot) => {
@@ -387,10 +385,11 @@ class FirebaseService {
       }
     });
   }
+
   subscribeToAppConfig(callback: (config: any) => void) {
     const id = 'cHThTqgAD0e1TpRQej1Y';
-    const userRef = doc(db, "appConfig", id);
-    return onSnapshot(userRef, (snapshot) => {
+    const configRef = doc(db, "appConfig", id);
+    return onSnapshot(configRef, (snapshot) => {
       if (snapshot?.exists()) {
         const config = {
           id: snapshot?.id,
@@ -402,6 +401,30 @@ class FirebaseService {
         callback(null);
       }
     });
+  }
+
+  async updateAppConfig(config: any) {
+    try {
+      const id = "cHThTqgAD0e1TpRQej1Y";
+      const configRef = doc(db, "appConfig", id);
+
+      Object.keys(config).forEach((key) => {
+        if (config[key] === undefined) {
+          delete config[key];
+        }
+      });
+
+      const snap = await getDoc(configRef);
+      if (!snap.exists()) {
+        throw new Error("App config document does not exist in Firestore!");
+      }
+
+      await updateDoc(configRef, { ...config });
+      return true;
+    } catch (err: any) {
+      console.error("updateAppConfig Error:", err);
+      throw err;
+    }
   }
 
 }

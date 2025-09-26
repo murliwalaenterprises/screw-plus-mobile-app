@@ -6,6 +6,7 @@ import { Colors } from "../../constants/Colors";
 import LinearGradient from "react-native-linear-gradient";
 import { AppText } from "../ui";
 import { PlusCircle, X } from "lucide-react-native";
+import { firebaseService } from "../../services/firebaseService";
 
 export default function AppConfigSettings() {
     const {
@@ -13,19 +14,20 @@ export default function AppConfigSettings() {
         topBarForegroundColor,
         activeTabColor,
         homeScreenAds,
-        isShowSlider,
-        isShowCategorySection,
+        isVisibleSlider,
+        isVisibleCategorySection,
         topBarBrandLogo,
-        setConfig,
     }: any = useAppConfig();
+
+    const [appConfig, setConfig] = useState({});
 
     const [form, setForm] = useState({
         topBarBackgroundColor: topBarBackgroundColor.join(","),
         topBarForegroundColor,
         activeTabColor: activeTabColor || "",
         homeScreenAds,
-        isShowSlider,
-        isShowCategorySection,
+        isVisibleSlider,
+        isVisibleCategorySection,
         topBarBrandLogo,
     });
 
@@ -37,35 +39,68 @@ export default function AppConfigSettings() {
             topBarForegroundColor,
             activeTabColor: activeTabColor || "",
             homeScreenAds,
-            isShowSlider,
-            isShowCategorySection,
+            isVisibleSlider,
+            isVisibleCategorySection,
             topBarBrandLogo,
         });
-    }, [topBarBackgroundColor, topBarForegroundColor, activeTabColor, homeScreenAds, isShowSlider, isShowCategorySection, topBarBrandLogo]);
+    }, [topBarBackgroundColor, topBarForegroundColor, activeTabColor, homeScreenAds, isVisibleSlider, isVisibleCategorySection, topBarBrandLogo]);
 
     const handleChange = (key: string, value: any) => {
         setForm((prev) => ({ ...prev, [key]: value }));
     };
 
+    const isValidColor = (color: string) => {
+        const hexRegex = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/; // #RGB or #RRGGBB
+        const rgbaRegex = /^rgba?\(\s*(\d{1,3}\s*,\s*){2}\d{1,3}(,\s*(0|0?\.\d+|1(\.0)?))?\s*\)$/; // rgba or rgb
+
+        return hexRegex.test(color) || rgbaRegex.test(color);
+    };
+
     const handleSave = async () => {
-        const config = {
-            topBarBackgroundColor: form.topBarBackgroundColor.split(",").map((c: any) => c.trim()),
+        const colors = form.topBarBackgroundColor.match(/rgba\([^)]*\)|#[0-9a-fA-F]+/g) || [];
+
+        // Validate each color
+        for (const c of colors) {
+            if (!isValidColor(c.trim())) {
+                Alert.alert("Invalid Color", `❌ '${c}' is not a valid color format. Use #hex or rgba().`);
+                return; // stop save
+            }
+        }
+
+        if (!isValidColor(form.topBarForegroundColor.trim())) {
+            Alert.alert("Invalid Color", "❌ Foreground color must be valid (#hex or rgba).");
+            return;
+        }
+
+        if (form.activeTabColor && !isValidColor(form.activeTabColor.trim())) {
+            Alert.alert("Invalid Color", "❌ Active Tab color must be valid (#hex or rgba).");
+            return;
+        }
+
+        const config: any = {
+            ...appConfig,
+            topBarBackgroundColor: colors,
             topBarForegroundColor: form.topBarForegroundColor,
             activeTabColor: form.activeTabColor || undefined,
             homeScreenAds: form.homeScreenAds,
-            isVisibleSlider: form.isShowSlider,
-            isVisibleCategorySection: form.isShowCategorySection,
+            isVisibleSlider: form.isVisibleSlider,
+            isVisibleCategorySection: form.isVisibleCategorySection,
             topBarBrandLogo: form.topBarBrandLogo,
         };
 
         try {
-            setConfig(config);
-            Alert.alert("Config updated successfully!");
-        } catch (error) {
+            if (!firebaseService || !firebaseService.updateAppConfig) {
+                Alert.alert("Error", "firebaseService.updateAppConfig is missing");
+                return;
+            }
+            await firebaseService.updateAppConfig(config);
+            Alert.alert("Success", "Config updated successfully!");
+        } catch (error: any) {
             console.error("Error saving config:", error);
-            Alert.alert("Failed to save config");
+            Alert.alert("Error", error.message || "Failed to save config");
         }
     };
+
 
     const addImageByUrl = () => {
         const url = (tempImageUrl || "").trim();
@@ -85,39 +120,50 @@ export default function AppConfigSettings() {
         }));
     };
 
-    return (
-        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: '40%' }}>
-            <Text style={styles.title}>App Configuration</Text>
+    useEffect(() => {
+        const unsubscribe = firebaseService.subscribeToAppConfig((config: any) => {
+            if (config) setConfig(config);
+        });
 
+        return () => unsubscribe && unsubscribe();
+    }, []);
+
+    return (
+        <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: '40%' }
+        }>
+            <Text style={styles.title}> App Configuration </Text>
 
             {/* Images */}
-            <Text style={styles.label}>Images (max 5)</Text>
+            <Text style={styles.label}> Images(max 5) </Text>
 
-            <View style={styles.imageList}>
-                {form.homeScreenAds.map((uri: string, idx: number) => (
-                    <View key={idx} style={styles.thumbWrap}>
-                        <Image source={{ uri }} style={styles.thumb} />
+            < View style={styles.imageList} >
+                {
+                    form.homeScreenAds.length && form.homeScreenAds.map((uri: string, idx: number) => (
+                        <View key={idx} style={styles.thumbWrap} >
+                            <Image source={{ uri }} style={styles.thumb} />
+                            <TouchableOpacity
+                                style={styles.removeBadge}
+                                onPress={() => removeImage(idx)}
+                            >
+                                <X size={14} color="#fff" />
+                            </TouchableOpacity>
+                        </View>
+                    ))}
+                {
+                    form.homeScreenAds.length < 5 && (
                         <TouchableOpacity
-                            style={styles.removeBadge}
-                            onPress={() => removeImage(idx)}
+                            style={[styles.thumbWrap, styles.thumbAdd]}
+                            onPress={() => {
+                                if (tempImageUrl.trim()) addImageByUrl();
+                            }
+                            }
                         >
-                            <X size={14} color="#fff" />
+                            <PlusCircle size={26} color="#6B7280" />
                         </TouchableOpacity>
-                    </View>
-                ))}
-                {form.homeScreenAds.length < 5 && (
-                    <TouchableOpacity
-                        style={[styles.thumbWrap, styles.thumbAdd]}
-                        onPress={() => {
-                            if (tempImageUrl.trim()) addImageByUrl();
-                        }}
-                    >
-                        <PlusCircle size={26} color="#6B7280" />
-                    </TouchableOpacity>
-                )}
+                    )}
             </View>
 
-            <View style={[styles.row, { marginTop: 8 }]}>
+            < View style={[styles.row, { marginTop: 8 }]} >
                 <TextInput
                     style={[styles.input, { flex: 1, marginRight: 8 }]}
                     placeholder="https://example.com/image.jpg"
@@ -125,12 +171,12 @@ export default function AppConfigSettings() {
                     onChangeText={setTempImageUrl}
                     placeholderTextColor={Colors.light.placeholderTextColor}
                 />
-                <TouchableOpacity style={styles.pillButton} onPress={addImageByUrl}>
-                    <Text style={styles.pillText}>Add URL</Text>
+                <TouchableOpacity style={styles.pillButton} onPress={addImageByUrl} >
+                    <Text style={styles.pillText}> Add URL </Text>
                 </TouchableOpacity>
             </View>
 
-            <View
+            < View
                 style={{
                     flexDirection: "row",
                     alignItems: "center",
@@ -138,66 +184,71 @@ export default function AppConfigSettings() {
                     marginBottom: 5,
                 }}
             >
-                <Text style={styles.label}>Top Bar Background Colors (comma separated)</Text>
-                <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: '#fff', padding: 5, borderRadius: 8, borderWidth: 1, borderColor: '#dedede' }}>
-                    {topBarBackgroundColor.map((color: any, index: number) => (
-                        <View
-                            key={index}
-                            style={{
-                                width: 14,
-                                height: 14,
-                                backgroundColor: color.trim(),
-                                borderRadius: 100,
-                                marginLeft: index > 0 ? 4 : 0,
-                                borderWidth: 1, borderColor: '#dedede'
-                            }}
-                        />
-                    ))}
+                <Text style={styles.label}> Top Bar Background Colors(comma separated) </Text>
+                < View style={{ flexDirection: "row", alignItems: "center", backgroundColor: '#fff', padding: 5, borderRadius: 8, borderWidth: 1, borderColor: '#dedede' }}>
+                    {
+                        topBarBackgroundColor.map((color: any, index: number) => (
+                            <View
+                                key={index}
+                                style={{
+                                    width: 14,
+                                    height: 14,
+                                    backgroundColor: color.trim(),
+                                    borderRadius: 100,
+                                    marginLeft: index > 0 ? 4 : 0,
+                                    borderWidth: 1, borderColor: '#dedede'
+                                }}
+                            />
+                        ))}
                 </View>
             </View>
 
-            <TextInput
+            < TextInput
                 style={styles.input}
                 value={form.topBarBackgroundColor}
                 onChangeText={(text) => handleChange("topBarBackgroundColor", text)}
             />
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
-                <Text style={styles.label}>Top Bar Foreground Color</Text>
-                <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: '#fff', padding: 5, borderRadius: 8, borderWidth: 1, borderColor: '#dedede' }}>
+            < View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
+                <Text style={styles.label}> Top Bar Foreground Color </Text>
+                < View style={{ flexDirection: "row", alignItems: "center", backgroundColor: '#fff', padding: 5, borderRadius: 8, borderWidth: 1, borderColor: '#dedede' }}>
                     <View
-                        style={{
-                            width: 14,
-                            height: 14,
-                            backgroundColor: topBarForegroundColor,
-                            borderRadius: 100,
-                            borderWidth: 1, borderColor: '#dedede'
-                        }}
+                        style={
+                            {
+                                width: 14,
+                                height: 14,
+                                backgroundColor: topBarForegroundColor,
+                                borderRadius: 100,
+                                borderWidth: 1, borderColor: '#dedede'
+                            }
+                        }
                     />
                 </View>
             </View>
 
-            <TextInput
+            < TextInput
                 style={styles.input}
                 value={form.topBarForegroundColor}
                 onChangeText={(text) => handleChange("topBarForegroundColor", text)}
             />
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
-                <Text style={styles.label}>Active Tab Color</Text>
-                <View style={{ flexDirection: "row", alignItems: "center", backgroundColor: '#fff', padding: 5, borderRadius: 8, borderWidth: 1, borderColor: '#dedede' }}>
+            < View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 5 }}>
+                <Text style={styles.label}> Active Tab Color </Text>
+                < View style={{ flexDirection: "row", alignItems: "center", backgroundColor: '#fff', padding: 5, borderRadius: 8, borderWidth: 1, borderColor: '#dedede' }}>
                     <View
-                        style={{
-                            width: 14,
-                            height: 14,
-                            backgroundColor: activeTabColor,
-                            borderRadius: 100,
-                            borderWidth: 1, borderColor: '#dedede'
-                        }}
+                        style={
+                            {
+                                width: 14,
+                                height: 14,
+                                backgroundColor: activeTabColor,
+                                borderRadius: 100,
+                                borderWidth: 1, borderColor: '#dedede'
+                            }
+                        }
                     />
                 </View>
             </View>
-            <TextInput
+            < TextInput
                 style={styles.input}
                 value={form.activeTabColor}
                 onChangeText={(text) => handleChange("activeTabColor", text)}
@@ -210,48 +261,55 @@ export default function AppConfigSettings() {
                 onChangeText={(text) => handleChange("homeScreenAds", text)}
             /> */}
 
-            {form.topBarBrandLogo && (<Image source={{ uri: form.topBarBrandLogo }} width={100} height={30} />)}
-            <Text style={styles.label}>Top Bar Brand Logo (URL)</Text>
-            <TextInput
+            {
+                form.topBarBrandLogo && (<Image source={{ uri: form.topBarBrandLogo }} style={{
+                    width: 120,        // max width
+                    height: undefined, // height auto adjust
+                    aspectRatio: 4,    // maintain proportion
+                    resizeMode: "contain",
+                }
+                } />)}
+            <Text style={styles.label}> Top Bar Brand Logo(URL) </Text>
+            < TextInput
                 style={[styles.input, { marginBottom: 10 }]}
                 value={form.topBarBrandLogo}
                 onChangeText={(text) => handleChange("topBarBrandLogo", text)}
             />
-            <Text style={[styles.settingSubtitle, { marginBottom: 20 }]}>Use your brand logo for the home screen in your app. {"\n"}
-                Recommended resolution: 1200 × 320 px (wide rectangular format). {"\n"}
+            < Text style={[styles.settingSubtitle, { marginBottom: 20 }]} > Use your brand logo for the home screen in your app. {"\n"}
+                Recommended resolution: 1200 × 320 px(wide rectangular format). {"\n"}
                 Transparent PNG is preferred for best results.</Text>
 
-            <View style={styles.settingItem}>
-                <View style={styles.settingLeft}>
+            < View style={styles.settingItem} >
+                <View style={styles.settingLeft} >
                     <View style={styles.settingText}>
-                        <Text style={styles.settingTitle}>Show Slider</Text>
-                        <Text style={styles.settingSubtitle}>Hide slider for home screen</Text>
+                        <Text style={styles.settingTitle}> Show Slider </Text>
+                        < Text style={styles.settingSubtitle} > Hide slider for home screen </Text>
                     </View>
                 </View>
-                <Switch
-                    value={form.isShowSlider}
-                    onValueChange={() => handleChange("isShowSlider", !form.isShowSlider)}
+                < Switch
+                    value={form.isVisibleSlider}
+                    onValueChange={() => handleChange("isVisibleSlider", !form.isVisibleSlider)}
                     trackColor={{ false: '#e9ecef', true: Colors.light.success }}
                     thumbColor="#fff"
                 />
             </View>
 
-            <View style={styles.settingItem}>
+            < View style={styles.settingItem} >
                 <View style={styles.settingLeft}>
                     <View style={styles.settingText}>
-                        <Text style={styles.settingTitle}>Hide Category Section?</Text>
-                        <Text style={styles.settingSubtitle}>Hide Category section from home screen</Text>
+                        <Text style={styles.settingTitle}> Hide Category Section ? </Text>
+                        < Text style={styles.settingSubtitle} > Hide Category section from home screen </Text>
                     </View>
                 </View>
-                <Switch
-                    value={form.isShowCategorySection}
-                    onValueChange={() => handleChange("isShowCategorySection", !form.isShowCategorySection)}
+                < Switch
+                    value={form.isVisibleCategorySection}
+                    onValueChange={() => handleChange("isVisibleCategorySection", !form.isVisibleCategorySection)}
                     trackColor={{ false: '#e9ecef', true: Colors.light.success }}
                     thumbColor="#fff"
                 />
             </View>
 
-            <TouchableOpacity style={{ marginTop: 20 }} onPress={handleSave}>
+            < TouchableOpacity style={{ marginTop: 20 }} onPress={handleSave} >
                 <LinearGradient
                     colors={[Colors.light.primaryButtonBackground.start, Colors.light.primaryButtonBackground.end]}
                     start={{ x: 0, y: 0 }}
@@ -259,7 +317,7 @@ export default function AppConfigSettings() {
                     style={{ borderRadius: 8 }}
                 >
                     <View style={styles.saveButton}>
-                        <AppText style={styles.saveText}>Save Config</AppText>
+                        <AppText style={styles.saveText}> Save Config </AppText>
                     </View>
                 </LinearGradient>
             </TouchableOpacity>
