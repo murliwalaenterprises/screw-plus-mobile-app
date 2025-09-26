@@ -48,5 +48,5 @@ export const Colors = {
   defaultWhite: '#fff',
   StatusBarBg: 'transparent',
   StatusBarTextColor: '#222',
-  ScreenBGColor: '#f8f9fa',
+  ScreenBGColor: '#f5f5f7',
 };

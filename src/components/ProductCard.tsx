@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Heart, ShoppingCartIcon, Star } from 'lucide-react-native';
 import React from 'react';
@@ -37,7 +38,7 @@ export default function ProductCard({ navigation, product, width, showCartButton
   };
 
   return (
-    <TouchableOpacity style={[styles.container, { width }]} onPress={handlePress}>
+    <TouchableOpacity style={[styles.container, { width, height: verticalScale(showCartButton ? 230 : 200) }]} onPress={handlePress}>
       <View style={styles.imageContainer}>
         <Image source={product.image ? { uri: product.image } : require('../assets/images/default-product-image.png')} style={styles.image} />
         <TouchableOpacity style={styles.favoriteButton} onPress={handleFavoritePress}>
@@ -48,23 +49,6 @@ export default function ProductCard({ navigation, product, width, showCartButton
           />
         </TouchableOpacity>
 
-        {/* {product.discount ? (
-          <View style={[styles.badge, styles.discountBadge]}>
-            <AppText variant="tiny" style={styles.badgeText}>{product.discount}% OFF</AppText>
-          </View>
-        ) : null} */}
-        {product.isNew ? (
-          <View style={[styles.badge, styles.newBadge]}>
-            <AppText variant="tiny" style={styles.badgeText}>NEW</AppText>
-          </View>
-        ) : null}
-
-        {/* {product.isNew ? (
-          <View style={[styles.badge, styles.newBadge, { bottom: verticalScale(product.isBestseller ? 30 : 10) }]}>
-            <AppText variant="tiny" style={styles.badgeText}>NEW</AppText>
-          </View>
-        ) : null} */}
-
         {product.isBestseller ? (
           <View style={[styles.badge, styles.bestsellerBadge]}>
             <AppText variant="tiny" style={styles.badgeText}>BESTSELLER</AppText>
@@ -73,24 +57,29 @@ export default function ProductCard({ navigation, product, width, showCartButton
       </View>
 
       <View style={styles.content}>
-        <AppText variant="small" style={styles.brand}>{product.brand}</AppText>
-        <AppText variant="small" style={styles.title} numberOfLines={2} ellipsizeMode='tail'>
-          {product.title}
-        </AppText>
+        <View>
+          {product.isNew ? (
+            <AppText variant="small" style={[styles.badgeText, { color: '#b64400', fontWeight: '700' }]}>New</AppText>
+          ) : null}
 
-        <View style={styles.ratingContainer}>
-          <Star size={moderateScale(14)} color="#ffa502" fill="#ffa502" />
-          <AppText variant="small" style={styles.rating}>{product.rating}</AppText>
-          <AppText variant="small" style={styles.reviews}>({product.reviews})</AppText>
-        </View>
+          <AppText variant="small" style={styles.title} numberOfLines={2} ellipsizeMode='tail'>
+            {product.title}
+          </AppText>
 
-        <View style={styles.priceContainer}>
-          <AppText style={styles.price}>{formatCurrency(getProductVariant(product).price)}</AppText>
-          {getProductVariant(product).originalPrice !== getProductVariant(product).price && (
-            <AppText style={styles.originalPrice} variant="small">
-              {formatCurrency(getProductVariant(product).originalPrice)}
-            </AppText>
-          )}
+          <View style={styles.ratingContainer}>
+            <Star size={moderateScale(14)} color="#ffa502" fill="#ffa502" />
+            <AppText variant="small" style={styles.rating}>{product.rating}</AppText>
+            <AppText variant="small" style={styles.reviews}>({product.reviews})</AppText>
+          </View>
+
+          <View style={styles.priceContainer}>
+            <AppText style={styles.price}>{formatCurrency(getProductVariant(product).price)}</AppText>
+            {getProductVariant(product).originalPrice !== getProductVariant(product).price && (
+              <AppText style={styles.originalPrice} variant="small">
+                {formatCurrency(getProductVariant(product).originalPrice)}
+              </AppText>
+            )}
+          </View>
         </View>
 
         {/* Add to Cart */}
@@ -109,25 +98,23 @@ export default function ProductCard({ navigation, product, width, showCartButton
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'rgba(255,255,255,0.95)',
-    borderRadius: moderateScale(16),
-    marginBottom: verticalScale(5),
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: verticalScale(4) },
-    shadowOpacity: 0.1,
-    shadowRadius: moderateScale(8),
-    elevation: 5,
     overflow: 'hidden',
+    borderTopLeftRadius: scale(10),
+    borderTopRightRadius: scale(10),
+    marginBottom: 1,
   },
   imageContainer: {
     position: 'relative',
-    backgroundColor: '#f3f3f3ff'
+    backgroundColor: '#f3f3f3ff',
+    borderTopLeftRadius: scale(10),
+    borderTopRightRadius: scale(10),
   },
   image: {
     width: '100%',
     height: verticalScale(100),
-    borderTopLeftRadius: moderateScale(16),
-    borderTopRightRadius: moderateScale(16),
-    objectFit: 'cover'
+    objectFit: 'cover',
+    borderTopLeftRadius: scale(10),
+    borderTopRightRadius: scale(10),
   },
   favoriteButton: {
     position: 'absolute',
@@ -144,8 +131,7 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    top: verticalScale(10),
-    left: scale(10),
+    top: verticalScale(5),
     paddingHorizontal: scale(8),
     paddingVertical: verticalScale(4),
     borderRadius: moderateScale(8),
@@ -154,14 +140,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#ff6b81',
   },
   newBadge: {
-    backgroundColor: '#2ed573',
+    backgroundColor: 'transparent',
     // top: undefined,
     // bottom: verticalScale(10),
   },
   bestsellerBadge: {
     backgroundColor: '#ffa502',
-    top: undefined,
-    bottom: verticalScale(10),
+    top: verticalScale(10),
+    // bottom: verticalScale(10),
     left: scale(10),
   },
   badgeText: {
@@ -170,6 +156,8 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: scale(12),
+    flex: 1,
+    justifyContent: 'space-between',
   },
   brand: {
     color: '#888',

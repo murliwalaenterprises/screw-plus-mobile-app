@@ -42,7 +42,7 @@ const ProductListScreen: React.FC<{ navigation: any, route: any }> = ({ navigati
                     <ProductCard
                         navigation={navigation}
                         product={item}
-                        width={(screenWidth - 20) / 2}
+                        width={((screenWidth - 20) / 2) - 2}
                         showCartButton
                     />
                 </View>
@@ -86,7 +86,11 @@ const ProductListScreen: React.FC<{ navigation: any, route: any }> = ({ navigati
                     renderItem={renderProduct}
                     numColumns={2}
                     columnWrapperStyle={styles.row}
-                    contentContainerStyle={{ paddingBottom: moderateScale(100), paddingTop: moderateScale(28) }}
+                    contentContainerStyle={{
+                        paddingBottom: moderateScale(100),
+                        paddingTop: moderateScale(28),
+                        paddingHorizontal: moderateScale(10),
+                    }}
                     showsVerticalScrollIndicator={false}
                     ListEmptyComponent={() => (
                         <View style={styles.noProducts}>
@@ -108,7 +112,8 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         flex: 1,
-        paddingHorizontal: moderateScale(8),
+        flexDirection: 'column',
+        justifyContent: 'center',
     },
     row: {
         justifyContent: "space-between",

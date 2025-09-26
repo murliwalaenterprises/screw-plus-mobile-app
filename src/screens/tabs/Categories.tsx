@@ -89,7 +89,7 @@ export default function CategoriesScreen({ navigation }: any) {
   }
 
   const renderProduct = ({ item }: { item: any }) => (
-    <ProductCard navigation={navigation} product={item} width={(screenWidth * 0.8) / 2 - 14} />
+    <ProductCard navigation={navigation} product={item} width={(screenWidth * 0.8) / 2 - 1.5} />
   );
 
   const NoProductFound = () => (
@@ -271,8 +271,8 @@ const styles = StyleSheet.create({
   },
   subcategoryContainer: {
     flexGrow: 1,
-    padding: scale(10), // was 12
-    paddingBottom: scale(120),
+    padding: scale(1), // was 12
+    paddingBottom: scale(76.5),
   },
   subcategoryImageContainer: {
     width: scale(35),

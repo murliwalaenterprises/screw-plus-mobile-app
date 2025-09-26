@@ -197,7 +197,7 @@ export default function Profile({ navigation }: any) {
           </View>
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
+        <ScrollView showsVerticalScrollIndicator={false} style={styles.container} contentContainerStyle={{ paddingBottom: 90 }}>
 
           <View style={styles.statsContainer}>
             <View style={styles.statItem}>

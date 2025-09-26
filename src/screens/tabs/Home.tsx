@@ -145,6 +145,7 @@ export default function Home({ navigation }: any) {
         renderItem={renderProduct}
         horizontal
         showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 16 }}
       />
     </View>
   );
@@ -189,7 +190,7 @@ export default function Home({ navigation }: any) {
               )
             }
             <ScrollView style={{ flex: 1, backgroundColor: Colors.ScreenBGColor }} showsVerticalScrollIndicator={false} contentContainerStyle={{
-              paddingBottom: 100
+              paddingBottom: 85
             }}>
               {
                 isShowSlider && (
@@ -220,8 +221,8 @@ export default function Home({ navigation }: any) {
 
               {
                 isShowCategorySection && (
-                  <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Shop by Category</Text>
+                  <View style={[styles.section, { paddingHorizontal: 20 }]}>
+                    <Text style={[styles.sectionTitle, { marginBottom: 10 }]}>Shop by Category</Text>
                     {loading.categories ? (
                       <View style={styles.loadingContainer}>
                         <Text style={styles.loadingText}>Loading categories...</Text>
@@ -257,7 +258,6 @@ export default function Home({ navigation }: any) {
                 <Text style={{ fontSize: scale(50), fontWeight: 'bold', opacity: 0.2 }}>Screw Plus</Text>
                 <Text style={{ opacity: 0.2, marginTop: 10, }}>Developed By ❤️ Murliwala Enterprises</Text>
               </View>
-              <View style={styles.bottomSpacing} />
             </ScrollView>
           </Animated.View>
         </View>
@@ -345,14 +345,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   section: {
-    paddingHorizontal: 16,
-    marginBottom: 24,
+    marginBottom: 0,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    paddingHorizontal: 20
   },
   sectionTitle: {
     fontSize: 20,
