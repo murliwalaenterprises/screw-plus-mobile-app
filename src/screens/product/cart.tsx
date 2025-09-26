@@ -2,7 +2,7 @@
 
 import { Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react-native';
 import React from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CartItem } from '../../types/product';
 import { useStore } from '../../store/useStore';
@@ -48,28 +48,28 @@ export default function CartScreen({ navigation }: any) {
         <Image source={{ uri: item.product.image }} style={styles.itemImage} />
 
         <View style={styles.itemDetails}>
-          <Text style={styles.itemTitle} numberOfLines={2}>
+          <AppText style={styles.itemTitle} numberOfLines={2}>
             {item.product.title}
-          </Text>
-          <Text style={styles.itemVariant}>
+          </AppText>
+          <AppText style={styles.itemVariant}>
             Size: {item.selectedSize} | Color: {item.selectedColor}
-          </Text>
+          </AppText>
           {selectedVariant ? (
             <View style={styles.priceContainer}>
-              <Text style={styles.price}>{formatCurrency(selectedVariant.price)}</Text>
+              <AppText style={styles.price}>{formatCurrency(selectedVariant.price)}</AppText>
               {selectedVariant.originalPrice && (
-                <Text style={styles.originalPrice}>
+                <AppText style={styles.originalPrice}>
                   {formatCurrency(selectedVariant.originalPrice)}
-                </Text>
+                </AppText>
               )}
               {getDiscountPercentage(selectedVariant.originalPrice, selectedVariant.price) > 0 && (
-                <Text style={styles.discount}>
+                <AppText style={styles.discount}>
                   -{getDiscountPercentage(selectedVariant.originalPrice, selectedVariant.price)}% OFF
-                </Text>
+                </AppText>
               )}
             </View>
           ) : (
-            <Text style={styles.price}>Please select options</Text>
+            <AppText style={styles.price}>Please select options</AppText>
           )}
 
           <View style={styles.quantityContainer}>
@@ -80,7 +80,7 @@ export default function CartScreen({ navigation }: any) {
               <Minus size={16} color="#666" />
             </TouchableOpacity>
 
-            <Text style={styles.quantity}>{item.quantity}</Text>
+            <AppText style={styles.quantity}>{item.quantity}</AppText>
 
             <TouchableOpacity
               style={[styles.quantityButton, { opacity: isOutOfStock ? 0.5 : 1 }]}
@@ -112,10 +112,10 @@ export default function CartScreen({ navigation }: any) {
         <View style={styles.container}>
           <View style={styles.emptyContainer}>
             <ShoppingBag size={64} color="#ccc" />
-            <Text style={styles.emptyTitle}>Your cart is empty</Text>
-            <Text style={styles.emptySubtitle}>
+            <AppText style={styles.emptyTitle}>Your cart is empty</AppText>
+            <AppText style={styles.emptySubtitle}>
               Add some products to get started
-            </Text>
+            </AppText>
           </View>
         </View>
       </SafeAreaView>
@@ -129,7 +129,7 @@ export default function CartScreen({ navigation }: any) {
         navigation={navigation}
       >
         <TouchableOpacity onPress={clearCart}>
-          <AppText variant="large">Clear All</AppText>
+          <AppText variant="medium">Clear All</AppText>
         </TouchableOpacity>
       </ScreenHeader>
       <View style={styles.container}>
@@ -161,7 +161,7 @@ export default function CartScreen({ navigation }: any) {
               style={{ borderRadius: 8 }}
             >
               <View style={styles.checkoutButton}>
-                <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
+                <AppText style={styles.checkoutButtonText}>Proceed to Checkout</AppText>
               </View>
             </LinearGradient>
           </TouchableOpacity>
@@ -187,12 +187,10 @@ const styles = StyleSheet.create({
     borderBottomColor: '#e9ecef',
   },
   title: {
-    fontSize: 22,
     fontWeight: 'bold',
     color: '#333',
   },
   itemCount: {
-    fontSize: 14,
     color: '#666',
     backgroundColor: '#f8f9fa',
     paddingHorizontal: 12,
@@ -202,7 +200,6 @@ const styles = StyleSheet.create({
     borderColor: '#e9ecef',
   },
   clearButton: {
-    fontSize: 14,
     color: '#ff4757',
     fontWeight: '500',
   },
@@ -213,14 +210,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
   },
   emptyTitle: {
-    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
     marginTop: 16,
     marginBottom: 8,
   },
   emptySubtitle: {
-    fontSize: 16,
     color: '#666',
     textAlign: 'center',
   },
@@ -251,18 +246,15 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   itemTitle: {
-    fontSize: 16,
     fontWeight: '600',
     color: '#333',
     marginBottom: 4,
   },
   itemVariant: {
-    fontSize: 12,
     color: '#666',
     marginBottom: 4,
   },
   itemPrice: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 8,
@@ -273,18 +265,15 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   price: {
-    fontSize: 16,
     fontWeight: 'bold',
     color: 'green',
   },
   originalPrice: {
-    fontSize: 16,
     color: '#999',
     textDecorationLine: 'line-through',
     marginLeft: 12,
   },
   discount: {
-    fontSize: 16,
     color: Colors.light.danger,
     fontWeight: '500',
     marginLeft: 12,
@@ -304,7 +293,6 @@ const styles = StyleSheet.create({
     borderColor: '#e9ecef',
   },
   quantity: {
-    fontSize: 16,
     fontWeight: '600',
     color: '#333',
     marginHorizontal: 16,
@@ -327,11 +315,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   totalLabel: {
-    fontSize: 18,
     color: '#333',
   },
   totalAmount: {
-    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
   },
@@ -343,7 +329,6 @@ const styles = StyleSheet.create({
   },
   checkoutButtonText: {
     color: Colors.light.primaryButtonForeground,
-    fontSize: 16,
     fontWeight: 'bold',
   },
 });

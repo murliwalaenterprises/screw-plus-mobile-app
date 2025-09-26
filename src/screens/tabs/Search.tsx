@@ -11,6 +11,7 @@ import ProductCard from '../../components/ProductCard';
 import LinearGradient from 'react-native-linear-gradient';
 import { Colors } from '../../constants/Colors';
 import { useAppConfig } from '../../store/useAppConfig';
+import { AppText } from '../../components/ui';
 
 export default function Search({ navigation }: any) {
     const { topBarBackgroundColor, topBarForegroundColor }: any = useAppConfig();
@@ -93,7 +94,7 @@ export default function Search({ navigation }: any) {
                 <View style={styles.searchContainer}>
                     {!isFocused && (
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-                            <Text style={{ fontSize: 28, fontWeight: '600', color: topBarForegroundColor }}>Search</Text>
+                            <AppText variant="huge" style={{ fontWeight: '600', color: topBarForegroundColor }}>Search</AppText>
                         </View>
                     )}
                     {/* Search bar + cancel */}
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
         fontSize: 16, color: '#333', paddingHorizontal: 16, paddingVertical: 12,
         backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#e9ecef'
     },
-    productsContainer: { padding: 16 },
+    productsContainer: { padding: 16, paddingBottom: 100 },
     row: { justifyContent: 'space-between' },
     productContainer: { flex: 1, marginHorizontal: 4 },
 });

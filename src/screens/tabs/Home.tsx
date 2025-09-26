@@ -5,7 +5,7 @@ import { useFirebaseData } from '../../store/useFirebaseData';
 import { useStore } from '../../store/useStore';
 import { Bell, ChevronDown, MapPin, Search, ShoppingCart } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { Animated, FlatList, Image, ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Animated, FlatList, Image, ScrollView, StatusBar, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Colors } from '../../constants/Colors';
 import LinearGradient from 'react-native-linear-gradient';
@@ -85,15 +85,15 @@ export default function Home({ navigation }: any) {
 
           ) : (
             <>
-              <Text style={[styles.welcomeText, { color: topBarForegroundColor }]}>Deliver to</Text>
+              <AppText variant="small" style={[styles.welcomeText, { color: topBarForegroundColor }]}>Deliver to</AppText>
               <TouchableOpacity
                 style={styles.locationButton}
                 onPress={() => setShowLocationSelector(true)}
               >
                 <MapPin size={16} color="#333" />
-                <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">
+                <AppText variant="small" style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">
                   {getSelectedLocation(selectedLocation)}
-                </Text>
+                </AppText>
                 <ChevronDown size={16} color="#333" />
               </TouchableOpacity>
             </>
@@ -120,7 +120,7 @@ export default function Home({ navigation }: any) {
           <ShoppingCart size={IconConfig.size} color={topBarForegroundColor} />
           {cartItemsCount > 0 && (
             <View style={styles.cartBadge}>
-              <Text style={styles.cartBadgeText}>{cartItemsCount}</Text>
+              <AppText style={styles.cartBadgeText}>{cartItemsCount}</AppText>
             </View>
           )}
         </TouchableOpacity>
@@ -131,10 +131,10 @@ export default function Home({ navigation }: any) {
   const renderSection = (title: string, data: any[], showViewAll = false) => (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>{title}</Text>
+        <AppText variant="medium" style={styles.sectionTitle}>{title}</AppText>
         {showViewAll && (
           <TouchableOpacity onPress={() => navigation.navigate(StackNames.ProductListScreen, { query: 'all' })}>
-            <Text style={styles.viewAllText}>View All</Text>
+            <AppText style={styles.viewAllText}>View All</AppText>
           </TouchableOpacity>
         )}
       </View>
@@ -195,7 +195,7 @@ export default function Home({ navigation }: any) {
                   <>
                     {loading.banners ? (
                       <View style={styles.loadingBanner}>
-                        <Text style={styles.loadingText}>Loading banners...</Text>
+                        <AppText style={styles.loadingText}>Loading banners...</AppText>
                       </View>
                     ) : (
                       <BannerCarousel banners={banners} />
@@ -219,11 +219,11 @@ export default function Home({ navigation }: any) {
 
               {
                 isVisibleCategorySection && (
-                  <View style={[styles.section, { paddingHorizontal: 20 }]}>
-                    <Text style={[styles.sectionTitle, { marginBottom: 10 }]}>Shop by Category</Text>
+                  <View style={[styles.section, { paddingHorizontal: 20, marginBottom: 20 }]}>
+                    <AppText variant="medium" style={[styles.sectionTitle, { marginBottom: 10 }]}>Shop by Category</AppText>
                     {loading.categories ? (
                       <View style={styles.loadingContainer}>
-                        <Text style={styles.loadingText}>Loading categories...</Text>
+                        <AppText style={styles.loadingText}>Loading categories...</AppText>
                       </View>
                     ) : (
                       <ScrollView
@@ -242,7 +242,7 @@ export default function Home({ navigation }: any) {
 
               {loading.products ? (
                 <View style={styles.loadingContainer}>
-                  <Text style={styles.loadingText}>Loading products...</Text>
+                  <AppText style={styles.loadingText}>Loading products...</AppText>
                 </View>
               ) : (
                 <>
@@ -253,8 +253,8 @@ export default function Home({ navigation }: any) {
               )}
 
               <View style={{ backgroundColor: '#f8f8f8', width: '100%', paddingHorizontal: 20, paddingTop: 20, paddingBottom: 30 }}>
-                <Text style={{ fontSize: scale(50), fontWeight: 'bold', opacity: 0.2 }}>Screw Plus</Text>
-                <Text style={{ opacity: 0.2, marginTop: 10, }}>Developed By ❤️ Murliwala Enterprises</Text>
+                <AppText style={{ fontSize: scale(50), fontWeight: 'bold', opacity: 0.2 }}>Screw Plus</AppText>
+                <AppText variant="small" style={{ opacity: 0.2, marginTop: 5 }}>Developed By ❤️ Murliwala Enterprises</AppText>
               </View>
             </ScrollView>
           </Animated.View>
@@ -304,13 +304,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   locationText: {
-    fontSize: 14,
     fontWeight: '600',
     color: '#333',
     marginHorizontal: 6,
   },
   welcomeText: {
-    fontSize: 14,
     fontWeight: '700',
     marginBottom: 2,
     marginLeft: 6
@@ -339,7 +337,6 @@ const styles = StyleSheet.create({
   },
   cartBadgeText: {
     color: '#fff',
-    fontSize: 12,
     fontWeight: 'bold',
   },
   section: {
@@ -352,12 +349,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20
   },
   sectionTitle: {
-    fontSize: 20,
     fontWeight: 'bold',
     color: '#333',
   },
   viewAllText: {
-    fontSize: 14,
     color: '#3742fa',
     fontWeight: '500',
   },
@@ -388,7 +383,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   loadingText: {
-    fontSize: 16,
     color: '#6B7280',
   },
 });

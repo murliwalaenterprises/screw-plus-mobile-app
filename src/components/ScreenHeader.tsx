@@ -30,14 +30,14 @@ const ScreenHeader: React.FC<any> = ({
                             onPress={() => (customBackNavigation ? navigation.navigate(customBackNavigation) : navigation.goBack())}
                         >
                             <ChevronLeft color={Colors.StatusBarTextColor} size={24} />
-                            <AppText variant="large" style={[styles.headerTitle]}>Back</AppText>
+                            <AppText variant="medium" style={[styles.headerTitle]}>Back</AppText>
                         </TouchableOpacity>
                     ) : (
                         <View style={styles.placeholder} />
                     )}
                 </View>
 
-                <AppText variant="large" style={{ color: Colors.StatusBarTextColor, fontWeight: '600' }}>
+                <AppText variant="medium" style={{ color: Colors.StatusBarTextColor, fontWeight: '600' }}>
                     {title}
                 </AppText>
 

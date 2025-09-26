@@ -61,7 +61,7 @@ const ProductListScreen: React.FC<{ navigation: any, route: any }> = ({ navigati
     return (
         <SafeAreaView style={styles.container} edges={["top", "left", "right"]}>
             <ScreenHeader title={query.title ? query.title : StackNames.ProductListScreen} navigation={navigation}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: scale(20) }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: scale(8), marginEnd: 10 }}>
                     <TouchableOpacity onPress={() => navigation.navigate(StackNames.SearchResults)}>
                         <Search size={IconConfig.size} color={Colors.StatusBarTextColor} />
                     </TouchableOpacity>
@@ -73,7 +73,7 @@ const ProductListScreen: React.FC<{ navigation: any, route: any }> = ({ navigati
                         />
                         {cartItemsCount > 0 && (
                             <View style={styles.cartBadge}>
-                                <AppText style={styles.cartBadgeText}>{cartItemsCount}</AppText>
+                                <AppText variant="small" style={styles.cartBadgeText}>{cartItemsCount}</AppText>
                             </View>
                         )}
                     </TouchableOpacity>
@@ -141,12 +141,12 @@ const styles = StyleSheet.create({
     },
     cartBadge: {
         position: 'absolute',
-        top: scale(-10),
-        right: scale(-10),
+        top: scale(-5),
+        right: scale(-5),
         backgroundColor: '#ff4757',
         borderRadius: scale(10),
-        minWidth: scale(20),
-        height: scale(20),
+        minWidth: scale(15),
+        height: scale(15),
         justifyContent: 'center',
         alignItems: 'center',
     },

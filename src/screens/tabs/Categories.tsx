@@ -216,18 +216,17 @@ const styles = StyleSheet.create({
   },
   cartBadge: {
     position: 'absolute',
-    top: scale(2),
-    right: scale(2),
+    top: 2,
+    right: 2,
     backgroundColor: '#ff4757',
-    borderRadius: scale(10),
-    minWidth: scale(20),
-    height: scale(20),
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
     justifyContent: 'center',
     alignItems: 'center',
   },
   cartBadgeText: {
     color: '#fff',
-    fontSize: scale(10), // was 12
     fontWeight: '600',
   },
   loadingContainer: {
