@@ -37,7 +37,10 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ options }) => {
 
     const [activeIndex, setActiveIndex] = useState<number | null>(null);
     const [hoverAnim] = useState(() => options.map(() => new Animated.Value(0)));
+    const [buttonScale] = useState(() => new Animated.Value(1));
 
+    const menuWidth = 240;
+    const menuHeight = options.length - 40;
 
     // PanResponder for hover effect during long press
     const panResponder = useRef(
@@ -88,42 +91,42 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ options }) => {
         }
     };
 
+    // inside openMenu
     const openMenu = () => {
         if (!buttonRef.current) return;
 
-        // Reset hover animations
-        hoverAnim.forEach(anim => {
-            anim.setValue(0);
-        });
+        hoverAnim.forEach(anim => anim.setValue(0));
         setActiveIndex(null);
 
         const nodeHandle = findNodeHandle(buttonRef.current);
         if (nodeHandle != null) {
-            UIManager.measure(
-                nodeHandle,
-                (x, y, width, height, pageX, pageY) => {
-                    setMenuPos({ x: pageX + width - 140, y: pageY + height + 5 });
-                    setMenuVisible(true);
+            UIManager.measure(nodeHandle, (x, y, width, height, pageX, pageY) => {
+                // menu will appear at button center
 
-                    // bubble / spring animation
-                    scaleAnim.setValue(0.5); // start smaller
-                    opacityAnim.setValue(0);
+                const originX = pageX + width / 2 - menuWidth / 2;
+                const originY = pageY + height / 2 - menuHeight / 2;
 
-                    Animated.parallel([
-                        Animated.spring(scaleAnim, {
-                            toValue: 1,
-                            friction: 5,       // lower = more bounce
-                            tension: 100,      // higher = faster
-                            useNativeDriver: true,
-                        }),
-                        Animated.timing(opacityAnim, {
-                            toValue: 1,
-                            duration: 150,
-                            useNativeDriver: true,
-                        }),
-                    ]).start();
-                }
-            );
+                setMenuPos({ x: originX, y: originY });
+                setMenuVisible(true);
+
+                // start scale from 0 at click point
+                scaleAnim.setValue(0.3);
+                opacityAnim.setValue(0);
+
+                Animated.parallel([
+                    Animated.spring(scaleAnim, {
+                        toValue: 1,
+                        friction: 5,
+                        tension: 100,
+                        useNativeDriver: true,
+                    }),
+                    Animated.timing(opacityAnim, {
+                        toValue: 1,
+                        duration: 150,
+                        useNativeDriver: true,
+                    }),
+                ]).start();
+            });
         }
     };
 
@@ -142,11 +145,36 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ options }) => {
         ]).start(() => setMenuVisible(false));
     };
 
+    const animateButtonPress = () => {
+        Animated.sequence([
+            Animated.timing(buttonScale, { toValue: 0.85, duration: 100, useNativeDriver: true }),
+            Animated.timing(buttonScale, { toValue: 1, duration: 100, useNativeDriver: true }),
+        ]).start();
+    };
+
     return (
         <View>
-            {!menuVisible && (<TouchableOpacity ref={buttonRef} onPress={openMenu} style={styles.defaultButton}>
-                <MoreHorizontal size={scale(14)} color="#4B5563" />
-            </TouchableOpacity>)}
+            {!menuVisible && (
+                <TouchableOpacity
+                    ref={buttonRef}
+                    activeOpacity={1}
+                    onPress={() => {
+                        animateButtonPress();
+                        openMenu();
+                    }}
+                    style={{ alignSelf: "flex-start" }}
+                >
+                    <Animated.View style={[styles.defaultButton, { transform: [{ scale: buttonScale }] }]}>
+                        <BlurView
+                            style={StyleSheet.absoluteFill}
+                            blurType="light"
+                            blurAmount={5}
+                            reducedTransparencyFallbackColor="white"
+                        />
+                        <MoreHorizontal size={scale(14)} color="#4B5563" />
+                    </Animated.View>
+                </TouchableOpacity>
+            )}
 
             {/* Action Menu */}
             <Modal
@@ -167,7 +195,13 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ options }) => {
                                 top: menuPos.y - 35,
                                 left: menuPos.x - 58,
                                 opacity: opacityAnim,
-                                transform: [{ scale: scaleAnim }],
+                                transform: [
+                                    { translateX: menuWidth / 2 },   // center origin
+                                    { translateY: menuHeight / 2 },
+                                    { scale: scaleAnim },
+                                    { translateX: -menuWidth / 2 },
+                                    { translateY: -menuHeight / 2 },
+                                ],
                             },
                         ]}
                     >
@@ -260,16 +294,17 @@ const styles = StyleSheet.create({
     menuText: { marginLeft: 12, fontSize: scale(13), color: "#1F2937" },
 
     defaultButton: {
-        backgroundColor: '#fff',
-        paddingVertical: scale(6),   // more vertical padding
-        paddingHorizontal: scale(6), // horizontal padding
-        borderRadius: 100,             // iOS buttons usually have moderate radius
-        alignItems: 'center',         // center the text horizontally
-        justifyContent: 'center',     // center the text vertically
-        shadowColor: '#000',          // subtle shadow
+        backgroundColor: "rgba(255,255,255,0.5)",
+        borderRadius: 100,
+        paddingVertical: scale(6),
+        paddingHorizontal: scale(6),
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
+        shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 2,
-        elevation: 2,                 // Android shadow
+        elevation: 2,
     },
 });
