@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 
-import { BarChart3, Grid3X3, Image, Package, Settings } from 'lucide-react-native';
+import { BarChart3, Grid3X3, Image, Package, Settings, Users } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   ScrollView,
@@ -19,8 +19,9 @@ import ScreenHeader from '../components/ScreenHeader';
 import { StackNames } from '../constants/StackNames';
 import { Colors } from '../constants/Colors';
 import AppConfigSettings from '../components/admin/AppConfigSettings';
+import Customers from '../components/admin/Customers';
 
-type TabType = 'products' | 'categories' | 'banners' | 'stats' | 'orders' | 'settings';
+type TabType = 'products' | 'categories' | 'banners' | 'stats' | 'orders' | 'customers' | 'settings';
 
 interface Tab {
   id: TabType;
@@ -35,6 +36,7 @@ const tabs: Tab[] = [
   { id: 'products', title: 'Products', icon: Package, color: '#3B82F6' },
   { id: 'banners', title: 'Banners', icon: Image, color: '#F59E0B' },
   { id: 'orders', title: 'Orders', icon: Package, color: '#003873' },
+  { id: 'customers', title: 'Customers', icon: Users, color: '#003873' },
   { id: 'settings', title: 'Settings', icon: Settings, color: '#414043ff' },
 ];
 
@@ -53,6 +55,8 @@ export default function AdminScreen({ navigation, route }: any) {
         return <StatsTab />;
       case 'orders':
         return <OrderTab navigation={navigation} route={route} />;
+      case 'customers':
+        return <Customers />;
       case 'settings':
         return <AppConfigSettings />;
       default:
