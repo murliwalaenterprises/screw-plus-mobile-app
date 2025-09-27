@@ -20,6 +20,7 @@ export default function AppConfigSettings() {
     }: any = useAppConfig();
 
     const [appConfig, setConfig] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
 
     const [form, setForm] = useState({
         topBarBackgroundColor: topBarBackgroundColor.join(","),
@@ -77,18 +78,19 @@ export default function AppConfigSettings() {
             return;
         }
 
-        const config: any = {
-            ...appConfig,
-            topBarBackgroundColor: colors,
-            topBarForegroundColor: form.topBarForegroundColor,
-            activeTabColor: form.activeTabColor || undefined,
-            homeScreenAds: form.homeScreenAds,
-            isVisibleSlider: form.isVisibleSlider,
-            isVisibleCategorySection: form.isVisibleCategorySection,
-            topBarBrandLogo: form.topBarBrandLogo,
-        };
-
         try {
+            setIsLoading(true);
+            const config: any = {
+                ...appConfig,
+                topBarBackgroundColor: colors,
+                topBarForegroundColor: form.topBarForegroundColor,
+                activeTabColor: form.activeTabColor || undefined,
+                homeScreenAds: form.homeScreenAds,
+                isVisibleSlider: form.isVisibleSlider,
+                isVisibleCategorySection: form.isVisibleCategorySection,
+                topBarBrandLogo: form.topBarBrandLogo,
+            };
+
             if (!firebaseService || !firebaseService.updateAppConfig) {
                 Alert.alert("Error", "firebaseService.updateAppConfig is missing");
                 return;
@@ -98,6 +100,8 @@ export default function AppConfigSettings() {
         } catch (error: any) {
             console.error("Error saving config:", error);
             Alert.alert("Error", error.message || "Failed to save config");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -309,15 +313,15 @@ export default function AppConfigSettings() {
                 />
             </View>
 
-            < TouchableOpacity style={{ marginTop: 20 }} onPress={handleSave} >
+            <TouchableOpacity style={{ marginTop: 20 }} onPress={handleSave} disabled={isLoading}>
                 <LinearGradient
                     colors={[Colors.light.primaryButtonBackground.start, Colors.light.primaryButtonBackground.end]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
-                    style={{ borderRadius: 8 }}
+                    style={{ borderRadius: 8, opacity: isLoading ? 0.6 : 1 }}
                 >
                     <View style={styles.saveButton}>
-                        <AppText style={styles.saveText}> Save Config </AppText>
+                        <AppText style={styles.saveText}>{isLoading ? 'Please wait...' : 'Save Changes'}</AppText>
                     </View>
                 </LinearGradient>
             </TouchableOpacity>
@@ -350,7 +354,7 @@ const styles = StyleSheet.create({
     },
     saveText: {
         color: Colors.light.primaryButtonForeground,
-        fontWeight: 'bold',
+        fontWeight: '500',
     },
     settingItem: {
         flexDirection: 'row',

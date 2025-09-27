@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable react-native/no-inline-styles */
 
-import { ArrowLeft, Heart, Share2, ShoppingCart, Star } from 'lucide-react-native';
+import { ArrowLeft, Heart, Info, Share2, ShoppingCart, Star } from 'lucide-react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -11,11 +11,13 @@ import {
   Dimensions,
   FlatList,
   Image,
+  Modal,
   ScrollView,
   Share,
   StyleSheet,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Vibration,
   View
 } from 'react-native';
@@ -25,8 +27,9 @@ import { firebaseService } from '../../services/firebaseService';
 import { formatCurrency, getDiscountPercentage, getProductVariant } from '../../services/utilityService';
 import { Colors } from '../../constants/Colors';
 import { StackNames } from '../../constants/StackNames';
-import { moderateScale, scale } from 'react-native-size-matters';
+import { moderateScale, moderateVerticalScale, scale, verticalScale } from 'react-native-size-matters';
 import { AppText } from '../../components/ui';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HEADER_HEIGHT = 300;
@@ -40,9 +43,7 @@ export default function ProductDetailScreen({ navigation, route }: any) {
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<any[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<any>({});
-
   const [showFullDesc, setShowFullDesc] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -50,6 +51,12 @@ export default function ProductDetailScreen({ navigation, route }: any) {
   const insets = useSafeAreaInsets();
 
   const cartItemsCount = getCartItemsCount();
+
+  const [showQtySheet, setShowQtySheet] = useState(false);
+  const [cartons, setCartons] = useState(0);
+  const [boxes, setBoxes] = useState(0);
+
+  const [cartonSize, setCartonSize] = useState<number>(12); // 1 carton = 12 boxes
 
   useEffect(() => {
     if (!productId) return;
@@ -64,6 +71,9 @@ export default function ProductDetailScreen({ navigation, route }: any) {
       } else {
         if (!Object.keys(selectedOptions).length) {
           const variant = getProductVariant(data);
+          if (variant && variant.cartonSize) {
+            setCartonSize(variant.cartonSize);
+          }
           setSelectedOptions((prev: any) => ({
             ...prev,
             ...variant
@@ -86,11 +96,12 @@ export default function ProductDetailScreen({ navigation, route }: any) {
       Alert.alert('Please select size and color');
       return;
     } else {
-      const cartResult = addToCart(product, selectedOptions.size, selectedOptions.color);
-      if (cartResult !== null) {
-        Alert.alert('Added to cart!');
-        Vibration.vibrate(500);
-      }
+      setShowQtySheet(true);
+      // const cartResult = addToCart(product, selectedOptions.size, selectedOptions.color);
+      // if (cartResult !== null) {
+      //   Alert.alert('Added to cart!');
+      //   Vibration.vibrate(500);
+      // }
     }
   };
 
@@ -191,6 +202,10 @@ export default function ProductDetailScreen({ navigation, route }: any) {
           d.color === updatedOptions.color
       );
 
+      if (updatedOptions && updatedOptions.cartonSize) {
+        setCartonSize(updatedOptions.cartonSize);
+      }
+
       return {
         ...updatedOptions,
         ...(variant || {}),
@@ -199,7 +214,6 @@ export default function ProductDetailScreen({ navigation, route }: any) {
   };
 
   const isOutOfStock = Number(selectedOptions.stock || 0) === 0;
-
 
   return (
     <SafeAreaView style={styles.container} edges={['left', 'right']}>
@@ -525,6 +539,85 @@ export default function ProductDetailScreen({ navigation, route }: any) {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal
+        visible={showQtySheet}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowQtySheet(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setShowQtySheet(false)}>
+          <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.5)" }}>
+            <View style={{ backgroundColor: "#fff", borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 20 }}>
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: verticalScale(20) }}>
+                <Text style={{ fontSize: 18, fontWeight: "600" }}>Select Quantity</Text>
+                <TouchableOpacity onPress={() => setShowQtySheet(false)}>
+                  <AppText variant="medium" style={{ color: "red" }}>Cancel</AppText>
+                </TouchableOpacity>
+              </View>
+
+              {/* Carton Selector */}
+              <View style={{ flexDirection: "row", alignItems: "center", marginBottom: verticalScale(10) }}>
+                <Text style={{ flex: 1, fontSize: 16 }}>Cartons</Text>
+                <TouchableOpacity onPress={() => setCartons(Math.max(0, cartons - 1))}>
+                  <Text style={{ fontSize: 22, paddingHorizontal: 12 }}>-</Text>
+                </TouchableOpacity>
+                <Text style={{ fontSize: 18, minWidth: 40, textAlign: "center" }}>{cartons}</Text>
+                <TouchableOpacity onPress={() => setCartons(cartons + 1)}>
+                  <Text style={{ fontSize: 22, paddingHorizontal: 12 }}>+</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Box Selector */}
+              <View style={{ flexDirection: "row", alignItems: "center", marginBottom: scale(20) }}>
+                <Text style={{ flex: 1, fontSize: 16 }}>Boxes</Text>
+                <TouchableOpacity onPress={() => setBoxes(Math.max(0, boxes - 1))}>
+                  <Text style={{ fontSize: 22, paddingHorizontal: 12 }}>-</Text>
+                </TouchableOpacity>
+                <Text style={{ fontSize: 18, minWidth: 40, textAlign: "center" }}>{boxes}</Text>
+                <TouchableOpacity onPress={() => setBoxes(boxes + 1)}>
+                  <Text style={{ fontSize: 22, paddingHorizontal: 12 }}>+</Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Info Text */}
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: scale(10), gap: scale(5) }}>
+                <Info size={scale(16)} color={'gray'} />
+                <Text style={{ fontSize: 14, color: "gray" }}>
+                  1 Carton = {cartonSize} Boxes
+                </Text>
+              </View>
+
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: moderateVerticalScale(10), marginBottom: 16 }}>
+                {/* Total Qty */}
+                <Text style={{ fontSize: 16 }}>
+                  Total: {cartons * cartonSize + boxes} Boxes
+                </Text>
+
+                {/* Action Buttons */}
+                <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 20, width: 200 }}>
+                  <TouchableOpacity style={[styles.buyNowButton, { opacity: isOutOfStock ? 0.2 : 1 }]} onPress={() => {
+                    const totalBoxes = cartons * cartonSize + boxes;
+                    if (totalBoxes <= 0) {
+                      Alert.alert("Please select at least 1 box");
+                      return;
+                    }
+                    addToCart(product, selectedOptions.size, selectedOptions.color, totalBoxes);
+                    setShowQtySheet(false);
+                    Vibration.vibrate(500);
+                    Alert.alert("Added to cart!");
+                  }} disabled={isOutOfStock}>
+                    <AppText style={styles.buyNowText}>Add item | {formatCurrency(selectedOptions.price * (cartons * cartonSize + boxes))}</AppText>
+                  </TouchableOpacity>
+                </View>
+              </View>
+
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
     </SafeAreaView>
   );
 }

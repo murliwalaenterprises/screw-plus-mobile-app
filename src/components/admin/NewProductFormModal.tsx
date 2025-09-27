@@ -40,6 +40,7 @@ type VariantInput = {
   originalPrice?: string;
   stock?: string;
   sku?: string;
+  cartonSize?: string;
 };
 
 type AttributeInput = { key: string; value: string };
@@ -89,6 +90,7 @@ export default function NewProductFormModal({
           stock:
             v.stock != null ? String(v.stock) : product.stock != null ? String(product.stock) : "",
           sku: v.sku ?? "",
+          cartonSize: v.cartonSize ?? 12,
         })) || [];
 
       const images: string[] = product.images?.length
@@ -103,7 +105,7 @@ export default function NewProductFormModal({
         category: product.category || categories[0]?.name || "",
         description: product.description || "",
         images,
-        variants: variants.length ? variants : [{ price: String(product.price || "") }],
+        variants: variants.length ? variants : [{ price: String(product.price || ""), cartonSize: String(product.cartonSize || "12") }],
         attributes: product.attributes || [],
         isNew: !!product.isNew,
         isBestseller: !!product.isBestseller,
@@ -119,7 +121,7 @@ export default function NewProductFormModal({
         category: categories[0]?.name || "",
         description: "",
         images: [],
-        variants: [{ price: "" }],
+        variants: [{ price: "", cartonSize: '12' }],
         attributes: [],
         isNew: false,
         isBestseller: false,
@@ -236,6 +238,7 @@ export default function NewProductFormModal({
         size: v.size?.trim() || undefined,
         color: v.color?.trim() || undefined,
         price: parseFloat(v.price),
+        cartonSize: Number(v.cartonSize),
         originalPrice:
           v.originalPrice && !Number.isNaN(parseFloat(v.originalPrice))
             ? parseFloat(v.originalPrice)
@@ -476,6 +479,17 @@ export default function NewProductFormModal({
                     placeholder="SKU"
                     value={v.sku ?? ""}
                     onChangeText={(t) => updateVariant(i, { sku: t })}
+                    placeholderTextColor={Colors.light.placeholderTextColor}
+                  />
+                </View>
+
+                <View style={[styles.row, { marginTop: 10 }]}>
+                  <TextInput
+                    style={[styles.input, styles.flex1, { marginRight: 8 }]}
+                    placeholder="Carton Size"
+                    keyboardType="numeric"
+                    value={v.cartonSize ?? ""}
+                    onChangeText={(t) => updateVariant(i, { cartonSize: t })}
                     placeholderTextColor={Colors.light.placeholderTextColor}
                   />
                 </View>

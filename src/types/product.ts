@@ -23,6 +23,7 @@ export interface Product {
       size: string;
       sku: string;
       stock: number;
+      cartonSize: number;
     }
   ]
 }
