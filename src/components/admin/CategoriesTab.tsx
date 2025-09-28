@@ -14,7 +14,7 @@ import {
 import CategoryFormModal from './CategoryFormModal';
 import { useFirebaseData } from '../../store/useFirebaseData';
 import { Category } from '../../types/product';
-import { QuickMenu } from '../ui';
+import { BottomSheetModal, QuickMenu } from '../ui';
 
 export default function CategoriesTab() {
   const { categories, loading, deleteCategory } = useFirebaseData();
@@ -123,14 +123,16 @@ export default function CategoriesTab() {
         }
       />
 
-      <CategoryFormModal
-        visible={showForm}
-        category={editingCategory}
-        onClose={() => {
-          setShowForm(false);
-          setEditingCategory(null);
-        }}
-      />
+      <BottomSheetModal visible={showForm} onClose={() => setShowForm(false)}>
+        {/* Content */}
+        <CategoryFormModal
+          category={editingCategory}
+          onClose={() => {
+            setShowForm(false);
+            setEditingCategory(null);
+          }}
+        />
+      </BottomSheetModal>
     </View>
   );
 }

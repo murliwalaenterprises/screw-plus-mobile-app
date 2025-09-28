@@ -1,12 +1,7 @@
-/* eslint-disable react-native/no-inline-styles */
-
-import { BarChart3, Grid3X3, Image, Package, Settings, Users } from 'lucide-react-native';
+import { BarChart3, Grid3X3, Image, MoreHorizontal, Package, Settings, Users } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
-  ScrollView,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -20,6 +15,8 @@ import { StackNames } from '../constants/StackNames';
 import { Colors } from '../constants/Colors';
 import AppConfigSettings from '../components/admin/AppConfigSettings';
 import Customers from '../components/admin/Customers';
+import { QuickMenu } from '../components/ui';
+import { moderateScale, moderateVerticalScale } from 'react-native-size-matters';
 
 type TabType = 'products' | 'categories' | 'banners' | 'stats' | 'orders' | 'customers' | 'settings';
 
@@ -69,42 +66,67 @@ export default function AdminScreen({ navigation, route }: any) {
       <ScreenHeader
         title={StackNames.AdminScreen}
         navigation={navigation}
-      />
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.tabsContainer}
-        contentContainerStyle={styles.tabsContent}
       >
-        {tabs.map((tab) => {
+        {/* <QuickMenu options={[
+          {
+            label: "Create new Category",
+            icon: null,
+            onPress: () => null,
+          },
+        ]} /> */}
+
+        <QuickMenu icon={<MoreHorizontal size={moderateScale(moderateVerticalScale(14))} color={"#222"} />} options={tabs.map((tab) => {
           const IconComponent = tab.icon;
           const isActive = activeTab === tab?.id;
 
-          return (
-            <TouchableOpacity
-              key={tab.id}
-              style={[
-                styles.tab,
-                isActive && { backgroundColor: tab.color }
-              ]}
-              onPress={() => setActiveTab(tab.id)}
-            >
-              <IconComponent
-                size={20}
-                color={isActive ? '#FFFFFF' : tab.color}
-              />
-              <Text style={[
-                styles.tabText,
-                isActive && { color: '#FFFFFF' }
-              ]}>
-                {tab.title}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-
+          return {
+            label: tab.title,
+            icon: <IconComponent
+              size={moderateScale(14)}
+              color={tab.color}
+            />,
+            isActive,
+            onPress: () => setActiveTab(tab.id),
+          }
+        })} />
+      </ScreenHeader>
       <View style={styles.content}>
+
+        {/* <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabsContent}
+        >
+          <View style={styles.tabsContainer}>
+            {tabs.map((tab) => {
+              const IconComponent = tab.icon;
+              const isActive = activeTab === tab?.id;
+
+              return (
+                <TouchableOpacity
+                  key={tab.id}
+                  style={[
+                    styles.tab,
+                    isActive && { backgroundColor: tab.color }
+                  ]}
+                  onPress={() => setActiveTab(tab.id)}
+                >
+                  <IconComponent
+                    size={20}
+                    color={isActive ? '#FFFFFF' : tab.color}
+                  />
+                  <Text style={[
+                    styles.tabText,
+                    isActive && { color: '#FFFFFF' }
+                  ]}>
+                    {tab.title}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </ScrollView> */}
+
         {renderTabContent()}
       </View>
     </SafeAreaView>
@@ -114,7 +136,7 @@ export default function AdminScreen({ navigation, route }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.StatusBarBg
+    backgroundColor: Colors.ScreenBGColor
   },
   header: {
     flexDirection: 'row',
@@ -138,15 +160,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: '#E5E7EB',
-    minHeight: 65,
-    maxHeight: 65
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   tabsContent: {
     paddingHorizontal: 20,
-    paddingVertical: 16
+    paddingVertical: 16,
   },
   tab: {
     flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
     paddingVertical: 8,
@@ -161,6 +184,7 @@ const styles = StyleSheet.create({
     marginLeft: 8
   },
   content: {
-    flex: 1
+    flex: 1,
+    paddingTop: moderateVerticalScale(10)
   }
 });

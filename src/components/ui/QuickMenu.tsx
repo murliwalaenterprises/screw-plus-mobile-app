@@ -15,9 +15,11 @@ import React, { useRef, useState } from "react";
 import { moderateScale, moderateVerticalScale, scale } from "react-native-size-matters";
 import { BlurView } from "@react-native-community/blur";
 import { MoreHorizontal } from "lucide-react-native";
+import ElasticButton from "./ElasticButton";
 
 type MenuOption = {
     label: string;
+    isActive?: boolean;
     icon: React.ReactNode;
     onPress: () => void;
     textColor?: string; // optional, default black
@@ -155,27 +157,14 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ icon, options }) => {
 
     return (
         <View>
-            {!menuVisible && (
-                <TouchableOpacity
-                    ref={buttonRef}
-                    activeOpacity={1}
-                    onPress={() => {
+            <TouchableOpacity ref={buttonRef}>
+                <Animated.View style={[{ transform: [{ scale: buttonScale }] }]}>
+                    <ElasticButton icon={icon ? icon : (<MoreHorizontal size={scale(14)} color="#4B5563" />)} onPress={() => {
                         animateButtonPress();
                         openMenu();
-                    }}
-                    style={{ alignSelf: "flex-start" }}
-                >
-                    <Animated.View style={[styles.defaultButton, { transform: [{ scale: buttonScale }] }]}>
-                        <BlurView
-                            style={StyleSheet.absoluteFill}
-                            blurType="light"
-                            blurAmount={5}
-                            reducedTransparencyFallbackColor="white"
-                        />
-                        {icon ? icon : (<MoreHorizontal size={scale(14)} color="#4B5563" />)}
-                    </Animated.View>
-                </TouchableOpacity>
-            )}
+                    }} />
+                </Animated.View>
+            </TouchableOpacity>
 
             {/* Action Menu */}
             <Modal
@@ -193,8 +182,8 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ icon, options }) => {
                         style={[
                             {
                                 position: "absolute",
-                                top: menuPos.y - 35,
-                                left: menuPos.x - 58,
+                                top: menuPos.y - 38,
+                                left: menuPos.x - 60,
                                 opacity: opacityAnim,
                                 transform: [
                                     { translateX: menuWidth / 2 },   // center origin
@@ -216,10 +205,14 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ icon, options }) => {
                                 />
 
                                 {options.map((opt, idx) => {
-                                    const bgColor = hoverAnim[idx].interpolate({
+                                    const isHovered = hoverAnim[idx]; // Animated value for hover
+                                    const bgColor = isHovered.interpolate({
                                         inputRange: [0, 1],
                                         outputRange: ['transparent', 'rgba(0,0,0,0.04)'],
                                     });
+
+                                    // Active style color
+                                    const activeBgColor = opt.isActive ? 'rgba(0,0,0,0.04)' : '';
 
                                     return (
                                         <TouchableOpacity
@@ -246,16 +239,30 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ icon, options }) => {
                                                 }).start();
                                             }}
                                         >
-                                            <Animated.View style={[styles.menuItem, { backgroundColor: bgColor, borderRadius: 20 }]}>
+                                            <Animated.View
+                                                style={[
+                                                    styles.menuItem,
+                                                    {
+                                                        borderRadius: 20,
+                                                        backgroundColor: opt.isActive
+                                                            ? activeBgColor
+                                                            : bgColor,
+                                                    },
+                                                ]}
+                                            >
                                                 {opt.icon}
-                                                <Text style={[styles.menuText, { color: opt.textColor || "#1F2937" }]}>
+                                                <Text
+                                                    style={[
+                                                        styles.menuText,
+                                                        { marginLeft: opt.icon ? 12 : 0 },
+                                                    ]}
+                                                >
                                                     {opt.label}
                                                 </Text>
                                             </Animated.View>
                                         </TouchableOpacity>
                                     );
                                 })}
-
                             </View>
                         </View>
                     </Animated.View>
@@ -294,7 +301,7 @@ const styles = StyleSheet.create({
         paddingVertical: moderateVerticalScale(5),
         paddingHorizontal: moderateScale(22),
     },
-    menuText: { marginLeft: 12, fontSize: scale(13), color: "#1F2937" },
+    menuText: { fontSize: scale(13), color: "#1F2937" },
 
     defaultButton: {
         backgroundColor: "rgba(255,255,255,0.5)",

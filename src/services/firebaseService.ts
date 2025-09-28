@@ -370,6 +370,19 @@ class FirebaseService {
     });
   }
 
+  subscribeToAllCustomers(
+    callback: (customer: any[]) => void
+  ) {
+    const customerRef = collectionGroup(db, "users");
+    return onSnapshot(customerRef, (snapshot) => {
+      const customers = snapshot.docs.map((oDoc) => {
+        const data = oDoc.data();
+        return data;
+      });
+      callback(customers);
+    });
+  }
+
   subscribeToUser(userId: string, callback: (user: any) => void) {
     const userRef = doc(db, "users", userId);
     return onSnapshot(userRef, (snapshot) => {

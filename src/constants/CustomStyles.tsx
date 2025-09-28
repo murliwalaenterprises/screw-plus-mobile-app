@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { moderateScale } from "react-native-size-matters";
+import { moderateScale, scale } from "react-native-size-matters";
 import { Colors } from "../constants/Colors";
 
 export const CustomStyles = StyleSheet.create({
@@ -62,5 +62,19 @@ export const CustomStyles = StyleSheet.create({
         color: Colors.Primary,
         fontSize: moderateScale(14),
         fontWeight: "500",
+    },
+
+    submitButton: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        borderRadius: scale(12),
+        backgroundColor: Colors.light.primaryButtonBackground.start,
+        marginLeft: 8,
+    },
+    submitButtonText: {
+        color: Colors.light.primaryButtonForeground,
+        fontWeight: '500',
     },
 });

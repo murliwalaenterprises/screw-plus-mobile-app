@@ -1,31 +1,27 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable radix */
 
-import { Save, X } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
-  ActivityIndicator,
   Alert,
-  Modal,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View
 } from 'react-native';
 import { Category } from '../../types/product';
 import { useFirebaseData } from '../../store/useFirebaseData';
 import { Colors } from '../../constants/Colors';
+import { HeaderRow } from '../ui';
+import { verticalScale } from 'react-native-size-matters';
 
 interface CategoryFormModalProps {
-  visible: boolean;
   category: Category | null;
   onClose: () => void;
 }
 
-export default function CategoryFormModal({ visible, category, onClose }: CategoryFormModalProps) {
+export default function CategoryFormModal({ category, onClose }: CategoryFormModalProps) {
   const { addCategory, updateCategory } = useFirebaseData();
-  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     image: '',
@@ -54,7 +50,6 @@ export default function CategoryFormModal({ visible, category, onClose }: Catego
       return;
     }
 
-    setLoading(true);
     try {
       const categoryData: Omit<Category, 'id'> = {
         name: formData.name,
@@ -73,75 +68,59 @@ export default function CategoryFormModal({ visible, category, onClose }: Catego
     } catch (error) {
       Alert.alert('Error', 'Failed to save category');
     } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <Modal visible={visible} animationType="slide" presentationStyle="pageSheet">
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={onClose}>
-            <X size={24} color="#6B7280" />
-          </TouchableOpacity>
-          <Text style={styles.title}>
-            {category ? 'Edit Category' : 'Add Category'}
-          </Text>
-          <TouchableOpacity
-            style={styles.saveButton}
-            onPress={handleSave}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="#FFFFFF" />
-            ) : (
-              <Save size={20} color="#FFFFFF" />
-            )}
-          </TouchableOpacity>
+    <>
+      {/* Header */}
+      <HeaderRow
+        title={`${category ? "Edit categories's details" : 'Add new category'}`}
+        buttonText="Save"
+        onPress={() => handleSave()}
+        containerStyle={{ marginBottom: verticalScale(20) }}
+      />
+      <View style={{ backgroundColor: '#fff', borderRadius: 20, padding: 20, marginBottom: 20 }}>
+        <View style={styles.field}>
+          <Text style={styles.label}>Category Name *</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.name}
+            onChangeText={(text) => setFormData({ ...formData, name: text })}
+            placeholder="e.g. Men, Women, Accessories"
+            placeholderTextColor={Colors.light.placeholderTextColor}
+          />
         </View>
 
-        <ScrollView style={styles.form} contentContainerStyle={styles.formContent} automaticallyAdjustKeyboardInsets>
-          <View style={styles.field}>
-            <Text style={styles.label}>Category Name *</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.name}
-              onChangeText={(text) => setFormData({ ...formData, name: text })}
-              placeholder="e.g. Men, Women, Accessories"
-              placeholderTextColor={Colors.light.placeholderTextColor}
-            />
-          </View>
+        <View style={styles.field}>
+          <Text style={styles.label}>Image URL *</Text>
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            value={formData.image}
+            onChangeText={(text) => setFormData({ ...formData, image: text })}
+            placeholder="https://example.com/category-image.jpg"
+            multiline
+            numberOfLines={3}
+            placeholderTextColor={Colors.light.placeholderTextColor}
+          />
+        </View>
 
-          <View style={styles.field}>
-            <Text style={styles.label}>Image URL *</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              value={formData.image}
-              onChangeText={(text) => setFormData({ ...formData, image: text })}
-              placeholder="https://example.com/category-image.jpg"
-              multiline
-              numberOfLines={3}
-              placeholderTextColor={Colors.light.placeholderTextColor}
-            />
-          </View>
-
-          <View style={styles.field}>
-            <Text style={styles.label}>Product Count</Text>
-            <TextInput
-              style={styles.input}
-              value={formData.productCount}
-              onChangeText={(text) => setFormData({ ...formData, productCount: text })}
-              placeholder="0"
-              keyboardType="numeric"
-              placeholderTextColor={Colors.light.placeholderTextColor}
-            />
-            <Text style={styles.fieldNote}>
-              This will be automatically updated based on products in this category
-            </Text>
-          </View>
-        </ScrollView>
+        <View style={styles.field}>
+          <Text style={styles.label}>Product Count</Text>
+          <TextInput
+            style={styles.input}
+            value={formData.productCount}
+            onChangeText={(text) => setFormData({ ...formData, productCount: text })}
+            placeholder="0"
+            keyboardType="numeric"
+            placeholderTextColor={Colors.light.placeholderTextColor}
+          />
+          <Text style={styles.fieldNote}>
+            This will be automatically updated based on products in this category
+          </Text>
+        </View>
       </View>
-    </Modal>
+    </>
   );
 }
 
