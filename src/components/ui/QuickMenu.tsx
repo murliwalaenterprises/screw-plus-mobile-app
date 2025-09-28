@@ -26,12 +26,13 @@ type MenuOption = {
 };
 
 type QuickMenuProps = {
+    blurAmount?: number;
     icon?: React.ReactNode;
     options: MenuOption[];
 };
 
 
-const QuickMenu: React.FC<QuickMenuProps> = ({ icon, options }) => {
+const QuickMenu: React.FC<QuickMenuProps> = ({ blurAmount = 5, icon, options }) => {
     const buttonRef = useRef<any>(null);
     const [menuVisible, setMenuVisible] = useState(false);
     const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
@@ -200,7 +201,7 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ icon, options }) => {
                                 <BlurView
                                     style={StyleSheet.absoluteFill}
                                     blurType="light"
-                                    blurAmount={5}
+                                    blurAmount={blurAmount}
                                     reducedTransparencyFallbackColor="white"
                                 />
 

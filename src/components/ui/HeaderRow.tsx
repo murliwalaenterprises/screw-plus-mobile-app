@@ -1,6 +1,7 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from "react";
-import { View, TouchableOpacity, StyleSheet, ViewStyle, TextStyle } from "react-native";
-import { AppText } from "."; // tumhara custom text component
+import { View, StyleSheet, ViewStyle, TextStyle } from "react-native";
+import { AppText, ElasticButton } from "."; // tumhara custom text component
 
 type HeaderRowProps = {
     title: string;
@@ -9,6 +10,7 @@ type HeaderRowProps = {
     containerStyle?: ViewStyle;
     titleStyle?: TextStyle;
     buttonTextStyle?: TextStyle;
+    buttonDisabled?: boolean;
 };
 
 const HeaderRow: React.FC<HeaderRowProps> = ({
@@ -18,19 +20,19 @@ const HeaderRow: React.FC<HeaderRowProps> = ({
     containerStyle,
     titleStyle,
     buttonTextStyle,
+    buttonDisabled = false,
 }) => {
     return (
         <View style={[styles.container, containerStyle]}>
             <AppText variant="medium" style={[styles.title, titleStyle]}>
                 {title}
             </AppText>
-
             {onPress && (
-                <TouchableOpacity onPress={onPress}>
-                    <AppText variant="medium" style={[styles.buttonText, buttonTextStyle]}>
+                <ElasticButton isDisabled={buttonDisabled} icon={<View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                    <AppText variant="small" style={[styles.buttonText, buttonTextStyle]}>
                         {buttonText}
                     </AppText>
-                </TouchableOpacity>
+                </View>} onPress={() => onPress()} />
             )}
         </View>
     );
@@ -52,7 +54,6 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontWeight: "500",
-        fontSize: 16,
         color: "#222",
     },
 });

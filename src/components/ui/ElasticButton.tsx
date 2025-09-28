@@ -5,7 +5,7 @@ import { X } from "lucide-react-native";
 import { moderateScale } from "react-native-size-matters";
 import { BlurView } from "@react-native-community/blur";
 
-const ElasticButton = ({ isDark = true, icon, onPress }: { isDark?: boolean, icon?: React.ReactNode, onPress: () => void }) => {
+const ElasticButton = ({ isDisabled = false, isDark = true, icon, onPress }: { isDisabled?: boolean, isDark?: boolean, icon?: React.ReactNode, onPress: () => void }) => {
     const scale = useRef(new Animated.Value(1)).current;
     const translateX = useRef(new Animated.Value(0)).current;
     const translateY = useRef(new Animated.Value(0)).current;
@@ -14,8 +14,8 @@ const ElasticButton = ({ isDark = true, icon, onPress }: { isDark?: boolean, ico
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
             onPanResponderGrant: () => {
-                // Shrink slightly
-                Animated.spring(scale, { toValue: 0.9, friction: 3, useNativeDriver: true }).start();
+                // Slight scale up on press
+                Animated.spring(scale, { toValue: 1.1, friction: 3, useNativeDriver: true }).start();
             },
             onPanResponderMove: (evt, gestureState) => {
                 // Non-linear stretch for rubber effect
@@ -30,7 +30,7 @@ const ElasticButton = ({ isDark = true, icon, onPress }: { isDark?: boolean, ico
                     Animated.spring(translateY, { toValue: 0, friction: 4, tension: 150, useNativeDriver: true }),
                 ]).start();
 
-                // Only trigger press if tap was short & small movement
+                // Trigger press only for tap
                 if (Math.abs(gestureState.dx) < 5 && Math.abs(gestureState.dy) < 5) {
                     onPress();
                 }
@@ -47,7 +47,7 @@ const ElasticButton = ({ isDark = true, icon, onPress }: { isDark?: boolean, ico
 
     return (
         <Animated.View
-            {...panResponder.panHandlers}
+            {...(!isDisabled ? panResponder.panHandlers : {})}
             style={{ transform: [{ scale }, { translateX }, { translateY }] }}
         >
             {/* Outer wrapper for shadow */}
@@ -66,7 +66,7 @@ const ElasticButton = ({ isDark = true, icon, onPress }: { isDark?: boolean, ico
                         blurType={!isDark ? "dark" : "light"}
                         blurAmount={1}
                     >
-                        <View style={[styles.closeButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.3)' : "rgba(0,0,0,0.3)" }]}>
+                        <View style={[styles.closeButton, { backgroundColor: isDark ? 'rgba(255,255,255,0.3)' : "rgba(0,0,0,0.3)", opacity: isDisabled ? 0.2 : 1 }]}>
                             {icon ? icon : (<X size={moderateScale(16)} color={isDark ? '#222' : '#fff'} />)}
                         </View>
                     </BlurView>

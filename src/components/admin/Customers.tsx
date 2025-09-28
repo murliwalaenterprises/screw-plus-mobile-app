@@ -7,10 +7,10 @@ import {
     Text,
     View,
 } from "react-native";
-import { Edit3, Users } from "lucide-react-native";
-import { BottomSheetModal, HeaderRow, Input, QuickMenu } from "../ui";
+import { Edit, Users } from "lucide-react-native";
+import { BottomSheetModal, ElasticButton, HeaderRow, Input } from "../ui";
 import { firebaseService } from "../../services/firebaseService";
-import { verticalScale } from "react-native-size-matters";
+import { scale, verticalScale } from "react-native-size-matters";
 
 // ----------------- Child Card Component -----------------
 type Customer = {
@@ -33,13 +33,10 @@ const CustomerCard: React.FC<CustomerCardProps> = ({ item, onEdit }) => {
                 <Text style={styles.detail}>📱 {item.mobile || 'NA'}</Text>
             </View>
 
-            <QuickMenu options={[
-                {
-                    label: "Edit",
-                    icon: <Edit3 size={12} color="#222" />,
-                    onPress: () => onEdit(item),
-                },
-            ]} />
+            <ElasticButton icon={<View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                <Edit size={scale(12)} color="#333" />
+                <Text>Edit</Text>
+            </View>} onPress={() => onEdit(item)} />
         </View>
     );
 };
@@ -50,6 +47,7 @@ export default function Customers() {
     const [customers, setCustomers] = useState<Customer[]>([]);
     const [refreshing, setRefreshing] = useState(false);
     const [showBottomSheet, setShowBottomSheetSheet] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
 
     const [selectedItem, setSelectedItem] = useState<{
         id: string,
@@ -88,6 +86,14 @@ export default function Customers() {
         }
     }
 
+    const handleSave = async () => {
+        setIsSaving(true);
+        setTimeout(() => {
+            setIsSaving(false);
+            setShowBottomSheetSheet(false);
+        }, 5000);
+    }
+
     return (
         <View style={styles.container}>
             {/* Header */}
@@ -115,8 +121,9 @@ export default function Customers() {
                 {/* Header */}
                 <HeaderRow
                     title="Edit customer's details"
-                    buttonText="Save"
-                    onPress={() => setShowBottomSheetSheet(false)}
+                    buttonText={isSaving ? 'Please wait...' : "Save"}
+                    buttonDisabled={isSaving}
+                    onPress={() => isSaving ? null : handleSave()}
                     containerStyle={{ marginBottom: verticalScale(20) }}
                 />
 

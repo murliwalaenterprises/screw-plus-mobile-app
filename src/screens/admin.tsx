@@ -75,7 +75,7 @@ export default function AdminScreen({ navigation, route }: any) {
           },
         ]} /> */}
 
-        <QuickMenu icon={<MoreHorizontal size={moderateScale(moderateVerticalScale(14))} color={"#222"} />} options={tabs.map((tab) => {
+        <QuickMenu blurAmount={15} icon={<MoreHorizontal size={moderateScale(moderateVerticalScale(14))} color={"#222"} />} options={tabs.map((tab) => {
           const IconComponent = tab.icon;
           const isActive = activeTab === tab?.id;
 
@@ -136,7 +136,7 @@ export default function AdminScreen({ navigation, route }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.ScreenBGColor
+    backgroundColor: Colors.StatusBarBg
   },
   header: {
     flexDirection: 'row',
