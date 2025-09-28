@@ -1,6 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
-
-import { Edit3, Image as ImageIcon, Plus, Trash2 } from 'lucide-react-native';
+import { Edit3, Image as ImageIcon, MoreVertical, Plus, Trash2 } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -16,6 +14,7 @@ import {
 import BannerFormModal from './BannerFormModal';
 import { useFirebaseData } from '../../store/useFirebaseData';
 import { Banner } from '../../types/product';
+import { QuickMenu } from '../ui';
 
 export default function BannersTab() {
   const { banners, loading, deleteBanner } = useFirebaseData();
@@ -69,18 +68,19 @@ export default function BannersTab() {
         <Text style={styles.bannerCta}>{item.cta}</Text>
       </View>
       <View style={styles.actions}>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: '#F59E0B' }]}
-          onPress={() => handleEdit(item)}
-        >
-          <Edit3 size={16} color="#FFFFFF" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: '#EF4444' }]}
-          onPress={() => handleDelete(item)}
-        >
-          <Trash2 size={16} color="#FFFFFF" />
-        </TouchableOpacity>
+        <QuickMenu icon={<MoreVertical size={12} color="#222" />} options={[
+          {
+            label: "Edit",
+            icon: <Edit3 size={12} color="#222" />,
+            onPress: () => handleEdit(item),
+          },
+          {
+            label: "Delete",
+            icon: <Trash2 size={12} color="#EF4444" />,
+            onPress: () => handleDelete(item),
+            textColor: "#EF4444",
+          }
+        ]} />
       </View>
     </View>
   );

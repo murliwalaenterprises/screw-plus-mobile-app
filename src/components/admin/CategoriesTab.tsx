@@ -1,5 +1,3 @@
-/* eslint-disable react-native/no-inline-styles */
-
 import { Edit3, Grid3X3, Plus, Trash2 } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
@@ -16,6 +14,7 @@ import {
 import CategoryFormModal from './CategoryFormModal';
 import { useFirebaseData } from '../../store/useFirebaseData';
 import { Category } from '../../types/product';
+import { QuickMenu } from '../ui';
 
 export default function CategoriesTab() {
   const { categories, loading, deleteCategory } = useFirebaseData();
@@ -68,18 +67,19 @@ export default function CategoriesTab() {
         <Text style={styles.productCount}>{item.productCount} products</Text>
       </View>
       <View style={styles.actions}>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: '#10B981' }]}
-          onPress={() => handleEdit(item)}
-        >
-          <Edit3 size={16} color="#FFFFFF" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: '#EF4444' }]}
-          onPress={() => handleDelete(item)}
-        >
-          <Trash2 size={16} color="#FFFFFF" />
-        </TouchableOpacity>
+        <QuickMenu options={[
+          {
+            label: "Edit",
+            icon: <Edit3 size={12} color="#222" />,
+            onPress: () => handleEdit(item),
+          },
+          {
+            label: "Delete",
+            icon: <Trash2 size={12} color="#EF4444" />,
+            onPress: () => handleDelete(item),
+            textColor: "#EF4444",
+          }
+        ]} />
       </View>
     </View>
   );

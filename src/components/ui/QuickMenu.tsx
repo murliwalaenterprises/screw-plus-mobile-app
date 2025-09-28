@@ -24,11 +24,12 @@ type MenuOption = {
 };
 
 type QuickMenuProps = {
+    icon?: React.ReactNode;
     options: MenuOption[];
 };
 
 
-const QuickMenu: React.FC<QuickMenuProps> = ({ options }) => {
+const QuickMenu: React.FC<QuickMenuProps> = ({ icon, options }) => {
     const buttonRef = useRef<any>(null);
     const [menuVisible, setMenuVisible] = useState(false);
     const [menuPos, setMenuPos] = useState({ x: 0, y: 0 });
@@ -171,7 +172,7 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ options }) => {
                             blurAmount={5}
                             reducedTransparencyFallbackColor="white"
                         />
-                        <MoreHorizontal size={scale(14)} color="#4B5563" />
+                        {icon ? icon : (<MoreHorizontal size={scale(14)} color="#4B5563" />)}
                     </Animated.View>
                 </TouchableOpacity>
             )}
@@ -210,7 +211,7 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ options }) => {
                                 <BlurView
                                     style={StyleSheet.absoluteFill}
                                     blurType="light"
-                                    blurAmount={2}
+                                    blurAmount={5}
                                     reducedTransparencyFallbackColor="white"
                                 />
 
@@ -224,9 +225,11 @@ const QuickMenu: React.FC<QuickMenuProps> = ({ options }) => {
                                         <TouchableOpacity
                                             key={idx}
                                             activeOpacity={1}
-                                            onPress={() => {
-                                                opt.onPress();
-                                                closeMenu();
+                                            onPress={async () => {
+                                                await closeMenu();
+                                                setTimeout(() => {
+                                                    opt.onPress();
+                                                }, 200);
                                             }}
                                             onPressIn={() => {
                                                 Animated.timing(hoverAnim[idx], {

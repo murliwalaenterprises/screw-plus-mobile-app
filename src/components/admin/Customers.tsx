@@ -15,7 +15,7 @@ import {
     findNodeHandle,
 } from "react-native";
 import { Edit3, Plus, ShareIcon, Trash2, Users } from "lucide-react-native";
-import QuickMenu from "../QuickMenu";
+import { QuickMenu } from "../ui";
 
 const initialCustomers: Customer[] = [
     { id: "1", name: "Rahul Sharma", email: "rahul@example.com", mobile: "9876543210" },

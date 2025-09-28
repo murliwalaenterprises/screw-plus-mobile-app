@@ -1,6 +1,4 @@
-/* eslint-disable react-native/no-inline-styles */
-
-import { Edit3, Package, Plus, Trash2 } from 'lucide-react-native';
+import { Edit3, MoreVertical, Package, Plus, Trash2 } from 'lucide-react-native';
 import React, { useState } from 'react';
 import {
   ActivityIndicator,
@@ -9,7 +7,6 @@ import {
   Image,
   RefreshControl,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View
 } from 'react-native';
@@ -17,7 +14,7 @@ import NewProductFormModal from './NewProductFormModal';
 import { useFirebaseData } from '../../store/useFirebaseData';
 import { Product } from '../../types/product';
 import { formatCurrency } from '../../services/utilityService';
-// import ProductFormModal from './ProductFormModal';
+import { AppText, QuickMenu } from '../ui';
 
 export default function ProductsTab() {
   const { products, loading, deleteProduct } = useFirebaseData();
@@ -66,29 +63,30 @@ export default function ProductsTab() {
     <View style={styles.productCard}>
       <Image source={{ uri: item.image }} style={styles.productImage} />
       <View style={styles.productInfo}>
-        <Text style={styles.productTitle} numberOfLines={2}>
+        <AppText style={styles.productTitle} numberOfLines={2}>
           {item.title}
-        </Text>
-        <Text style={styles.productCategory}>{item.category}</Text>
-        <Text style={styles.productPrice}>{formatCurrency(item.price)}</Text>
+        </AppText>
+        <AppText variant="small" style={styles.productCategory}>{item.category}</AppText>
+        <AppText style={styles.productPrice}>{formatCurrency(item.price)}</AppText>
         <View style={styles.productStats}>
-          <Text style={styles.statText}>★ {item.rating}</Text>
-          <Text style={styles.statText}>({item.reviews})</Text>
+          <AppText variant="small" style={styles.statText}>★ {item.rating}</AppText>
+          <AppText variant="small" style={styles.statText}>({item.reviews})</AppText>
         </View>
       </View>
       <View style={styles.actions}>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: '#3B82F6' }]}
-          onPress={() => handleEdit(item)}
-        >
-          <Edit3 size={16} color="#FFFFFF" />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.actionButton, { backgroundColor: '#EF4444' }]}
-          onPress={() => handleDelete(item)}
-        >
-          <Trash2 size={16} color="#FFFFFF" />
-        </TouchableOpacity>
+        <QuickMenu icon={<MoreVertical size={12} color="#222" />} options={[
+          {
+            label: "Edit",
+            icon: <Edit3 size={12} color="#222" />,
+            onPress: () => handleEdit(item),
+          },
+          {
+            label: "Delete",
+            icon: <Trash2 size={12} color="#EF4444" />,
+            onPress: () => handleDelete(item),
+            textColor: "#EF4444",
+          }
+        ]} />
       </View>
     </View>
   );
@@ -97,7 +95,7 @@ export default function ProductsTab() {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#3B82F6" />
-        <Text style={styles.loadingText}>Loading products...</Text>
+        <AppText style={styles.loadingText}>Loading products...</AppText>
       </View>
     );
   }
@@ -107,11 +105,11 @@ export default function ProductsTab() {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Package size={24} color="#3B82F6" />
-          <Text style={styles.headerTitle}>Products ({products.length})</Text>
+          <AppText style={styles.headerTitle}>Products ({products.length})</AppText>
         </View>
         <TouchableOpacity style={styles.addButton} onPress={handleAdd}>
           <Plus size={20} color="#FFFFFF" />
-          <Text style={styles.addButtonText}>Add Product</Text>
+          <AppText style={styles.addButtonText}>Add Product</AppText>
         </TouchableOpacity>
       </View>
 
@@ -126,8 +124,8 @@ export default function ProductsTab() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Package size={48} color="#9CA3AF" />
-            <Text style={styles.emptyText}>No products found</Text>
-            <Text style={styles.emptySubtext}>Add your first product to get started</Text>
+            <AppText style={styles.emptyText}>No products found</AppText>
+            <AppText style={styles.emptySubtext}>Add your first product to get started</AppText>
           </View>
         }
       />
@@ -156,7 +154,6 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 12,
-    fontSize: 16,
     color: '#6B7280'
   },
   header: {
@@ -174,7 +171,6 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   headerTitle: {
-    fontSize: 18,
     fontWeight: '600',
     color: '#1F2937',
     marginLeft: 8
@@ -197,6 +193,7 @@ const styles = StyleSheet.create({
   },
   productCard: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
     backgroundColor: '#FFFFFF',
     borderRadius: 12,
     padding: 16,
@@ -218,18 +215,15 @@ const styles = StyleSheet.create({
     marginLeft: 12
   },
   productTitle: {
-    fontSize: 16,
     fontWeight: '600',
     color: '#1F2937',
     marginBottom: 4
   },
   productCategory: {
-    fontSize: 14,
     color: '#6B7280',
     marginBottom: 4
   },
   productPrice: {
-    fontSize: 16,
     fontWeight: '700',
     color: '#059669',
     marginBottom: 4
@@ -239,7 +233,6 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   statText: {
-    fontSize: 12,
     color: '#6B7280',
     marginRight: 8
   },
@@ -262,13 +255,11 @@ const styles = StyleSheet.create({
     paddingVertical: 60
   },
   emptyText: {
-    fontSize: 18,
     fontWeight: '600',
     color: '#4B5563',
     marginTop: 16
   },
   emptySubtext: {
-    fontSize: 14,
     color: '#9CA3AF',
     marginTop: 4
   }
